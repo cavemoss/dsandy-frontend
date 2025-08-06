@@ -33,7 +33,7 @@ export function ProductInfo({ product }: Params) {
 
         <div className="flex gap-1.5">
           <Badge variant="destructive">20% OFF</Badge>
-          {product.inStock ? (
+          {true ? (
             <Badge variant="secondary" className="bg-green-100 text-green-800">
               In Stock
             </Badge>

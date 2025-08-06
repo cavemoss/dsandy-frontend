@@ -12,10 +12,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/shadcd/compon
 import { Separator } from '@/shared/shadcd/components/ui/separator';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 
-interface PaymentPageProps {
-  onNavigate: (page: string) => void;
-}
-
 interface OrderItem {
   id: string;
   name: string;
@@ -25,7 +21,7 @@ interface OrderItem {
   variant?: string;
 }
 
-export default function PaymentPage({ onNavigate }: PaymentPageProps) {
+export default function PaymentPage() {
   const router = useRouter();
 
   const handleBack = () => {
@@ -132,10 +128,8 @@ export default function PaymentPage({ onNavigate }: PaymentPageProps) {
                 Thank you for your purchase. Your order #12345 has been confirmed and will be shipped soon.
               </p>
               <div className="space-y-3">
-                <Button onClick={() => onNavigate('product')} className="w-full">
-                  Continue Shopping
-                </Button>
-                <Button variant="outline" onClick={() => onNavigate('cart')} className="w-full">
+                <Button className="w-full">Continue Shopping</Button>
+                <Button variant="outline" className="w-full">
                   View Order Details
                 </Button>
               </div>

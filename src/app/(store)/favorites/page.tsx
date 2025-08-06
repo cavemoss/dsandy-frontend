@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Heart, ShoppingCart, Star,Trash2 } from 'lucide-react';
+import { ArrowLeft, Heart, ShoppingCart, Star, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { Badge } from '@/shared/shadcd/components/ui/badge';
@@ -20,11 +20,7 @@ interface FavoriteItem {
   dateAdded: string;
 }
 
-interface FavoritesPageProps {
-  onNavigate: (page: string) => void;
-}
-
-export default function FavoritesPage({ onNavigate }: FavoritesPageProps) {
+export default function FavoritesPage() {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([
     {
       id: '1',
@@ -112,7 +108,7 @@ export default function FavoritesPage({ onNavigate }: FavoritesPageProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => onNavigate('product')} className="p-2">
+            <Button variant="ghost" className="p-2">
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
@@ -142,7 +138,7 @@ export default function FavoritesPage({ onNavigate }: FavoritesPageProps) {
               <p className="text-muted-foreground mb-6">
                 Start browsing and save items you love by clicking the heart icon
               </p>
-              <Button onClick={() => onNavigate('product')}>Start Shopping</Button>
+              <Button>Start Shopping</Button>
             </CardContent>
           </Card>
         ) : (
@@ -243,7 +239,7 @@ export default function FavoritesPage({ onNavigate }: FavoritesPageProps) {
         {/* Continue Shopping */}
         {favorites.length > 0 && (
           <div className="text-center mt-12">
-            <Button variant="outline" onClick={() => onNavigate('product')} className="px-8">
+            <Button variant="outline" className="px-8">
               Continue Shopping
             </Button>
           </div>

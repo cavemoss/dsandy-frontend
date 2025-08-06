@@ -9,22 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/shadcd/compon
 import { Input } from '@/shared/shadcd/components/ui/input';
 import { Separator } from '@/shared/shadcd/components/ui/separator';
 
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  quantity: number;
-  variant?: string;
-  inStock: boolean;
-}
-
-interface CartPageProps {
-  onNavigate: (page: string) => void;
-}
-
-export default function CartPage({ onNavigate }: CartPageProps) {
+export default function CartPage() {
   const cartItems = useCartStore((state) => state.items);
 
   const [promoCode, setPromoCode] = useState('');
@@ -52,7 +37,7 @@ export default function CartPage({ onNavigate }: CartPageProps) {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" onClick={() => onNavigate('product')} className="p-2">
+          <Button variant="ghost" className="p-2">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
@@ -68,7 +53,7 @@ export default function CartPage({ onNavigate }: CartPageProps) {
               <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
               <h2 className="text-xl font-medium mb-2">Your cart is empty</h2>
               <p className="text-muted-foreground mb-6">Start shopping to add items to your cart</p>
-              <Button onClick={() => onNavigate('product')}>Continue Shopping</Button>
+              <Button>Continue Shopping</Button>
             </CardContent>
           </Card>
         ) : (
@@ -181,7 +166,7 @@ export default function CartPage({ onNavigate }: CartPageProps) {
                   Proceed to Checkout
                 </Button>
 
-                <Button variant="outline" className="w-full" onClick={() => onNavigate('product')}>
+                <Button variant="outline" className="w-full">
                   Continue Shopping
                 </Button>
               </div>

@@ -1,5 +1,5 @@
-import { SubdomainName } from '@/widgets/init';
 import { SupplierEnum } from '@/shared/lib/types';
+import { SubdomainName } from '@/widgets/init';
 
 import type * as ProductJson from './product-json';
 

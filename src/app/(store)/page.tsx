@@ -1,4 +1,5 @@
-import { Award, Clock, Globe,Headphones, Shield, Truck } from 'lucide-react';
+import { Award, Clock, Globe, Headphones, Shield, Truck } from 'lucide-react';
+import Image from 'next/image';
 
 import { ProductDisplayCard } from '@/entities/products';
 import { Button } from '@/shared/shadcd/components/ui/button';
@@ -195,7 +196,7 @@ export default function MainPage() {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">Shop by Category</h2>
             <p className="text-lg text-muted-foreground">
-              Find exactly what you're looking for in our curated collections
+              {"Find exactly what you're looking for in our curated collections"}
             </p>
           </div>
 
@@ -220,7 +221,7 @@ export default function MainPage() {
             ].map((category) => (
               <div key={category.name} className="group cursor-pointer">
                 <div className="aspect-square rounded-2xl overflow-hidden mb-4 relative">
-                  <img
+                  <Image
                     src={category.image}
                     alt={category.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
