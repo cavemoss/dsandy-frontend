@@ -19,6 +19,8 @@ const eslintConfig = [
       'unused-imports': unusedImports,
     },
     rules: {
+      'react-hooks/exhaustive-deps': 'off',
+
       // Import sorting
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',

@@ -1,33 +1,40 @@
 'use client';
 
+import { Button } from '@shadcd/button';
 import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
-import { useState } from 'react';
 
-import { Button } from '@/shared/shadcd/components/ui/button';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
+
+import { useProductsStore } from '../model';
 
 interface Props {
   images: string[];
 }
 
 export function ProductImageGallery({ images }: Props) {
-  const [selectedImage, setSelectedImage] = useState(0);
+  const productsStore = useProductsStore();
 
-  const nextImage = () => {
-    setSelectedImage((prev) => (prev + 1) % images.length);
-  };
+  const imageIndex = useProductsStore((state) => state.products.current.imageIndex);
 
-  const prevImage = () => {
-    setSelectedImage((prev) => (prev - 1 + images.length) % images.length);
-  };
+  const nextImage = () =>
+    productsStore.setState((state) => {
+      const ptr = state.products.current;
+      ptr.imageIndex = (ptr.imageIndex + 1) % images.length;
+    });
+
+  const prevImage = () =>
+    productsStore.setState((state) => {
+      const ptr = state.products.current;
+      ptr.imageIndex = (ptr.imageIndex - 1 + images.length) % images.length;
+    });
 
   return (
     <div className="space-y-4">
       {/* Main Image */}
       <div className="relative group bg-gray-50 rounded-lg overflow-hidden aspect-square">
         <ImageWithFallback
-          src={images[selectedImage]}
-          alt={`Image ${selectedImage + 1}`}
+          src={images[imageIndex]}
+          alt={`Image ${imageIndex + 1}`}
           className="w-full h-full object-cover brightness-95"
         />
 
@@ -67,9 +74,9 @@ export function ProductImageGallery({ images }: Props) {
           {images.map((image, index) => (
             <button
               key={index}
-              onClick={() => setSelectedImage(index)}
+              onClick={() => productsStore.setState((state) => (state.products.current.imageIndex = index))}
               className={`flex-shrink-0 rounded-md overflow-hidden border-2 transition-colors ${
-                selectedImage === index ? 'border-primary' : 'border-transparent'
+                imageIndex === index ? 'border-primary' : 'border-transparent'
               }`}
             >
               <ImageWithFallback

@@ -1,13 +1,13 @@
-import { StripeElementsOptions } from '@stripe/stripe-js';
+import { Stripe, StripeElements, StripeElementsOptions } from '@stripe/stripe-js';
 
-import { CheckoutStepEnum, ShippingInfo } from './order-info.types';
+import { OrderDTO, OrderContactInfoDTO, OrderShippingInfoDTO } from '@/api/entities';
+import { SelectOption } from '@/shared/lib/types';
 
 export interface CheckoutState {
-  currentStep: CheckoutStepEnum;
-  shipping: ShippingInfo;
+  contactInfo: OrderContactInfoDTO;
+  shippingInfo: OrderShippingInfoDTO;
   // actions
-  setStep: (step: CheckoutStepEnum) => void;
-  setShippingInfo: (callback: (obj: ShippingInfo) => void) => void;
+  setState: (clb: (s: this) => void) => void;
 }
 
 export interface StripeStoreState {
@@ -16,9 +16,48 @@ export interface StripeStoreState {
     amount: number;
     currency: string;
   };
+  isProcessing: boolean;
+  order: OrderDTO | null;
   // getters
   getElementsOptions: () => StripeElementsOptions;
   // actions
-  setOptions: (callback: (options: StripeStoreState['options']) => void) => void;
-  updateClientSecret: () => Promise<void>;
+  setOptions: (clb: (opt: this['options']) => void) => void;
+  createPaymentIntent: () => Promise<void>;
+  confirmPayment: (stripe: Stripe, elements: StripeElements) => Promise<void>;
+  setState: (clb: (s: this) => void) => void;
+}
+
+export interface ShippingFormState {
+  data: {
+    country: string;
+    province: string;
+    city: string;
+    address: string;
+    zipCode: string;
+    apartment: string;
+  };
+  postalCodes: {
+    iso: string;
+    regEx: string;
+    mask: string;
+  }[];
+  // getters
+  getCountries: () => SelectOption[];
+  getProvinces: () => SelectOption[];
+  getCities: () => SelectOption[];
+  getPhoneMask: () => string;
+  getPostalCode: () => this['postalCodes'][0] | null;
+  // actions
+  init: () => Promise<void>;
+  loadPostalCodes: () => Promise<void>;
+  unsetData: (keys: (keyof this['data'])[]) => void;
+  setData: (clb: (s: this['data']) => void) => void;
+}
+
+export interface PostalCodeDTO {
+  Note: string;
+  Country: string;
+  ISO: string;
+  Format: string;
+  Regex: string;
 }

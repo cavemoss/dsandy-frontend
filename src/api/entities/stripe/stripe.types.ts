@@ -1,8 +1,11 @@
-export interface CreatePaymentIntentBodyDto {
+export interface CreatePaymentIntentBody {
   amount: number;
   currency: string;
+  metadata: {
+    orderId: number;
+  };
 }
 
-export interface CreatePaymentIntentResponseDto {
+export interface CreatePaymentIntentResponse {
   clientSecret: string;
 }

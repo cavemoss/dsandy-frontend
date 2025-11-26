@@ -1,2 +1,3 @@
-export { Footer } from './Footer';
-export { Header } from './Header';
+export * from './Footer';
+export * from './Header';
+export * from './Initialization';

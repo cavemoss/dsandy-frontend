@@ -2,25 +2,36 @@ import { DisplayPrice } from '@/shared/lib/types';
 
 export interface CartItem {
   productId: number;
-  variantIdx: number;
-  imgSrc: string;
-  productTitle: string;
-  variantTitle: string;
-  inStock: boolean;
-  priceUSD: number;
+  scuId: number;
+  quantity: number;
+}
+
+export interface CartDisplayItem {
+  productName: string;
+  propertyName: string;
+  propertyValueName: string;
   displayPrice: DisplayPrice;
+  image: string;
   quantity: number;
 }
 
 export interface CartState {
   items: CartItem[];
-  // getters
-  isCurrentProductAdded: () => boolean;
-  getItemPrice: (item: CartItem) => number;
-  getTotalItems: () => number | null;
+  // Getters
+  getCartItemIndex: (productId: number, scuId: number) => number;
+  getCartItem: (productId: number, scuId: number) => CartItem;
+  getCartDisplayItems: () => CartDisplayItem[];
+  getItemPrice: (index: number) => string;
+  getSubtotal: () => number;
+  getTotalPrice: () => number;
+  getTotalItems: () => number;
   getAmountSaved: () => number;
-  // action
+  // Actions
+  init: () => void;
   addToCart: (item: CartItem) => void;
   removeFromCart: (index: number) => void;
-  setItemQuantity: (index: number, amount: number) => void;
+  setItemQuantity: {
+    (productId: number, scuId: number, amount: number): void;
+    (index: number, amount: number): void;
+  };
 }

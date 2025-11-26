@@ -1,7 +1,6 @@
 import * as api from '@/api/entities';
-import { useFeedbackStore } from '@/entities/feedback';
-import { createZustand, deepClone } from '@/shared/lib/utils';
-import { useInitStore } from '@/widgets/init';
+import { createZustand, deepClone, objectByKey } from '@/shared/lib/utils';
+import { formatPrice } from '@/widgets/init';
 
 import { ProductsState } from '../types';
 
@@ -10,53 +9,56 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
     all: [],
     current: {
       item: null,
-      variant: null,
-      size: null,
+      scu: null,
+      imageIndex: 0,
+      quantity: 1,
     },
   },
   error: false,
 
-  // getters
+  // Getters
+
+  getProductsByIds: () => objectByKey(get().products.all, 'id'),
+
+  getCurrentSCUsByIds: () => objectByKey(get().products.current.item!.scus, 'id'),
+
+  getProductAndSCU: (productId, scuId) => {
+    const { [productId]: product } = get().getProductsByIds();
+    const { [scuId]: scu } = objectByKey(product.scus, 'id');
+
+    return { product, scu };
+  },
+
   getProductImages: () => {
     const { item: product } = get().products.current;
-    return [...product!.gallery.map((g) => g.src), ...product!.variants.map((v) => v.imgSrc)];
+    return [...product!.images, ...product!.scus.map((scu) => scu.image)];
   },
 
   getDisplayPrices: () => {
-    const price = get().products.current.variant!.priceUSD;
-    const format = (price: number) => '$' + price.toFixed(2);
-
-    return { original: format(price * 1.2), discounted: format(price) };
-  },
-
-  getInStock: () => get().products.current.variant!.inStock,
-
-  getCartItem: () => {
-    const { item: product, variant } = get().products.current;
-
+    const price = get().products.current.scu!.priceInfo;
+    console.log(price.dsOfferPrice, formatPrice(price.dsOfferPrice));
     return {
-      productId: product!.id,
-      variantIdx: variant!.index,
-      priceUSD: variant!.priceUSD,
-      imgSrc: variant!.imgSrcPreview,
-      productTitle: product!.title,
-      variantTitle: variant!.title,
-      inStock: true,
-      quantity: product!.quantity,
-      displayPrice: get().getDisplayPrices(),
+      original: formatPrice(price.dsPrice),
+      discounted: formatPrice(price.dsOfferPrice),
     };
   },
 
-  // actions
+  getInStock: () => get().products.current.scu!.availableStock,
+
+  getCartItem: (quantity) => {
+    const { item, scu } = get().products.current;
+    return { productId: item!.id, scuId: scu!.id, quantity };
+  },
+
+  // Actions
+
   async init() {
     await get().loadAllProducts();
   },
 
   async loadAllProducts() {
     try {
-      const subdomain = useInitStore.getState().getSubdomain();
-      const products = await api.products.get(subdomain);
-
+      const products = await api.products.getDynamic();
       set((state) => ((state.products.all = products), state));
     } catch (error) {
       console.debug('Error fetching products', { error });
@@ -66,48 +68,31 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
 
   setCurrentProduct(idParam) {
     const productId: number = Array.isArray(idParam) ? NaN : Number(idParam);
-    const product = get().products.all.find((p) => p.id == productId);
+    const product = get().products.all.find((p) => p.id === productId);
 
     if (!product) return;
 
     set((state) => {
       const { current } = state.products;
 
-      current.item = { ...product, quantity: 1 };
-      current.variant = { ...product.variants[0], index: 0 };
-      current.size = product.variantsSize && { ...product.variantsSize[0], index: 0 };
+      current.item = product;
+      current.scu = product.scus[0];
 
       return state;
     });
-
-    void useFeedbackStore.getState().loadFeedback(productId);
   },
 
-  setVariant(index) {
-    const variant = get().products.current.item!.variants[index];
-
+  setSCU(scuId) {
     set((state) => {
-      state.products.current.variant = { ...variant, index };
+      const ptr = state.products.current;
+
+      ptr.scu = state.getCurrentSCUsByIds()[scuId];
+      ptr.imageIndex = state.getProductImages().findIndex((img) => img === ptr.scu!.image);
+      ptr.quantity = 1;
+
       return deepClone(state);
     });
   },
 
-  setSize(index) {
-    const size = get().products.current.item!.variantsSize![index];
-
-    set((state) => {
-      state.products.current.size = { ...size, index };
-      return deepClone(state);
-    });
-  },
-
-  setQuantity(amount) {
-    set((state) => {
-      const { item: product } = state.products.current;
-
-      product!.quantity = Math.max(1, product!.quantity + amount);
-
-      return deepClone(state);
-    });
-  },
+  setState: (callback) => set((state) => (callback(state), deepClone(state))),
 }));

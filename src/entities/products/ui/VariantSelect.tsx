@@ -2,41 +2,43 @@
 
 import { useState } from 'react';
 
-import { ProductJson } from '@/api/entities';
+import { ProductSCU } from '@/api/entities';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 
 import { useProductsStore } from '..';
 
 interface Params {
-  all: ProductJson.Variant[];
-  current: ProductJson.Variant;
-  index: number;
+  all: ProductSCU[];
+  current: ProductSCU;
 }
 
-export function ProductVariantSelect({ all: variants, current: currentVariant, index: currentIndex }: Params) {
-  const MAX_VISIBLE_VARIANTS = 6;
+const MAX_VISIBLE_SCUS = 6;
 
-  const hasMoreVariants = variants.length > MAX_VISIBLE_VARIANTS;
+export function ProductSCUSelect({ all: allSCUs, current: currentSCU }: Params) {
+  const { setSCU } = useProductsStore.getState();
 
-  const [showAllVariants, setShowAllVariants] = useState(false);
+  const [showAllSCUs, setShowAllSCUs] = useState(false);
 
-  const displayedVariants = showAllVariants ? variants : variants.slice(0, MAX_VISIBLE_VARIANTS);
+  const hasMoreSCUs = allSCUs.length > MAX_VISIBLE_SCUS;
 
-  const { setVariant } = useProductsStore.getState();
+  const displayedSCUs = showAllSCUs ? allSCUs : allSCUs.slice(0, MAX_VISIBLE_SCUS);
+
+  // Methods
 
   return (
     <div className="space-y-6 mb-6">
       <div>
         <label className="block mb-3">
-          Variant: <span className="font-medium">{currentVariant.title}</span>
+          {currentSCU.propertyName}: <span className="font-medium">{currentSCU.propertyValueName}</span>
         </label>
+
         <div className="flex flex-wrap gap-3">
-          {displayedVariants.map((variant, index) => {
-            const isSelected = currentIndex === index;
-            const isAvailable = true;
+          {displayedSCUs.map((scu, idx) => {
+            const isSelected = currentSCU.id === scu.id;
+            const isAvailable = scu.availableStock > 0;
 
             return (
-              <div key={index} className="relative w-16" onClick={() => setVariant(index)}>
+              <div key={idx} title={scu.propertyValueName} className="relative w-16" onClick={() => setSCU(scu.id)}>
                 <button
                   disabled={!isAvailable}
                   className={`relative w-16 h-16 rounded-lg border-2 overflow-hidden transition-all ${
@@ -48,7 +50,7 @@ export function ProductVariantSelect({ all: variants, current: currentVariant, i
                   }`}
                 >
                   <ImageWithFallback
-                    src={variant.imgSrcPreview}
+                    src={scu.image}
                     alt="variant"
                     className="w-full h-full object-cover brightness-95"
                   />
@@ -58,29 +60,30 @@ export function ProductVariantSelect({ all: variants, current: currentVariant, i
                     </div>
                   )}
                 </button>
-                <p className="text-xs text-center mt-1 text-muted-foreground truncate w-16" title={variant.title}>
-                  {variant.title}
+                <p
+                  className="text-xs text-center mt-1 text-muted-foreground truncate w-16"
+                  title={scu.propertyValueName}
+                >
+                  {scu.propertyValueName}
                 </p>
               </div>
             );
           })}
 
           {/* View All / Show Less Button */}
-          {hasMoreVariants && (
+          {hasMoreSCUs && (
             <div className="relative w-16">
               <button
-                onClick={() => setShowAllVariants(!showAllVariants)}
+                onClick={() => setShowAllSCUs(!showAllSCUs)}
                 className="relative w-16 h-16 rounded-lg border-2 border-dashed border-muted hover:border-primary transition-all flex items-center justify-center bg-muted/100"
               >
                 <div className="text-center">
                   <span className="text-xs text-muted-foreground font-medium">
-                    {showAllVariants ? 'Less' : `+${variants.length - MAX_VISIBLE_VARIANTS}`}
+                    {showAllSCUs ? 'Less' : `+${allSCUs.length - MAX_VISIBLE_SCUS}`}
                   </span>
                 </div>
               </button>
-              <p className="text-xs text-center mt-2 text-muted-foreground">
-                {showAllVariants ? 'Show Less' : 'View All'}
-              </p>
+              <p className="text-xs text-center mt-2 text-muted-foreground">{showAllSCUs ? 'Show Less' : 'View All'}</p>
             </div>
           )}
         </div>

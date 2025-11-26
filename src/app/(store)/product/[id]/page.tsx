@@ -9,42 +9,41 @@ import {
   ProductDetailTabs,
   ProductImageGallery,
   ProductInfo,
-  ProductSizeSelect,
+  ProductSCUSelect,
   ProductTrustBudges,
-  ProductVariantSelect,
   useProductsStore,
 } from '@/entities/products';
 
 export default function ProductPage() {
   const params = useParams();
 
-  const { setCurrentProduct, getProductImages } = useProductsStore.getState();
+  const productsStore = useProductsStore();
 
   const product = useProductsStore((state) => state.products.current.item);
-  const variant = useProductsStore((state) => state.products.current.variant);
-  const size = useProductsStore((state) => state.products.current.size);
+  const scu = useProductsStore((state) => state.products.current.scu);
 
-  useEffect(() => setCurrentProduct(params.id), []);
+  useEffect(() => productsStore.setCurrentProduct(params.id), []);
 
-  if (!product || !variant) return <></>;
+  if (!product || !scu) return <></>;
+
+  const productImages = productsStore.getProductImages();
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
-          <ProductImageGallery images={getProductImages()} />
+          <ProductImageGallery images={productImages} />
 
           <div className="space-y-6">
-            <ProductInfo product={product} />
-            <ProductVariantSelect index={variant.index} all={product.variants} current={variant} />
-            {size && <ProductSizeSelect index={size.index} all={product.variantsSize!} current={size} />}
-            <ProductActions quantity={product.quantity} />
+            <ProductInfo product={product} scu={scu} />
+            <ProductSCUSelect all={product.scus} current={scu} />
+            <ProductActions />
             <ProductTrustBudges />
           </div>
         </div>
 
         <ProductDetailTabs product={product} />
-        <ProductReviews averageRating={product.feedbackInfo.rating} totalReviews={100} />
+        <ProductReviews averageRating={product.feedback.rating} totalReviews={100} />
       </div>
     </div>
   );

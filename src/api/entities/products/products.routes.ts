@@ -1,9 +1,9 @@
 import axios from '@/api/config/axios';
-import { SubdomainName } from '@/widgets/init';
 
 import { Product } from './products.types';
 
 const ROUTE = '/products';
 
-export const get = (subdomain: SubdomainName) =>
-  axios.get<Product[]>(ROUTE, { params: { subdomain } }).then((r) => r.data || []);
+export const get = () => axios.get<Product[]>(ROUTE).then((r) => r.data || []);
+
+export const getDynamic = () => axios.get<Product[]>(ROUTE + '/dynamic').then((r) => r.data || []);

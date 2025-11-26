@@ -1,16 +1,16 @@
 'use client';
 
-import { Check, Shield } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Badge } from '@shadcd/badge';
+import { Button } from '@shadcd/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@shadcd/card';
+import { Check } from 'lucide-react';
 import { useState } from 'react';
 
-import { CheckoutMainContent, CheckoutProgressHeader, CheckoutStepEnum } from '@/features/checkout';
-import BackChevron from '@/shared/components/BackChevron';
-import { Badge } from '@/shared/shadcd/components/ui/badge';
-import { Button } from '@/shared/shadcd/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
+import { useCartStore } from '@/features/cart';
+import { CheckoutForm } from '@/features/checkout';
 import { Separator } from '@/shared/shadcd/components/ui/separator';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
+import { formatPrice } from '@/widgets/init';
 
 interface OrderItem {
   id: string;
@@ -22,97 +22,17 @@ interface OrderItem {
 }
 
 export default function PaymentPage() {
-  const router = useRouter();
+  const cartStore = useCartStore();
 
-  const handleBack = () => {
-    router.back(); // Navigates to the previous page in history
-  };
-
-  const [step, setStep] = useState(CheckoutStepEnum.SHIPPING_INFO);
-
-  const [paymentMethod, setPaymentMethod] = useState('card');
-  const [sameAsShipping, setSameAsShipping] = useState(true);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
 
-  // Form states
-  const [shippingInfo, setShippingInfo] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
-    address: '',
-    apartment: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: 'US',
-    phone: '',
-  });
-
-  const [billingInfo, setBillingInfo] = useState({
-    firstName: '',
-    lastName: '',
-    address: '',
-    apartment: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: 'US',
-  });
-
-  const [paymentInfo, setPaymentInfo] = useState({
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    nameOnCard: '',
-  });
-
-  // Mock order data
-  const orderItems: OrderItem[] = [
-    {
-      id: '1',
-      name: 'Premium Cotton T-Shirt',
-      price: 24.99,
-      quantity: 2,
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=300&fit=crop',
-      variant: 'Midnight Black - Size L',
-    },
-    {
-      id: '2',
-      name: 'Premium Cotton T-Shirt',
-      price: 24.99,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=300&fit=crop&brightness=1.2',
-      variant: 'Pure White - Size M',
-    },
-  ];
-
-  const subtotal = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = 0; // Free shipping
-  const tax = subtotal * 0.08;
+  const subtotal = cartStore.getSubtotal();
+  const shipping = 0;
+  const tax = 0;
   const total = subtotal + shipping + tax;
 
-  const formatPrice = (price: number) => `$${price.toFixed(2)}`;
-
-  const handleShippingChange = (field: string, value: string) => {
-    setShippingInfo((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleBillingChange = (field: string, value: string) => {
-    setBillingInfo((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handlePaymentChange = (field: string, value: string) => {
-    setPaymentInfo((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = async () => {
-    setIsProcessing(true);
-    // Mock payment processing
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    setIsProcessing(false);
-    setOrderComplete(true);
-  };
+  const cartDisplayItems = cartStore.getCartDisplayItems();
+  const someItemsAreHidden = cartDisplayItems.length > 3;
 
   if (orderComplete) {
     return (
@@ -141,86 +61,83 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <BackChevron router={router} title="Checkout" muted="Complete your purchase" />
+    <div className="h-screen p-12" style={{ display: 'flex', gap: 40, overflowY: 'scroll' }}>
+      {/* Main Content */}
+      <div className="space-y-6 pb-12" style={{ marginLeft: 'auto', width: 560 }}>
+        <CheckoutForm />
+      </div>
 
-        <CheckoutProgressHeader />
-
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            <CheckoutMainContent />
-          </div>
-
-          {/* Order Summary Sidebar */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {orderItems.map((item) => (
-                  <div key={item.id} className="flex gap-3">
-                    <div className="relative">
-                      <ImageWithFallback
-                        src={item.image}
-                        alt={item.name}
-                        className="w-16 h-16 object-cover rounded-md"
-                      />
-                      <Badge
-                        variant="secondary"
-                        className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs"
-                      >
-                        {item.quantity}
-                      </Badge>
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">{item.name}</p>
-                      {item.variant && <p className="text-xs text-muted-foreground">{item.variant}</p>}
-                      <p className="text-sm">{formatPrice(item.price)}</p>
-                    </div>
-                  </div>
-                ))}
-
-                <Separator />
-
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Subtotal</span>
-                    <span>{formatPrice(subtotal)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Shipping</span>
-                    <span className="text-green-600">FREE</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Tax</span>
-                    <span>{formatPrice(tax)}</span>
-                  </div>
-                  <Separator />
-                  <div className="flex justify-between font-bold">
-                    <span>Total</span>
-                    <span>{formatPrice(total)}</span>
-                  </div>
+      {/* Order Summary Sidebar */}
+      <div className="space-y-6" style={{ marginRight: 'auto', width: '400px', position: 'sticky', top: 0 }}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Order Summary</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {cartDisplayItems.slice(0, 3).map((item, index) => (
+              <div key={index} className="flex gap-3">
+                <div className="relative">
+                  <ImageWithFallback
+                    src={item.image}
+                    alt={item.productName}
+                    className="w-16 h-16 object-cover rounded-md brightness-95"
+                  />
+                  {item.quantity > 1 && (
+                    <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                      {item.quantity}
+                    </Badge>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Security Badge */}
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <Shield className="h-8 w-8 text-green-600" />
-                  <div>
-                    <p className="font-medium text-sm">Secure Checkout</p>
-                    <p className="text-xs text-muted-foreground">Your payment information is encrypted and secure</p>
-                  </div>
+                <div className="flex-1">
+                  <p className="font-medium text-sm line-clamp-2">{item.productName}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {item.propertyName}: {item.propertyValueName}
+                  </p>
+                  <p className="text-sm line-clamp-2">{item.displayPrice.discounted}</p>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+              </div>
+            ))}
+
+            {someItemsAreHidden && (
+              <Button variant="outline" className="w-full text-sm underline">
+                Show all ({cartDisplayItems.length - 3} hidden)
+              </Button>
+            )}
+
+            <div className="space-y-2 mt-4">
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>Subtotal</span>
+                <Badge variant="secondary">{formatPrice(subtotal)}</Badge>
+              </div>
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>Shipping</span>
+                <Badge variant="outline">FREE</Badge>
+              </div>
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>Tax</span>
+                <Badge variant="secondary">{formatPrice(tax)}</Badge>
+              </div>
+              <Separator />
+              <div className="flex justify-between font-bold mt-6">
+                <span>Total</span>
+                <span>{formatPrice(total)}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Security Badge */}
+        <Card>
+          <CardContent className="">
+            <div className="flex items-center">
+              <img src="https://www.vectorlogo.zone/logos/stripe/stripe-ar21.svg" alt="s" />
+              <div>
+                <p className="font-medium text-sm">Secure Checkout</p>
+                <p className="text-xs text-muted-foreground">Powered by Stripe</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

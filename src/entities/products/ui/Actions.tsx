@@ -1,50 +1,68 @@
 'use client';
 
+import { Button } from '@shadcd/button';
 import { Check, Heart, Share2, ShoppingCart } from 'lucide-react';
 import { useState } from 'react';
 
 import { useCartStore } from '@/features/cart';
 import Counter from '@/shared/components/Counter';
-import { Button } from '@/shared/shadcd/components/ui/button';
 
-import { useProductsStore } from '..';
+import { useProductsStore } from '../model';
 
-interface Params {
-  quantity: number;
-}
+export function ProductActions() {
+  const cartStore = useCartStore();
+  const productsStore = useProductsStore();
 
-export function ProductActions({ quantity }: Params) {
-  // models
-  const [loading, setLoading] = useState(false);
+  // Refs
 
-  // methods
-  const { setQuantity, getCartItem } = useProductsStore.getState();
-  const { addToCart, isCurrentProductAdded } = useCartStore.getState();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleAddToCart = async () => {
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
+  const scu = useProductsStore((state) => state.products.current.scu!);
+  const quantity = useProductsStore((state) => state.products.current.quantity);
 
-    setLoading(false);
-    addToCart(getCartItem());
+  // Computed
+
+  const cartItem = productsStore.getCartItem(quantity);
+
+  const isCurrentProductInCart = cartStore.getCartItemIndex(cartItem.productId, cartItem.scuId) >= 0;
+
+  const currentProductQuantity = cartStore.getCartItem(cartItem.productId, cartItem.scuId)?.quantity;
+
+  // Methods
+
+  const addToCard = () => {
+    cartStore.addToCart(cartItem);
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 400);
   };
 
-  // tsx
+  const setCurrentProductQuantity = (amount: number) => {
+    cartStore.setItemQuantity(cartItem.productId, cartItem.scuId, amount);
+  };
+
+  const setQuantity = (amount: number) => {
+    productsStore.setState((state) => (state.products.current.quantity += amount));
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
-        <Counter value={quantity} setter={setQuantity} />
+        {isCurrentProductInCart ? (
+          <Counter value={currentProductQuantity} setter={setCurrentProductQuantity} />
+        ) : (
+          <Counter value={quantity} setter={setQuantity} />
+        )}
         <span className="text-muted-foreground">Quantity</span>
       </div>
 
       <div className="flex gap-3">
-        <Button className="flex-1" size="lg" disabled={loading || isCurrentProductAdded()} onClick={handleAddToCart}>
-          {loading ? (
+        <Button className="flex-1" size="lg" disabled={isLoading || isCurrentProductInCart} onClick={() => addToCard()}>
+          {isLoading ? (
             <>
               <div className="h-5 w-5 mr-2 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
               Adding...
             </>
-          ) : isCurrentProductAdded() ? (
+          ) : isCurrentProductInCart ? (
             <>
               <Check className="h-5 w-5 mr-2" />
               Added!
@@ -52,7 +70,7 @@ export function ProductActions({ quantity }: Params) {
           ) : (
             <>
               <ShoppingCart className="h-5 w-5 mr-2" />
-              {true ? 'Add to Cart' : 'Out of Stock'}
+              {scu.availableStock > 0 ? 'Add to Cart' : 'Out of Stock'}
             </>
           )}
         </Button>

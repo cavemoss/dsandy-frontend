@@ -1,8 +1,7 @@
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@radix-ui/react-accordion';
+import { Accordion } from '@shadcd/accordion';
+import { Card, CardContent } from '@shadcd/card';
 import { RotateCcw, Shield, Truck } from 'lucide-react';
-
-import { Accordion } from '@/shared/shadcd/components/ui/accordion';
-import { Card, CardContent } from '@/shared/shadcd/components/ui/card';
 
 export function ProductGuarantiesAccordion() {
   return (

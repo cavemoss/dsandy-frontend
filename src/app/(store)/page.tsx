@@ -1,8 +1,8 @@
+import { Button } from '@shadcd/button';
 import { Award, Clock, Globe, Headphones, Shield, Truck } from 'lucide-react';
 import Image from 'next/image';
 
 import { ProductDisplayCard } from '@/entities/products';
-import { Button } from '@/shared/shadcd/components/ui/button';
 
 const featuredProducts = [
   {
@@ -222,6 +222,8 @@ export default function MainPage() {
               <div key={category.name} className="group cursor-pointer">
                 <div className="aspect-square rounded-2xl overflow-hidden mb-4 relative">
                   <Image
+                    width={10}
+                    height={10}
                     src={category.image}
                     alt={category.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"

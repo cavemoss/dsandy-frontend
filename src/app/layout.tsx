@@ -1,9 +1,12 @@
 import './globals.css';
+import '../localization/i18n';
 
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import { Toaster } from '@/shared/shadcd/components/ui/sonner';
 import { Dialogs } from '@/widgets/dialogs';
+import { Initialization } from '@/widgets/init';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,6 +29,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
         <Dialogs />
+        <Toaster />
+        <Initialization />
       </body>
     </html>
   );

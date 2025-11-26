@@ -6,8 +6,10 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set) => (
   [DialogEnum.LOGIN]: false,
   [DialogEnum.SIGNUP]: false,
 
-  // actions
   toggleDialog(dialog) {
-    set((state) => ((state[dialog] = !state[dialog]), deepClone(state)));
+    set((state) => {
+      Object.values(DialogEnum).forEach((d) => d !== dialog && (state[d] &&= false));
+      return (state[dialog] = !state[dialog]), deepClone(state);
+    });
   },
 }));

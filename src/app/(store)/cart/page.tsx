@@ -1,21 +1,24 @@
 'use client';
 
+import { Button } from '@shadcd/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@shadcd/card';
+import { Input } from '@shadcd/input';
+import { Separator } from '@shadcd/separator';
 import { ArrowLeft, ShoppingBag, Tag } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
-import { CartDisplayItem, useCartStore } from '@/features/cart';
-import { Button } from '@/shared/shadcd/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
-import { Input } from '@/shared/shadcd/components/ui/input';
-import { Separator } from '@/shared/shadcd/components/ui/separator';
+import { useCartStore } from '@/features/cart';
+import { CartDisplayItem } from '@/features/cart/ui';
+import { formatPrice } from '@/widgets/init';
 
 export default function CartPage() {
-  const cartItems = useCartStore((state) => state.items);
+  const cartStore = useCartStore();
+
+  const cartItems = cartStore.getCartDisplayItems();
 
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
-
-  const formatPrice = (price: number) => `$${price.toFixed(2)}`;
 
   const applyPromoCode = () => {
     if (promoCode.toLowerCase() === 'save10') {
@@ -24,7 +27,7 @@ export default function CartPage() {
     }
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.priceUSD * item.quantity, 0);
+  const subtotal = cartStore.getSubtotal();
   const promoDiscount = appliedPromo === 'SAVE10' ? subtotal * 0.1 : 0;
   const shipping = subtotal > 50 ? 0 : 9.99;
   const tax = (subtotal - promoDiscount) * 0.08;
@@ -72,7 +75,7 @@ export default function CartPage() {
               )}
 
               {cartItems.map((item, index) => (
-                <CartDisplayItem key={index} item={item} index={index} />
+                <CartDisplayItem key={index} index={index} />
               ))}
             </div>
 
@@ -163,7 +166,7 @@ export default function CartPage() {
               {/* Checkout Button */}
               <div className="space-y-3">
                 <Button className="w-full" size="lg">
-                  Proceed to Checkout
+                  <Link href="/checkout">Proceed to Checkout</Link>
                 </Button>
 
                 <Button variant="outline" className="w-full">

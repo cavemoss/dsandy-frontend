@@ -1,39 +1,41 @@
-import { Product } from '@/api/entities';
+import { Badge } from '@shadcd/badge';
+
+import { Product, ProductSCU } from '@/api/entities';
 import StarRating from '@/shared/components/StarRating';
-import { Badge } from '@/shared/shadcd/components/ui/badge';
 
 import { useProductsStore } from '..';
 
 interface Params {
   product: Product;
+  scu: ProductSCU;
 }
 
-export function ProductInfo({ product }: Params) {
-  const { getDisplayPrices } = useProductsStore.getState();
+export function ProductInfo({ product, scu }: Params) {
+  const productsStore = useProductsStore();
 
-  const placeholder =
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt ipsum soluta unde blanditiis, ut id mollitia aspernatur, at explicabo a nemo quos maiores, velit consequuntur praesentium cumque amet odit eos.';
+  const displayPrices = productsStore.getDisplayPrices();
+  const isInStock = scu.availableStock > 0;
 
   return (
     <>
-      <h1 className="text-3xl font-bold mb-2">{product.title}</h1>
+      <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
 
       {/* Feedback Info */}
       <div className="flex items-center gap-3 mb-4">
         <div className="flex items-center gap-2">
-          <StarRating rating={product.feedbackInfo.rating} withLabel />
-          <span className="text-muted-foreground">({product.feedbackInfo.displayReviews})</span>
-          <span className="text-muted-foreground">{product.feedbackInfo.displaySold}</span>
+          <StarRating rating={product.feedback.rating} withLabel />
+          <span className="text-muted-foreground">({product.feedback.reviewsCount} reviews)</span>
+          <span className="text-muted-foreground">{product.feedback.salesCount} sold</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 mb-6">
-        <span className="text-3xl font-bold text-primary">{getDisplayPrices().discounted}</span>
-        <span className="text-xl text-muted-foreground line-through">{getDisplayPrices().original}</span>
+      <div className="flex items-center gap-3 mb-16">
+        <span className="text-3xl font-bold text-primary">{displayPrices.discounted}</span>
+        <span className="text-xl text-muted-foreground line-through">{displayPrices.original}</span>
 
         <div className="flex gap-1.5">
           <Badge variant="destructive">20% OFF</Badge>
-          {true ? (
+          {isInStock ? (
             <Badge variant="secondary" className="bg-green-100 text-green-800">
               In Stock
             </Badge>
@@ -44,9 +46,6 @@ export function ProductInfo({ product }: Params) {
           )}
         </div>
       </div>
-
-      {/* Description */}
-      <p className="text-muted-foreground mb-6">{product.description || placeholder}</p>
     </>
   );
 }

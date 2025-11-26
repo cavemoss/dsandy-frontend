@@ -3,9 +3,9 @@
 import { ArrowLeft, Heart, ShoppingCart, Star, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-import { Badge } from '@/shared/shadcd/components/ui/badge';
-import { Button } from '@/shared/shadcd/components/ui/button';
-import { Card, CardContent } from '@/shared/shadcd/components/ui/card';
+import { Badge } from '@shadcd/badge';
+import { Button } from '@shadcd/button';
+import { Card, CardContent } from '@shadcd/card';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 
 interface FavoriteItem {

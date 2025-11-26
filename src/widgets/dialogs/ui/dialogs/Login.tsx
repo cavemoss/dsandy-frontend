@@ -1,30 +1,53 @@
 'use client';
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { Button } from '@shadcd/button';
+import { Checkbox } from '@shadcd/checkbox';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@shadcd/dialog';
+import { Label } from '@shadcd/label';
+import { Separator } from '@shadcd/separator';
+import { Mail } from 'lucide-react';
+import { useState } from 'react';
 
+import { useCustomersStore } from '@/entities/customers';
+import { LabeledInput } from '@/shared/components/form';
 import FacebookSvg from '@/shared/components/svg-icons/FaceBook';
 import GoogleSvg from '@/shared/components/svg-icons/Google';
-import { Button } from '@/shared/shadcd/components/ui/button';
-import { Checkbox } from '@/shared/shadcd/components/ui/checkbox';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/shared/shadcd/components/ui/dialog';
-import { Input } from '@/shared/shadcd/components/ui/input';
-import { Label } from '@/shared/shadcd/components/ui/label';
-import { Separator } from '@/shared/shadcd/components/ui/separator';
+import { InputModel } from '@/shared/lib/types';
 
 import { useDialogsStore } from '../..';
 import { DialogEnum } from '../../types/dialogs.types';
 
 export default function LoginDialog() {
-  const open = useDialogsStore((state) => state[DialogEnum.LOGIN]);
-  const { toggleDialog } = useDialogsStore.getState();
+  const customersStore = useCustomersStore();
+  const dialogsStore = useDialogsStore();
+
+  const isOpened = useDialogsStore((state) => state[DialogEnum.LOGIN]);
+
+  const [errorTriggered, setErrorTriggered] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setErrorTriggered(true);
+    setIsLoading(true);
+    await customersStore.login();
+    setIsLoading(false);
+  };
+
+  const emailModel: InputModel = {
+    id: 'email',
+    type: 'email',
+    value: customersStore.credentials.email,
+    onChange: (e) => customersStore.setState(({ credentials }) => (credentials.email = e.target.value)),
+  };
+
+  const passwordModel: InputModel = {
+    id: 'password',
+    type: 'password',
+    value: customersStore.credentials.password,
+    onChange: (e) => customersStore.setState(({ credentials }) => (credentials.password = e.target.value)),
+  };
 
   return (
-    <Dialog open={open} onOpenChange={() => toggleDialog(DialogEnum.LOGIN)}>
+    <Dialog open={isOpened} onOpenChange={() => dialogsStore.toggleDialog(DialogEnum.LOGIN)}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Sign In to Your Account</DialogTitle>
@@ -32,24 +55,13 @@ export default function LoginDialog() {
         </DialogHeader>
 
         <div className="space-y-4 my-6">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input id="email" type="email" placeholder="john@example.com" className="pl-10" />
-            </div>
-          </div>
+          <LabeledInput model={emailModel} label="Email Address" placeholder="jane@example.com">
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          </LabeledInput>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input id="password" placeholder="Enter your password" className="pl-10 pr-10" />
-              <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3">
-                {false ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </Button>
-            </div>
-          </div>
+          <LabeledInput model={passwordModel} label="Password" placeholder="Enter your password">
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          </LabeledInput>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -64,8 +76,8 @@ export default function LoginDialog() {
           </div>
         </div>
 
-        <Button type="submit" className="w-full">
-          {false ? (
+        <Button type="submit" className="w-full" onClick={handleSubmit}>
+          {isLoading ? (
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               Signing in...
@@ -97,11 +109,7 @@ export default function LoginDialog() {
 
         <div className="text-center text-sm">
           <span className="text-muted-foreground">{"Don't have an account?"} </span>
-          <Button
-            onClick={() => (toggleDialog(DialogEnum.LOGIN), toggleDialog(DialogEnum.SIGNUP))}
-            variant="link"
-            className="p-0 h-auto"
-          >
+          <Button onClick={() => dialogsStore.toggleDialog(DialogEnum.SIGNUP)} variant="link" className="p-0 h-auto">
             Sign up
           </Button>
         </div>

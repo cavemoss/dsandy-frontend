@@ -1,9 +1,8 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@shadcd/avatar';
+import { Badge } from '@shadcd/badge';
+import { Card, CardContent } from '@shadcd/card';
+import { Progress } from '@shadcd/progress';
 import { Star } from 'lucide-react';
-
-import { Avatar, AvatarFallback, AvatarImage } from '@/shared/shadcd/components/ui/avatar';
-import { Badge } from '@/shared/shadcd/components/ui/badge';
-import { Card, CardContent } from '@/shared/shadcd/components/ui/card';
-import { Progress } from '@/shared/shadcd/components/ui/progress';
 
 interface Review {
   id: string;

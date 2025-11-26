@@ -1,7 +1,6 @@
+import { Button } from '@shadcd/button';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
-import { Button } from '../shadcd/components/ui/button';
 
 interface Props {
   router: ReturnType<typeof useRouter>;

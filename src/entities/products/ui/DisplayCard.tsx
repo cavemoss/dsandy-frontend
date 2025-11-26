@@ -1,8 +1,8 @@
+import { Badge } from '@shadcd/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@shadcd/card';
 import { Star } from 'lucide-react';
 import Link from 'next/link';
 
-import { Badge } from '@/shared/shadcd/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 
 interface ProductCardProps {

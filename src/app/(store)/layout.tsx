@@ -1,22 +1,16 @@
 'use client';
 
-import { useEffect } from 'react';
-
 import { Footer, Header, useInitStore } from '@/widgets/init';
 
 export default function StoreLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const { init, initialized } = useInitStore();
+  const isInitialized = useInitStore((state) => state.initialized);
 
-  useEffect(
-    () => void init(),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+  if (!isInitialized) return <></>;
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1">{initialized && children}</main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
   );

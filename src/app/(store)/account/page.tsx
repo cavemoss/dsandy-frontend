@@ -1,18 +1,18 @@
 'use client';
 
-import { CreditCard, Edit, Mail, MapPin, Package, Plus, Settings, Trash2, User } from 'lucide-react';
+import { Badge } from '@shadcd/badge';
+import { Button } from '@shadcd/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@shadcd/card';
+import { Separator } from '@shadcd/separator';
+import { Switch } from '@shadcd/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shadcd/tabs';
+import { CreditCard, Edit, Mail, MapPin, Plus, Settings, Trash2, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import OrdersHistory from '@/entities/customers/ui/OrdersHistory';
+import PersonalInfo from '@/entities/customers/ui/PersonalInfo';
 import BackChevron from '@/shared/components/BackChevron';
-import { Badge } from '@/shared/shadcd/components/ui/badge';
-import { Button } from '@/shared/shadcd/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
-import { Input } from '@/shared/shadcd/components/ui/input';
-import { Label } from '@/shared/shadcd/components/ui/label';
-import { Separator } from '@/shared/shadcd/components/ui/separator';
-import { Switch } from '@/shared/shadcd/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/shadcd/components/ui/tabs';
 
 interface Address {
   id: string;
@@ -114,76 +114,7 @@ export default function AccountPage() {
               </TabsList>
 
               {/* Profile Tab */}
-              <TabsContent value="profile">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <User className="h-5 w-5" />
-                      Personal Information
-                    </CardTitle>
-                    <Button variant="outline" onClick={() => setIsEditing(!isEditing)} disabled={isSaving}>
-                      {isEditing ? (
-                        'Cancel'
-                      ) : (
-                        <>
-                          <Edit className="h-4 w-4 mr-2" /> Edit
-                        </>
-                      )}
-                    </Button>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input
-                          id="firstName"
-                          value={profileData.firstName}
-                          onChange={(e) => handleProfileChange('firstName', e.target.value)}
-                          disabled={!isEditing}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input
-                          id="lastName"
-                          value={profileData.lastName}
-                          onChange={(e) => handleProfileChange('lastName', e.target.value)}
-                          disabled={!isEditing}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={profileData.email}
-                        onChange={(e) => handleProfileChange('email', e.target.value)}
-                        disabled={!isEditing}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        value={profileData.phone}
-                        onChange={(e) => handleProfileChange('phone', e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="(555) 123-4567"
-                      />
-                    </div>
-
-                    {isEditing && (
-                      <Button disabled={isSaving} className="w-full">
-                        {isSaving ? 'Saving...' : 'Save Changes'}
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
+              <PersonalInfo />
 
               {/* Addresses Tab */}
               <TabsContent value="addresses">
@@ -239,42 +170,7 @@ export default function AccountPage() {
               </TabsContent>
 
               {/* Orders Tab */}
-              <TabsContent value="orders">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Package className="h-5 w-5" />
-                      Order History
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {/* Sample orders */}
-                      {[1, 2, 3].map((order) => (
-                        <div key={order} className="border rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <div>
-                              <p className="font-medium">Order #000{order}</p>
-                              <p className="text-sm text-muted-foreground">Placed on Dec {order + 10}, 2024</p>
-                            </div>
-                            <Badge variant={order === 1 ? 'default' : 'secondary'}>
-                              {order === 1 ? 'Delivered' : 'Shipped'}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <p className="text-sm">
-                              {order === 1 ? '2 items' : '1 item'} • ${(24.99 * order).toFixed(2)}
-                            </p>
-                            <Button variant="outline" size="sm">
-                              View Details
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
+              <OrdersHistory />
 
               {/* Settings Tab */}
               <TabsContent value="settings">

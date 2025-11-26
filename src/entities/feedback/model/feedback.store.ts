@@ -1,9 +1,9 @@
 import * as api from '@/api/entities/feedback';
 import { createZustand } from '@/shared/lib/utils';
 
-import { FeedbackState } from '../types/general.types';
+import { FeedbackState } from '../types';
 
-export default createZustand<FeedbackState>('feedback', (set, get) => ({
+export const useFeedbackStore = createZustand<FeedbackState>('feedback', (set, get) => ({
   feedbackByProduct: {},
 
   // getters

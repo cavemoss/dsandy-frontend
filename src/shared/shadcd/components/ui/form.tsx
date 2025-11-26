@@ -13,7 +13,7 @@ import {
   useFormState,
 } from 'react-hook-form';
 
-import { Label } from '@/shared/shadcd/components/ui/label';
+import { Label } from '@shadcd/label';
 import { cn } from '@/shared/shadcd/lib/utils';
 
 const Form = FormProvider;
@@ -135,4 +135,4 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   );
 }
 
-export { Form, FormControl, FormDescription, FormField,FormItem, FormLabel, FormMessage, useFormField };
+export { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, useFormField };

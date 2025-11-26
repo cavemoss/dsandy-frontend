@@ -1,3 +1,6 @@
+import { Button } from '@shadcd/button';
+import { Input } from '@shadcd/input';
+import { Separator } from '@shadcd/separator';
 import {
   CreditCard,
   Facebook,
@@ -11,10 +14,6 @@ import {
   Twitter,
   Youtube,
 } from 'lucide-react';
-
-import { Button } from '@/shared/shadcd/components/ui/button';
-import { Input } from '@/shared/shadcd/components/ui/input';
-import { Separator } from '@/shared/shadcd/components/ui/separator';
 
 export function Footer() {
   return (
