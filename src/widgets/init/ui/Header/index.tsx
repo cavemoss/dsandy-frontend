@@ -2,37 +2,24 @@
 
 import { Badge } from '@shadcd/badge';
 import { Button } from '@shadcd/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@shadcd/dropdown-menu';
 import { Input } from '@shadcd/input';
 import { Sheet, SheetContent, SheetTrigger } from '@shadcd/sheet';
-import { Archive, Heart, LogIn, Menu, Search, ShoppingCart, User, UserPlus } from 'lucide-react';
+import { Heart, Menu, Search, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 import { useCustomersStore } from '@/entities/customers';
 import { useCartStore } from '@/features/cart';
-import { Avatar, AvatarFallback, AvatarImage } from '@/shared/shadcd/components/ui/avatar';
-import { useDialogsStore } from '@/widgets/dialogs';
-import { DialogEnum } from '@/widgets/dialogs/types/dialogs.types';
 
+import Customer from './Customer';
 import Logo from './Logo';
 import ParamsSelect from './ParamsSelect';
 
 export function Header() {
-  const router = useRouter();
-  const dialogsStore = useDialogsStore();
   const cartStore = useCartStore();
   const customersStore = useCustomersStore();
 
-  const totalItems = cartStore.getTotalItems();
+  const cartItemsCount = cartStore.getTotalItems();
   const customerInfo = customersStore.currentCustomer?.info;
-  const avatarFallback = `${customerInfo?.fistName[0]?.toUpperCase()}${customerInfo?.lastName[0]?.toUpperCase()}`;
 
   return (
     <>
@@ -47,9 +34,8 @@ export function Header() {
         {/* Main header */}
         <div className="container mx-auto py-4">
           <div className="grid grid-cols-3">
-            {/* Logo */}
             <div className="flex items-center">
-              <Logo />
+              <Logo className="text-[1.6rem]" />
             </div>
 
             {/* Search bar - hidden on mobile */}
@@ -63,43 +49,8 @@ export function Header() {
             {/* Right side actions */}
             <div className="flex items-center gap-2">
               <div className="ml-auto"></div>
-
               <ParamsSelect />
-
-              {customerInfo ? (
-                <Button variant="ghost" className="pr-1" onClick={() => router.push('/account')}>
-                  <span className="text-gray-600">
-                    {customerInfo.fistName} {customerInfo.lastName}
-                  </span>
-
-                  <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.pngs" alt="@shadcn" />
-                    <AvatarFallback>
-                      <span className="text-gray-600">{avatarFallback}</span>
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              ) : (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="relative">
-                      <User className="h-5 w-5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem onClick={() => dialogsStore.toggleDialog(DialogEnum.LOGIN)}>
-                      <LogIn /> Sign In
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => dialogsStore.toggleDialog(DialogEnum.SIGNUP)}>
-                      <UserPlus /> Create Account
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <Archive /> My Orders
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
+              <Customer info={customerInfo} />
 
               {/* Favorites */}
               <Link href="/favorites">
@@ -115,9 +66,9 @@ export function Header() {
               <Link href="/cart">
                 <Button variant="ghost" size="icon" className="relative">
                   <ShoppingCart className="h-5 w-5" />
-                  {!!totalItems && (
+                  {!!cartItemsCount && (
                     <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                      {totalItems}
+                      {cartItemsCount}
                     </Badge>
                   )}
                 </Button>

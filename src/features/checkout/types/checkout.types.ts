@@ -1,6 +1,6 @@
 import { Stripe, StripeElements, StripeElementsOptions } from '@stripe/stripe-js';
 
-import { OrderDTO, OrderContactInfoDTO, OrderShippingInfoDTO } from '@/api/entities';
+import { OrderContactInfoDTO, OrderDTO, OrderShippingInfoDTO } from '@/api/entities';
 import { SelectOption } from '@/shared/lib/types';
 
 export interface CheckoutState {
@@ -21,10 +21,9 @@ export interface StripeStoreState {
   // getters
   getElementsOptions: () => StripeElementsOptions;
   // actions
-  setOptions: (clb: (opt: this['options']) => void) => void;
+  setOptions: (opt: this['options']) => void;
   createPaymentIntent: () => Promise<void>;
   confirmPayment: (stripe: Stripe, elements: StripeElements) => Promise<void>;
-  setState: (clb: (s: this) => void) => void;
 }
 
 export interface ShippingFormState {

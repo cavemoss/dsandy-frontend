@@ -14,6 +14,7 @@ export interface CustomersState {
   // actions
   init: () => Promise<void>;
   loadCurrentCustomer: () => Promise<void>;
+  savePreferences: () => Promise<void>;
   register: () => Promise<void>;
   login: () => Promise<void>;
   resetData: () => void;

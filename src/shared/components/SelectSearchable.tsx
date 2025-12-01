@@ -5,18 +5,18 @@ import { Popover, PopoverContent, PopoverTrigger } from '@shadcd/popover';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import React, { useState } from 'react';
 
-import { SelectOption } from '../lib/types';
+import { SelectModel, SelectOption } from '../lib/types';
 import { cn } from '../shadcd/lib/utils';
 
 interface Params {
+  model: SelectModel;
   options: SelectOption[];
-  value: string;
-  onSelect: (value: string) => void;
-  label?: string;
+  label?: React.ReactNode;
   icon?: React.ReactNode;
+  onChange?: (value: string) => void;
 }
 
-export default function SelectSearchable({ options, value, onSelect, icon, label }: Params) {
+export default function SelectSearchable({ options, model, icon, label, onChange }: Params) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -27,7 +27,7 @@ export default function SelectSearchable({ options, value, onSelect, icon, label
         <PopoverTrigger asChild>
           <Button variant="outline" role="combobox" aria-expanded={open} className="justify-between w-full">
             {icon}
-            {value ? options.find((opt) => opt.value === value)?.label : 'Select country...'}
+            {model.value ? options.find((opt) => opt.value === model.value)?.label : 'Select country...'}
             <ChevronsUpDown className="opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -39,10 +39,10 @@ export default function SelectSearchable({ options, value, onSelect, icon, label
               <CommandEmpty>No framework found.</CommandEmpty>
               <CommandGroup>
                 {options.map((opt, idx) => (
-                  <CommandItem key={idx} value={opt.value} onSelect={onSelect}>
+                  <CommandItem key={idx} value={opt.value} onSelect={(v) => (model.onValueChange(v), onChange?.(v))}>
                     {opt.icon}
                     {opt.label}
-                    <Check className={cn('ml-auto', value === opt.value ? 'opacity-100' : 'opacity-0')} />
+                    <Check className={cn('ml-auto', model.value === opt.value ? 'opacity-100' : 'opacity-0')} />
                   </CommandItem>
                 ))}
               </CommandGroup>

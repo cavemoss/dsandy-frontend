@@ -1,5 +1,6 @@
 import * as api from '@/api/entities';
 import { createZustand, deepClone } from '@/shared/lib/utils';
+import { useInitStore } from '@/widgets/init';
 
 import { CustomersState } from '../types';
 
@@ -12,7 +13,7 @@ export const useAccountStore = createZustand<CustomersState>('customers', (set, 
   },
 
   info: {
-    fistName: '',
+    firstName: '',
     lastName: '',
     phone: '',
   },
@@ -71,6 +72,7 @@ export const useAccountStore = createZustand<CustomersState>('customers', (set, 
         email: credentials.email,
         password: credentials.password,
         info,
+        preferences: useInitStore.getState().viewerParams,
       });
 
       get().init();

@@ -1,6 +1,6 @@
 import axios from '@/api/config/axios';
 
-import { CreateCustomerDTO, CustomerDTO } from './customers.types';
+import { CreateCustomerDTO, CustomerDTO, UpdateCustomerDTO } from './customers.types';
 
 export const ROUTE = '/customers';
 
@@ -11,4 +11,4 @@ export const getByJwtToken = async () => {
 
 export const create = (dto: CreateCustomerDTO) => axios.post<CustomerDTO>(ROUTE, dto).then((res) => res.data);
 
-export const patch = (dto: CustomerDTO) => axios.patch(ROUTE, dto);
+export const patch = (dto: UpdateCustomerDTO) => axios.patch(ROUTE, dto);

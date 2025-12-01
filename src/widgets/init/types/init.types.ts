@@ -1,26 +1,36 @@
 import { SubdomainDTO } from '@/api/entities';
 
-export interface Country {
+export interface ViewerParams {
+  currency: string;
+  country: string;
+  language: string;
+}
+
+type Country = { code: string; name: string; flag: string };
+
+type Currency = { code: string; name: string; symbol: string };
+
+export interface CountryData {
   code: string;
-  name: string;
-  flag: string;
+  currencies: Currency[];
 }
 
 export interface InitState {
   initialized: boolean;
+  countryData: CountryData[];
   subdomain: SubdomainDTO;
-  viewerParams: {
-    currency: string;
-    country: string;
-    language: string;
-  };
+  viewerParams: ViewerParams;
   // getters
   isAdminPanel: () => boolean;
   getAvailableCountries: () => Country[];
+  getCurrentCountry: () => Country;
+  getAvailableCurrencies: () => Currency[];
   // actions
   init: () => Promise<void>;
   loadSubdomainData: () => Promise<void>;
+  loadLogoFont: () => void;
   setViewerParams: () => Promise<void>;
+  saveViewerParams: () => Promise<void>;
   setState: (clb: (s: this) => void) => void;
 }
 
@@ -29,10 +39,4 @@ export interface NavState {
   replace: (href: string) => void;
   back: () => void;
   prefetch: (href: string) => void;
-}
-
-export interface ViewerParams {
-  currency: string;
-  country: string;
-  language: string;
 }

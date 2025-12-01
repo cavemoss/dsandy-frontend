@@ -15,6 +15,8 @@ import {
   Youtube,
 } from 'lucide-react';
 
+import Logo from './Header/Logo';
+
 export function Footer() {
   return (
     <footer className="bg-muted/30 border-t mt-auto">
@@ -59,7 +61,10 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company info */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">DropShop</h3>
+            <div className="min-h-[46px]">
+              <Logo className="text-xl" />
+            </div>
+
             <p className="text-muted-foreground mb-4">
               Your trusted dropshipping partner for quality products at unbeatable prices. We bring you the latest
               trends and essentials from around the world.

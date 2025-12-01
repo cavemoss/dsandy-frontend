@@ -1,13 +1,15 @@
+import { Phone } from 'lucide-react';
+import React from 'react';
+
 import { InputModel } from '../lib/types';
 import LabeledInput from './LabeledInput';
 
 interface Params {
   className?: string;
   model: InputModel;
-  label?: string;
-  placeholder?: string;
+  label?: string | React.ReactNode;
   disabled?: boolean;
-  icon?: React.ReactNode;
+  withIcon?: boolean;
 }
 
 export function LabeledPhoneInput(params: Params & { mask?: string }) {
@@ -35,5 +37,5 @@ export function LabeledPhoneInput(params: Params & { mask?: string }) {
 
   const model: InputModel = { ...params.model, onChange };
 
-  return <LabeledInput {...params} model={model} placeholder={mask} />;
+  return <LabeledInput {...params} icon={params.withIcon && <Phone />} model={model} placeholder={mask} />;
 }

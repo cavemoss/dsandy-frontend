@@ -2,7 +2,7 @@ import { Mail, Phone, User, X } from 'lucide-react';
 
 import LabeledInput from '@/shared/components/LabeledInput';
 import { LabeledPhoneInput } from '@/shared/components/LabeledPhoneInput';
-import { InputModel } from '@/shared/lib/types';
+import { Model } from '@/shared/lib/utils';
 import { Button } from '@/shared/shadcd/components/ui/button';
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
 import { TabsContent } from '@/shared/shadcd/components/ui/tabs';
@@ -11,42 +11,21 @@ import { useCustomersStore } from '../model';
 
 export default function PersonalInfo() {
   const store = useCustomersStore();
+  const model = new Model(store);
 
   const currentCustomer = useCustomersStore((state) => state.currentCustomerModel);
 
   if (!currentCustomer) return <></>;
 
-  const { setCustomerModel } = store;
-
   const isChanged = store.isChanged();
 
-  const fistNameModel: InputModel = {
-    id: 'fistName',
-    type: 'text',
-    value: currentCustomer.info.fistName,
-    onChange: (e) => setCustomerModel((s) => (s.info.fistName = e.target.value)),
-  };
+  const fistNameModel = model.input((s) => s.currentCustomerModel!.info, 'firstName');
 
-  const lastNameModel: InputModel = {
-    id: 'lastName',
-    type: 'text',
-    value: currentCustomer.info.lastName,
-    onChange: (e) => setCustomerModel((s) => (s.info.lastName = e.target.value)),
-  };
+  const lastNameModel = model.input((s) => s.currentCustomerModel!.info, 'lastName');
 
-  const emailModel: InputModel = {
-    id: 'email',
-    type: 'text',
-    value: currentCustomer.email,
-    onChange: (e) => setCustomerModel((s) => (s.email = e.target.value)),
-  };
+  const emailModel = model.input((s) => s.currentCustomerModel!, 'email');
 
-  const phoneModel: InputModel = {
-    id: 'phone',
-    type: 'tel',
-    value: currentCustomer.info.phone,
-    onChange: (e) => setCustomerModel((s) => (s.info.phone = e.target.value)),
-  };
+  const phoneModel = model.input((s) => s.currentCustomerModel!.info, 'phone');
 
   return (
     <TabsContent value="profile">
@@ -73,7 +52,7 @@ export default function PersonalInfo() {
             <LabeledInput model={lastNameModel} label="Last Name" />
           </div>
           <LabeledInput model={emailModel} label="Email" icon={<Mail />} />
-          <LabeledPhoneInput model={phoneModel} label="Phone" icon={<Phone />} />
+          <LabeledPhoneInput model={phoneModel} label="Phone" withIcon={<Phone />} />
         </CardContent>
       </Card>
     </TabsContent>

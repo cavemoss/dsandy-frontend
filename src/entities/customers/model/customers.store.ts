@@ -1,5 +1,9 @@
+import { toast } from 'sonner';
+
 import * as api from '@/api/entities';
+import { useAuthStore } from '@/features/auth';
 import { createZustand, deepClone, deepCompare } from '@/shared/lib/utils';
+import { DialogEnum, useDialogsStore } from '@/widgets/dialogs';
 import { useInitStore } from '@/widgets/init';
 
 import { CustomersState } from '../types';
@@ -15,7 +19,7 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
   },
 
   info: {
-    fistName: '',
+    firstName: '',
     lastName: '',
     phone: '',
   },
@@ -65,34 +69,51 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
     }
   },
 
-  async login() {
-    const s = get();
-
+  async savePreferences() {
     try {
-      const result = await api.auth.loginCustomer(s.credentials);
+      await api.customers.patch({
+        preferences: useInitStore.getState().viewerParams,
+      });
+    } catch (error) {
+      console.debug('Error loading customer data', { error });
+    }
+  },
+
+  async login() {
+    try {
+      const result = await api.auth.loginCustomer(useAuthStore.getState().credentials);
       localStorage.setItem('jwtToken', result.accessToken);
 
-      s.loadCurrentCustomer();
+      void get().loadCurrentCustomer();
     } catch (error) {
       console.debug('Unable to login', { error });
     }
   },
 
   async register() {
-    const s = get();
-    const { info, credentials } = s;
+    const { customerInfo: info, credentials } = useAuthStore.getState();
+    const { viewerParams: preferences } = useInitStore.getState();
+
+    useAuthStore.setState({ isLoading: true });
 
     try {
       await api.customers.create({
         email: credentials.email,
         password: credentials.password,
         info,
-        preferences: useInitStore.getState().viewerParams,
+        preferences,
       });
 
-      s.init();
+      toast.success('Account successfully created!');
+      useDialogsStore.getState().toggleDialog(DialogEnum.SIGNUP);
+
+      void get().login();
     } catch (error) {
-      console.debug('Unable to create account', { error });
+      const msg = 'Unable to create account';
+      console.debug(msg, { error });
+      toast.error(msg);
+    } finally {
+      useAuthStore.setState({ isLoading: false });
     }
   },
 
@@ -100,7 +121,7 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
     set((s) => {
       s.credentials.password = '';
       s.credentials.email = '';
-      s.info.fistName = '';
+      s.info.firstName = '';
       s.info.lastName = '';
       s.info.phone = '';
       return deepClone(s);

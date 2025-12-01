@@ -1,4 +1,5 @@
 import { SelectProps } from '@radix-ui/react-select';
+import React from 'react';
 
 import { USStates } from './constants';
 import { createZustand } from './utils';
@@ -47,28 +48,6 @@ export type CountryCode =
   | 'CL'
   | 'IN';
 
-export type Locale =
-  | 'en'
-  | 'ru'
-  | 'pt'
-  | 'es'
-  | 'fr'
-  | 'id'
-  | 'it'
-  | 'th'
-  | 'ja'
-  | 'ar'
-  | 'vi'
-  | 'tr'
-  | 'de'
-  | 'he'
-  | 'ko'
-  | 'nl'
-  | 'pl'
-  | 'mx'
-  | 'cl'
-  | 'in';
-
 export enum SupplierEnum {
   ALIEXPRESS,
 }
@@ -77,14 +56,24 @@ export type DisplayPrice = { original: string; discounted: string };
 
 export type USStateCode = (typeof USStates)[number]['code'];
 
-export type InputModel = Required<Pick<React.ComponentProps<'input'>, 'id' | 'type' | 'value' | 'onChange'>> & {
-  error?: string | false;
-};
+export type InputModel = Required<Pick<React.ComponentProps<'input'>, 'value' | 'onChange'>> &
+  Pick<React.ComponentProps<'input'>, 'id' | 'type'> & {
+    error?: React.ReactNode | false;
+  };
 
 export type SelectModel = Required<Pick<SelectProps, 'value' | 'onValueChange'>> & {
-  error?: string | false;
+  error?: React.ReactNode | false;
 };
 
 export type ZustandStoreInstance<T> = ReturnType<typeof createZustand<T>>;
 
-export type SelectOption = { value: string; label: string; icon?: React.ReactNode };
+export type SelectOption = {
+  value: string;
+  label: string | React.ReactNode;
+  icon?: React.ReactNode;
+};
+
+export interface Locale {
+  code: string;
+  name: string;
+}

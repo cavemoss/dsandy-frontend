@@ -1,6 +1,7 @@
-import { InputGroup, InputGroupAddon, InputGroupInput } from '@shadcd/input-group';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@shadcd/input-group';
 import { Label } from '@shadcd/label';
-import React from 'react';
+import { Eye, EyeOff, Lock } from 'lucide-react';
+import React, { useState } from 'react';
 
 import { InputModel } from '../lib/types';
 
@@ -10,25 +11,24 @@ interface Params {
   label?: string | React.ReactNode;
   placeholder?: string;
   disabled?: boolean;
-  icon?: React.ReactNode;
 }
 
-export default function LabeledInput({ model, label, placeholder, disabled, icon, className }: Params) {
+export default function LabeledPasswordInput({ model, label, placeholder, disabled, className }: Params) {
+  const [shown, setShown] = useState(false);
+
   const errorInput = 'border-destructive ring-destructive/20 dark:ring-destructive/40 ring-[3px]';
   const errorLabel = 'text-destructive/55';
 
   const node = (
     <>
       <InputGroup className={model.error ? errorInput : ''}>
-        <InputGroupInput
-          id={model.id}
-          type={model.type}
-          value={model.value}
-          onChange={model.onChange}
-          placeholder={placeholder}
-          disabled={disabled}
-        />
-        <InputGroupAddon>{icon}</InputGroupAddon>
+        <InputGroupInput {...model} type={shown ? 'text' : 'password'} placeholder={placeholder} disabled={disabled} />
+        <InputGroupAddon>
+          <Lock />
+        </InputGroupAddon>
+        <InputGroupAddon align="inline-end">
+          <InputGroupButton onClick={() => setShown(!shown)}>{shown ? <Eye /> : <EyeOff />}</InputGroupButton>
+        </InputGroupAddon>
       </InputGroup>
       {model.error && <div className={`text-xs -mt-1 ${errorLabel}`}>{model.error}</div>}
     </>

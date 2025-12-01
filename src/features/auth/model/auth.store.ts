@@ -4,14 +4,36 @@ import { createZustand, deepClone } from '@/shared/lib/utils';
 import { AuthState } from '../types/auth.types';
 
 export const useAuthStore = createZustand<AuthState>('auth', (set, get) => ({
+  isLoading: false,
+
   credentials: {
     email: '',
     password: '',
   },
 
+  customerInfo: {
+    firstName: '',
+    lastName: '',
+    phone: '',
+  },
+
+  // Getter
+
+  isEmailValid: () => {
+    const REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const { email } = get().credentials;
+    return REGEX.test(email);
+  },
+
+  isPasswordValid: () => {
+    const REGEX = /^[A-Za-z\d@$!%*?&]{6,}$/;
+    const { password } = get().credentials;
+    return REGEX.test(password);
+  },
+
   // Actions
 
-  async handleLogin() {
+  async loginTenant() {
     const self = get();
 
     try {
@@ -22,5 +44,20 @@ export const useAuthStore = createZustand<AuthState>('auth', (set, get) => ({
     }
   },
 
-  setCredentials: (partial) => set((s) => (Object.assign(s.credentials, partial), deepClone(s))),
+  resetData() {
+    set((s) => {
+      s.credentials = {
+        email: '',
+        password: '',
+      };
+      s.customerInfo = {
+        firstName: '',
+        lastName: '',
+        phone: '',
+      };
+      return deepClone(s);
+    });
+  },
+
+  setState: (clb) => set((s) => (clb(s), deepClone(s))),
 }));

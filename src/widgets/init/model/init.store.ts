@@ -2,6 +2,7 @@
 
 import { Country } from 'country-state-city';
 import Cookies from 'js-cookie';
+import { toast } from 'sonner';
 
 import { SubdomainDTO } from '@/api/entities';
 import * as api from '@/api/entities';
@@ -11,13 +12,15 @@ import { useProductsStore } from '@/entities/products';
 import { useAdminStore } from '@/features/admin/model/admin.state';
 import { useCartStore } from '@/features/cart';
 import i18n from '@/localization/i18n';
-import { createZustand, deepClone } from '@/shared/lib/utils';
+import { createZustand, deepClone, objectByKey } from '@/shared/lib/utils';
 
-import { getAnonViewerParams, InitState } from '..';
+import { fetchCountryData, getAnonViewerParams, InitState, ViewerParams } from '..';
 import { useNavStore } from './navigation.store';
 
 export const useInitStore = createZustand<InitState>('init', (set, get) => ({
   initialized: false,
+
+  countryData: [],
 
   subdomain: {} as SubdomainDTO,
 
@@ -48,13 +51,30 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
     });
   },
 
+  getCurrentCountry: () => {
+    const self = get();
+
+    const countries = objectByKey(self.getAvailableCountries(), 'code');
+    const defaultCtr = self.subdomain.config.countries[0];
+
+    return countries[self.viewerParams.country] ?? countries[defaultCtr];
+  },
+
+  getAvailableCurrencies: () => {
+    const self = get();
+    return self.countryData.find(({ code }) => self.viewerParams.country === code)!.currencies;
+  },
+
   // Actions
 
   init: async () => {
     const self = get();
-    const navStore = useNavStore.getState();
 
     if (self.initialized) return;
+
+    const navStore = useNavStore.getState();
+
+    set({ countryData: await fetchCountryData() });
 
     if (self.isAdminPanel()) {
       await useAdminStore.getState().init();
@@ -67,13 +87,15 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
     }
 
     await self.loadSubdomainData();
+    self.loadLogoFont();
 
     useCartStore.getState().init();
     await useCustomersStore.getState().init();
-    await useOrdersStore.getState().init();
-    await useProductsStore.getState().init();
 
     await self.setViewerParams();
+
+    await useOrdersStore.getState().init();
+    await useProductsStore.getState().init();
 
     set({ initialized: true });
   },
@@ -93,10 +115,45 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
       return set({ viewerParams: currentCustomer.preferences });
     }
 
-    set({ viewerParams: await getAnonViewerParams() });
-    const locale = get().viewerParams.language;
+    let viewerParams: ViewerParams;
 
-    i18n.changeLanguage(locale);
+    const localStorageItem = localStorage.getItem('viewerParams');
+
+    if (localStorageItem) {
+      viewerParams = JSON.parse(localStorageItem);
+    } else {
+      viewerParams = await getAnonViewerParams();
+    }
+
+    set({ viewerParams });
+    i18n.changeLanguage(viewerParams.language);
+  },
+
+  loadLogoFont() {
+    const self = useInitStore.getState();
+    const { fontBased } = self.subdomain.config.logo;
+
+    if (fontBased?.font) {
+      const link = document.createElement('link');
+      const fontEncoded = encodeURIComponent(fontBased.font);
+
+      link.href = `https://fonts.googleapis.com/css2?family=${fontEncoded}&display=swap`;
+      link.rel = 'stylesheet';
+
+      document.head.appendChild(link);
+    }
+  },
+
+  async saveViewerParams() {
+    const customersStore = useCustomersStore.getState();
+    const self = get();
+
+    if (customersStore.currentCustomer) {
+      return customersStore.savePreferences();
+    }
+
+    localStorage.setItem('viewerParams', JSON.stringify(self.viewerParams));
+    toast.success('Preferences saved');
   },
 
   setState: (clb) => set((s) => (clb(s), deepClone(s))),

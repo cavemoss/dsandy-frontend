@@ -4,9 +4,9 @@ import { Button } from '@shadcd/button';
 import { Card, CardContent } from '@shadcd/card';
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@shadcd/field';
 import { Input } from '@shadcd/input';
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 
-import { InputModel } from '@/shared/lib/types';
+import { Model } from '@/shared/lib/utils';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 import { cn } from '@/shared/shadcd/lib/utils';
 
@@ -15,25 +15,23 @@ import { useAuthStore } from '../model/auth.store';
 export function AdminLoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const authStore = useAuthStore();
 
-  const { setCredentials } = authStore;
+  // Refs
 
-  const emailModel: InputModel = {
-    id: 'email',
-    type: 'text',
-    value: authStore.credentials.email,
-    onChange: (e) => setCredentials({ email: e.target.value }),
-  };
+  const [errorTrigger, setErrorTrigger] = useState(false);
 
-  const passwordModel: InputModel = {
-    id: 'password',
-    type: 'password',
-    value: authStore.credentials.password,
-    onChange: (e) => setCredentials({ password: e.target.value }),
-  };
+  const m = new Model(authStore, errorTrigger);
+
+  // Models
+
+  const emailModel = m.input((s) => s.credentials, 'email');
+
+  const passwordModel = m.input((s) => s.credentials, 'password');
+
+  // Hooks
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    authStore.handleLogin();
+    authStore.loginTenant();
   };
 
   return (

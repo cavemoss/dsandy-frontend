@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
 import { Skeleton } from '@/shared/shadcd/components/ui/skeleton';
+import { useInitStore } from '@/widgets/init';
 
 import { useCheckoutStore, useStripeStore } from '../../model';
 import PaymentSection from './PaymentSection';
@@ -14,6 +15,7 @@ import PaymentSection from './PaymentSection';
 export function CheckoutForm() {
   const stripeStore = useStripeStore();
   const checkoutStore = useCheckoutStore();
+  const initStore = useInitStore();
 
   const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
   const stripeOptions = stripeStore.getElementsOptions();
@@ -22,7 +24,7 @@ export function CheckoutForm() {
 
   const addressOptions: StripeAddressElementOptions = {
     mode: 'shipping',
-    allowedCountries: ['US', 'CA', 'GB'],
+    allowedCountries: initStore.subdomain.config.countries,
     autocomplete: { mode: 'automatic' },
     fields: {
       phone: 'always',
@@ -37,17 +39,18 @@ export function CheckoutForm() {
 
   const onChangeAddress = ({ value }: StripeAddressElementChangeEvent) => {
     checkoutStore.setState((state) => {
-      const { shippingInfo: sInf, contactInfo: cInf } = state;
+      const { shippingInfo: si, contactInfo: ci } = state;
 
-      cInf.firstName = value.firstName ?? '';
-      cInf.lastName = value.lastName ?? '';
+      ci.firstName = value.firstName!;
+      ci.lastName = value.lastName!;
+      ci.phone = value.phone!;
 
-      sInf.address = value.address.line1;
-      sInf.country = value.address.country;
-      if (value.address.line2) sInf.address2 = value.address.line2;
-      sInf.province = value.address.state;
-      sInf.city = value.address.city;
-      sInf.zipCode = value.address.postal_code;
+      si.address = value.address.line1;
+      si.country = value.address.country;
+      if (value.address.line2) si.address2 = value.address.line2;
+      si.province = value.address.state;
+      si.city = value.address.city;
+      si.zipCode = value.address.postal_code;
     });
   };
 

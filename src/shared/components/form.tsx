@@ -24,8 +24,8 @@ interface LabeledPasswordInputParams extends Params {
 
 interface LabeledSelectParams {
   model: SelectModel;
-  label: string;
-  placeholder: string;
+  label?: string | React.ReactNode;
+  placeholder?: string;
   options: SelectOption[];
   disabled?: boolean;
 }
@@ -124,7 +124,7 @@ export function LabeledPasswordInput({ model, label, placeholder }: LabeledPassw
 export function LabeledSelect({ model, options, label, placeholder, disabled }: LabeledSelectParams) {
   return (
     <div className="space-y-2 flex-1">
-      <Label>{label}</Label>
+      {label && <Label>{label}</Label>}
       <Select {...model}>
         <SelectTrigger className="w-full" disabled={disabled}>
           <SelectValue placeholder={placeholder} />

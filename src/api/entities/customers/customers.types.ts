@@ -1,16 +1,9 @@
-import { CountryCode, CurrencyCode, Locale } from '@/shared/lib/types';
 import { ViewerParams } from '@/widgets/init';
 
 export interface CustomerInfoDTO {
-  fistName: string;
+  firstName: string;
   lastName: string;
   phone: string;
-}
-
-export interface CustomerPreferencesDTO {
-  currency: CurrencyCode;
-  country: CountryCode;
-  language: Locale;
 }
 
 export interface CustomerDTO {
@@ -27,3 +20,5 @@ export interface CreateCustomerDTO {
   info: CustomerInfoDTO;
   preferences: ViewerParams;
 }
+
+export type UpdateCustomerDTO = Partial<CreateCustomerDTO>;

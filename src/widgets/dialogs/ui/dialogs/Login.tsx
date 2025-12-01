@@ -8,10 +8,13 @@ import { Mail } from 'lucide-react';
 import { useState } from 'react';
 
 import { useCustomersStore } from '@/entities/customers';
-import { LabeledInput } from '@/shared/components/form';
+import { useAuthStore } from '@/features/auth';
+import LabeledInput from '@/shared/components/LabeledInput';
+import LabeledPasswordInput from '@/shared/components/LabeledPasswordInput';
 import FacebookSvg from '@/shared/components/svg-icons/FaceBook';
 import GoogleSvg from '@/shared/components/svg-icons/Google';
-import { InputModel } from '@/shared/lib/types';
+import { Model } from '@/shared/lib/utils';
+import { FieldDescription } from '@/shared/shadcd/components/ui/field';
 
 import { useDialogsStore } from '../..';
 import { DialogEnum } from '../../types/dialogs.types';
@@ -19,32 +22,25 @@ import { DialogEnum } from '../../types/dialogs.types';
 export default function LoginDialog() {
   const customersStore = useCustomersStore();
   const dialogsStore = useDialogsStore();
+  const authStore = useAuthStore();
 
   const isOpened = useDialogsStore((state) => state[DialogEnum.LOGIN]);
 
-  const [errorTriggered, setErrorTriggered] = useState(false);
+  const [errorTrigger, setErrorTrigger] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const m = new Model(authStore, errorTrigger);
+
   const handleSubmit = async () => {
-    setErrorTriggered(true);
+    setErrorTrigger(true);
     setIsLoading(true);
     await customersStore.login();
     setIsLoading(false);
   };
 
-  const emailModel: InputModel = {
-    id: 'email',
-    type: 'email',
-    value: customersStore.credentials.email,
-    onChange: (e) => customersStore.setState(({ credentials }) => (credentials.email = e.target.value)),
-  };
+  const emailModel = m.input((s) => s.credentials, 'email');
 
-  const passwordModel: InputModel = {
-    id: 'password',
-    type: 'password',
-    value: customersStore.credentials.password,
-    onChange: (e) => customersStore.setState(({ credentials }) => (credentials.password = e.target.value)),
-  };
+  const passwordModel = m.input((s) => s.credentials, 'password');
 
   return (
     <Dialog open={isOpened} onOpenChange={() => dialogsStore.toggleDialog(DialogEnum.LOGIN)}>
@@ -55,13 +51,9 @@ export default function LoginDialog() {
         </DialogHeader>
 
         <div className="space-y-4 my-6">
-          <LabeledInput model={emailModel} label="Email Address" placeholder="jane@example.com">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          </LabeledInput>
+          <LabeledInput model={emailModel} icon={<Mail />} label={<>Email Address</>} placeholder="jane@example.com" />
 
-          <LabeledInput model={passwordModel} label="Password" placeholder="Enter your password">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          </LabeledInput>
+          <LabeledPasswordInput model={passwordModel} label={<>Password</>} placeholder="Enter your password" />
 
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -107,11 +99,11 @@ export default function LoginDialog() {
           </Button>
         </div>
 
-        <div className="text-center text-sm">
-          <span className="text-muted-foreground">{"Don't have an account?"} </span>
-          <Button onClick={() => dialogsStore.toggleDialog(DialogEnum.SIGNUP)} variant="link" className="p-0 h-auto">
-            Sign up
-          </Button>
+        <div className="text-center">
+          <FieldDescription>
+            Don&apos;t have an account? <></>
+            <a onClick={() => dialogsStore.toggleDialog(DialogEnum.SIGNUP)}>Sign up</a>
+          </FieldDescription>
         </div>
       </DialogContent>
     </Dialog>

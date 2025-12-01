@@ -3,6 +3,7 @@ export interface CreatePaymentIntentBody {
   currency: string;
   metadata: {
     orderId: number;
+    tenantId: number;
   };
 }
 

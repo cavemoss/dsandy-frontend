@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import * as api from '@/api/entities/stripe';
 import { useOrdersStore } from '@/entities/orders';
 import { useCartStore } from '@/features/cart';
-import { createZustand, deepClone } from '@/shared/lib/utils';
+import { createZustand } from '@/shared/lib/utils';
 import { useInitStore } from '@/widgets/init';
 
 import { StripeStoreState } from '../types';
@@ -26,22 +26,25 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
 
   // Actions
 
-  setOptions(callback) {
-    set((state) => {
-      callback(state.options);
-      state.options.amount *= 100;
-      return state;
+  setOptions: (opt) => {
+    set({
+      options: {
+        amount: opt.amount * 100,
+        currency: opt.currency,
+      },
     });
   },
 
   async createPaymentIntent() {
     const self = get();
+    const initStore = useInitStore.getState();
+    const cartStore = useCartStore.getState();
 
     if (self.order || self.clientSecret) return;
 
-    self.setOptions((opt) => {
-      opt.amount = useCartStore.getState().getTotalPrice();
-      opt.currency = useInitStore.getState().viewerParams.currency.toLowerCase();
+    self.setOptions({
+      amount: cartStore.getTotalPrice(),
+      currency: initStore.viewerParams.currency.toLowerCase(),
     });
 
     try {
@@ -54,8 +57,9 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
       const { clientSecret } = await api.stripe.createPaymentIntent({
         metadata: {
           orderId: order.id,
+          tenantId: initStore.subdomain.tenantId,
         },
-        ...self.options,
+        ...get().options,
       });
 
       set({ clientSecret });
@@ -86,6 +90,8 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
 
     console.info({ selectedPaymentMethod });
 
+    await useOrdersStore.getState().updateOrderInfo();
+
     const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
       elements,
       clientSecret,
@@ -103,9 +109,6 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
     console.info({ paymentIntent });
     toast.success('Success!');
 
-    useOrdersStore.getState().updateOrderInfo();
     set({ isProcessing: false, clientSecret: null });
   },
-
-  setState: (clb) => set((s) => (clb(s), deepClone(s))),
 }));
