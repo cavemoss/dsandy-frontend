@@ -2,6 +2,7 @@
 
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
+import { Label } from '@shadcd/label';
 import * as React from 'react';
 import {
   Controller,
@@ -13,7 +14,6 @@ import {
   useFormState,
 } from 'react-hook-form';
 
-import { Label } from '@shadcd/label';
 import { cn } from '@/shared/shadcd/lib/utils';
 
 const Form = FormProvider;

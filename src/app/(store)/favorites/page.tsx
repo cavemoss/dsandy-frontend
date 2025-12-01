@@ -1,11 +1,11 @@
 'use client';
 
-import { ArrowLeft, Heart, ShoppingCart, Star, Trash2 } from 'lucide-react';
-import { useState } from 'react';
-
 import { Badge } from '@shadcd/badge';
 import { Button } from '@shadcd/button';
 import { Card, CardContent } from '@shadcd/card';
+import { ArrowLeft, Heart, ShoppingCart, Star, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 
 interface FavoriteItem {
