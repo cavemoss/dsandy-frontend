@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { useCartStore } from '@/features/cart';
-import { CartDisplayItem } from '@/features/cart/ui';
+import { Item } from '@/features/cart/ui';
 import { formatPrice } from '@/widgets/init';
 
 export default function CartPage() {
@@ -75,7 +75,7 @@ export default function CartPage() {
               )}
 
               {cartItems.map((item, index) => (
-                <CartDisplayItem key={index} index={index} />
+                <Item key={index} index={index} />
               ))}
             </div>
 

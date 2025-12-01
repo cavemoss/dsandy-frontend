@@ -12,7 +12,7 @@ interface Params {
   index: number;
 }
 
-export function CartDisplayItem({ index }: Params) {
+export function Item({ index }: Params) {
   const cartStore = useCartStore();
 
   const cartItem = cartStore.getCartDisplayItems()[index];

@@ -1,4 +1,4 @@
-import { Mail, Phone, User, X } from 'lucide-react';
+import { Mail, User, X } from 'lucide-react';
 
 import LabeledInput from '@/shared/components/LabeledInput';
 import { LabeledPhoneInput } from '@/shared/components/LabeledPhoneInput';
@@ -52,7 +52,7 @@ export default function PersonalInfo() {
             <LabeledInput model={lastNameModel} label="Last Name" />
           </div>
           <LabeledInput model={emailModel} label="Email" icon={<Mail />} />
-          <LabeledPhoneInput model={phoneModel} label="Phone" withIcon={<Phone />} />
+          <LabeledPhoneInput model={phoneModel} label="Phone" withIcon />
         </CardContent>
       </Card>
     </TabsContent>

@@ -10,7 +10,7 @@ import { useCartStore } from '@/features/cart';
 import { CheckoutForm } from '@/features/checkout';
 import { Separator } from '@/shared/shadcd/components/ui/separator';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
-import { formatPrice } from '@/widgets/init';
+import { formatPrice, useInitStore } from '@/widgets/init';
 
 interface OrderItem {
   id: string;
@@ -23,6 +23,7 @@ interface OrderItem {
 
 export default function PaymentPage() {
   const cartStore = useCartStore();
+  const isInitialized = useInitStore((state) => state.initialized);
 
   const [orderComplete, setOrderComplete] = useState(false);
 
@@ -33,6 +34,8 @@ export default function PaymentPage() {
 
   const cartDisplayItems = cartStore.getCartDisplayItems();
   const someItemsAreHidden = cartDisplayItems.length > 3;
+
+  if (!isInitialized) return <></>;
 
   if (orderComplete) {
     return (

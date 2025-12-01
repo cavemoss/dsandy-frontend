@@ -4,6 +4,5 @@ export * from './DisplayCard';
 export * from './GuarantiesAccordion';
 export * from './ImageGallery';
 export * from './Info';
-export * from './SizeSelect';
 export * from './TrustBadges';
 export * from './VariantSelect';

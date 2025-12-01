@@ -14,7 +14,7 @@ export const deepCompare = (...args: object[]): boolean =>
   args.map((obj) => JSON.stringify(obj)).every((json, idx, array) => json === array[0]);
 
 export class Model<S extends { setState: (clb: (s: S) => void) => void }> {
-  constructor(private readonly state: S, readonly trigger: boolean) {}
+  constructor(private readonly state: S, readonly trigger?: boolean) {}
 
   #errors: (React.ReactNode | false)[] = [];
 
