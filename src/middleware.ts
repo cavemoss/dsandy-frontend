@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const url = request.nextUrl;
-
-  const { hostname, pathname } = url;
-
-  const isAdminPanel =
-    hostname.startsWith('admin.') || (hostname === 'localhost' && !!request.cookies.get('isAdminPanel'));
+  const isAdminPanel = request.headers.get('host')?.startsWith('admin.');
 
   if (isAdminPanel) {
-    url.pathname = '/admin' + pathname;
-    return NextResponse.rewrite(url);
+    const { nextUrl } = request;
+    nextUrl.pathname = '/admin' + nextUrl.pathname;
+
+    return NextResponse.rewrite(nextUrl);
   }
 
   return NextResponse.next();
