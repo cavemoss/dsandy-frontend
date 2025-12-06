@@ -13,7 +13,7 @@ export default function StarRating({ rating, size = 'sm', withLabel }: Params) {
   };
 
   return (
-    <div className="flex gap-1.5">
+    <div className="flex items-center gap-1.5">
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <Star

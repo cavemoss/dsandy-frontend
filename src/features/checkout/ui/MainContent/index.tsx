@@ -5,16 +5,17 @@ import { loadStripe, StripeAddressElementChangeEvent, StripeAddressElementOption
 import { Truck } from 'lucide-react';
 import { useState } from 'react';
 
+import { useOrdersStore } from '@/entities/orders';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
 import { Skeleton } from '@/shared/shadcd/components/ui/skeleton';
 import { useInitStore } from '@/widgets/init';
 
-import { useCheckoutStore, useStripeStore } from '../../model';
+import { useStripeStore } from '../../model';
 import PaymentSection from './PaymentSection';
 
 export function CheckoutForm() {
   const stripeStore = useStripeStore();
-  const checkoutStore = useCheckoutStore();
+  const ordersState = useOrdersStore();
   const initStore = useInitStore();
 
   const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
@@ -38,7 +39,7 @@ export function CheckoutForm() {
   };
 
   const onChangeAddress = ({ value }: StripeAddressElementChangeEvent) => {
-    checkoutStore.setState((state) => {
+    ordersState.setState((state) => {
       const { shippingInfo: si, contactInfo: ci } = state;
 
       ci.firstName = value.firstName!;
@@ -81,7 +82,9 @@ export function CheckoutForm() {
         </CardContent>
       </Card>
 
-      <PaymentSection />
+      <div className="min-h-screen -mt-6 py-12">
+        <PaymentSection />
+      </div>
     </Elements>
   );
 }

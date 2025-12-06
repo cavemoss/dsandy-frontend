@@ -8,17 +8,20 @@ import { Heart, Menu, Search, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 
 import { useCustomersStore } from '@/entities/customers';
-import { useCartStore } from '@/features/cart';
+import { useCartStore, useFavoritesStore } from '@/features/cart';
 
 import Customer from './Customer';
 import Logo from './Logo';
+import { MenuBar } from './Menu';
 import ParamsSelect from './ParamsSelect';
 
 export function Header() {
   const cartStore = useCartStore();
   const customersStore = useCustomersStore();
+  const favoritesStore = useFavoritesStore();
 
-  const cartItemsCount = cartStore.getTotalItems();
+  const favoriteItemsCount = Object.keys(favoritesStore.items).length;
+  const cartItemsCount = cartStore.getItemsCount();
   const customerInfo = customersStore.currentCustomer?.info;
 
   return (
@@ -56,9 +59,11 @@ export function Header() {
               <Link href="/favorites">
                 <Button variant="ghost" size="icon" className="relative">
                   <Heart className="h-5 w-5" />
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                    3
-                  </Badge>
+                  {!!favoriteItemsCount && (
+                    <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                      {favoriteItemsCount}
+                    </Badge>
+                  )}
                 </Button>
               </Link>
 
@@ -82,32 +87,7 @@ export function Header() {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right">
-                  <div className="flex flex-col gap-4 mt-8">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                      <Input placeholder="Search products..." className="pl-10" />
-                    </div>
-                    <nav className="flex flex-col gap-2">
-                      <Button variant="ghost" className="justify-start">
-                        Home
-                      </Button>
-                      <Button variant="ghost" className="justify-start">
-                        Categories
-                      </Button>
-                      <Button variant="ghost" className="justify-start">
-                        New Arrivals
-                      </Button>
-                      <Button variant="ghost" className="justify-start">
-                        Best Sellers
-                      </Button>
-                      <Button variant="ghost" className="justify-start">
-                        Sale
-                      </Button>
-                      <Button variant="ghost" className="justify-start">
-                        Contact
-                      </Button>
-                    </nav>
-                  </div>
+                  <MenuBar />
                 </SheetContent>
               </Sheet>
             </div>
@@ -123,20 +103,8 @@ export function Header() {
         </div>
 
         {/* Navigation */}
-        <nav className="border-t bg-muted/50 hidden md:block">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-center gap-8 py-3">
-              <Button variant="ghost" className="hover:bg-background">
-                Home
-              </Button>
-              <Button variant="ghost" className="hover:bg-background">
-                Categories
-              </Button>
-              <Button variant="ghost" className="hover:bg-background">
-                Contact
-              </Button>
-            </div>
-          </div>
+        <nav className="border-t bg-muted/50 hidden md:block py-4">
+          <MenuBar />
         </nav>
       </header>
     </>

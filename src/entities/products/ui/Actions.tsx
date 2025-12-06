@@ -4,7 +4,7 @@ import { Button } from '@shadcd/button';
 import { Check, Heart, Share2, ShoppingCart } from 'lucide-react';
 import { useState } from 'react';
 
-import { useCartStore } from '@/features/cart';
+import { useCartStore, useFavoritesStore } from '@/features/cart';
 import Counter from '@/shared/components/Counter';
 
 import { useProductsStore } from '../model';
@@ -12,6 +12,7 @@ import { useProductsStore } from '../model';
 export function ProductActions() {
   const cartStore = useCartStore();
   const productsStore = useProductsStore();
+  const favoritesStore = useFavoritesStore();
 
   // Refs
 
@@ -27,6 +28,8 @@ export function ProductActions() {
   const isCurrentProductInCart = cartStore.getCartItemIndex(cartItem.productId, cartItem.scuId) >= 0;
 
   const currentProductQuantity = cartStore.getCartItem(cartItem.productId, cartItem.scuId)?.quantity;
+
+  const isFavorite = favoritesStore.items[`${cartItem.productId}:${cartItem.scuId}`];
 
   // Methods
 
@@ -74,8 +77,8 @@ export function ProductActions() {
             </>
           )}
         </Button>
-        <Button variant="outline" size="lg">
-          <Heart className={`h-5 w-5 ${false ? 'fill-red-500 text-red-500' : ''}`} />
+        <Button variant="outline" size="lg" onClick={() => favoritesStore.toggle(cartItem.productId, cartItem.scuId)}>
+          <Heart className={`h-5 w-5 ${isFavorite && 'fill-red-500 text-red-500'}`} />
         </Button>
         <Button variant="outline" size="lg">
           <Share2 className="h-5 w-5" />

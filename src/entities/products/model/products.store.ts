@@ -50,6 +50,11 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
     return { productId: item!.id, scuId: scu!.id, quantity };
   },
 
+  getExactSCU: (productId, scuId) => {
+    const product = get().getProductsByIds()[productId];
+    return objectByKey(product.scus, 'id')[scuId];
+  },
+
   // Actions
 
   async init() {
@@ -66,7 +71,7 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
     }
   },
 
-  setCurrentProduct(idParam) {
+  setCurrentProduct(idParam, scuId) {
     const productId: number = Array.isArray(idParam) ? NaN : Number(idParam);
     const product = get().products.all.find((p) => p.id === productId);
 
@@ -76,7 +81,7 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
       const { current } = state.products;
 
       current.item = product;
-      current.scu = product.scus[0];
+      current.scu = objectByKey(product.scus, 'id')[scuId!] ?? product.scus[0];
 
       return state;
     });

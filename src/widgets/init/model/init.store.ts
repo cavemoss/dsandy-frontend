@@ -10,7 +10,7 @@ import { useCustomersStore } from '@/entities/customers';
 import { useOrdersStore } from '@/entities/orders';
 import { useProductsStore } from '@/entities/products';
 import { useAdminStore } from '@/features/admin/model/admin.state';
-import { useCartStore } from '@/features/cart';
+import { useCartStore, useFavoritesStore } from '@/features/cart';
 import i18n from '@/localization/i18n';
 import { createZustand, deepClone, objectByKey } from '@/shared/lib/utils';
 
@@ -90,6 +90,8 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
     self.loadLogoFont();
 
     useCartStore.getState().init();
+    useFavoritesStore.getState().init();
+
     await useCustomersStore.getState().init();
 
     await self.setViewerParams();

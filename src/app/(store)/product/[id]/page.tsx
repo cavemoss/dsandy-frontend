@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { ProductReviews } from '@/entities/feedback';
@@ -16,13 +16,17 @@ import {
 
 export default function ProductPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
 
   const productsStore = useProductsStore();
 
   const product = useProductsStore((state) => state.products.current.item);
   const scu = useProductsStore((state) => state.products.current.scu);
 
-  useEffect(() => productsStore.setCurrentProduct(params.id), []);
+  useEffect(() => {
+    const scuId = searchParams.get('scu');
+    productsStore.setCurrentProduct(params.id, scuId);
+  }, []);
 
   if (!product || !scu) return <></>;
 

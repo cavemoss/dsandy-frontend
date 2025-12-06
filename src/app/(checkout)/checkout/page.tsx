@@ -3,8 +3,6 @@
 import { Badge } from '@shadcd/badge';
 import { Button } from '@shadcd/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@shadcd/card';
-import { Check } from 'lucide-react';
-import { useState } from 'react';
 
 import { useCartStore } from '@/features/cart';
 import { CheckoutForm } from '@/features/checkout';
@@ -12,20 +10,9 @@ import { Separator } from '@/shared/shadcd/components/ui/separator';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 import { formatPrice, useInitStore } from '@/widgets/init';
 
-interface OrderItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  variant?: string;
-}
-
 export default function PaymentPage() {
   const cartStore = useCartStore();
   const isInitialized = useInitStore((state) => state.initialized);
-
-  const [orderComplete, setOrderComplete] = useState(false);
 
   const subtotal = cartStore.getSubtotal();
   const shipping = 0;
@@ -37,36 +24,9 @@ export default function PaymentPage() {
 
   if (!isInitialized) return <></>;
 
-  if (orderComplete) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
-          <Card className="max-w-2xl mx-auto text-center">
-            <CardContent className="p-12">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Check className="h-8 w-8 text-green-600" />
-              </div>
-              <h1 className="text-2xl font-bold mb-4">Order Confirmed!</h1>
-              <p className="text-muted-foreground mb-6">
-                Thank you for your purchase. Your order #12345 has been confirmed and will be shipped soon.
-              </p>
-              <div className="space-y-3">
-                <Button className="w-full">Continue Shopping</Button>
-                <Button variant="outline" className="w-full">
-                  View Order Details
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="h-screen p-12" style={{ display: 'flex', gap: 40, overflowY: 'scroll' }}>
-      {/* Main Content */}
-      <div className="space-y-6 pb-12" style={{ marginLeft: 'auto', width: 560 }}>
+    <>
+      <div className="ml-auto w-150">
         <CheckoutForm />
       </div>
 
@@ -128,20 +88,14 @@ export default function PaymentPage() {
             </div>
           </CardContent>
         </Card>
-
         {/* Security Badge */}
-        <Card>
-          <CardContent className="">
-            <div className="flex items-center">
-              <img src="https://www.vectorlogo.zone/logos/stripe/stripe-ar21.svg" alt="s" />
-              <div>
-                <p className="font-medium text-sm">Secure Checkout</p>
-                <p className="text-xs text-muted-foreground">Powered by Stripe</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="flex items-center">
+          {/* <img src="https://www.vectorlogo.zone/logos/stripe/stripe-ar21.svg" alt="s" /> */}
+          <p className="mx-auto text-muted-foreground text-sm leading-normal font-normal">
+            Secure Checkout Powered by <u>Stripe</u>
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

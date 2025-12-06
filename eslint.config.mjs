@@ -19,6 +19,7 @@ const eslintConfig = [
       'unused-imports': unusedImports,
     },
     rules: {
+      '@typescript-eslint/no-unused-expressions': 'off',
       '@typescript-eslint/no-this-alias': 'off',
       'react-hooks/exhaustive-deps': 'off',
 

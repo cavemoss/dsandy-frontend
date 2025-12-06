@@ -37,26 +37,29 @@ export const useCartStore = createZustand<CartState>('cart', (set, get) => ({
 
   getItemPrice: (index) => {
     const item = get().items[index];
-
-    const { [item.productId]: product } = useProductsStore.getState().getProductsByIds();
-    const { [item.scuId]: scu } = objectByKey(product.scus, 'id');
-
+    const scu = useProductsStore.getState().getExactSCU(item.productId, item.scuId);
     return formatPrice(scu.priceInfo.dsOfferPrice * item.quantity);
   },
 
-  getTotalPrice: () => Math.trunc(get().getSubtotal()),
+  getItemsCount: () => get().items.length,
+
+  getAmountSaved: () => 15,
 
   getSubtotal: () =>
     get().items.reduce((sum, item) => {
-      const { [item.productId]: product } = useProductsStore.getState().getProductsByIds();
-      const { [item.scuId]: scu } = objectByKey(product.scus, 'id');
-
+      const scu = useProductsStore.getState().getExactSCU(item.productId, item.scuId);
       return sum + scu.priceInfo.dsOfferPrice * item.quantity;
     }, 0),
 
-  getTotalItems: () => get().items.length,
+  getShipping: () => {
+    const self = get();
+    return self.getSubtotal() > 50 ? 9.99 : 0;
+  },
 
-  getAmountSaved: () => 0,
+  getTotal: () => {
+    const self = get();
+    return +(self.getSubtotal() + self.getShipping()).toFixed(2);
+  },
 
   // Actions
 

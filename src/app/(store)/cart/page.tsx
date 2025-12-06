@@ -4,50 +4,30 @@ import { Button } from '@shadcd/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@shadcd/card';
 import { Input } from '@shadcd/input';
 import { Separator } from '@shadcd/separator';
-import { ArrowLeft, ShoppingBag, Tag } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
+import { ShoppingBag, Tag } from 'lucide-react';
 
 import { useCartStore } from '@/features/cart';
-import { Item } from '@/features/cart/ui';
-import { formatPrice } from '@/widgets/init';
+import { CartItem } from '@/features/cart/ui';
+import BackChevron from '@/shared/components/BackChevron';
+import { formatPrice, useNavStore } from '@/widgets/init';
 
 export default function CartPage() {
   const cartStore = useCartStore();
+  const navStore = useNavStore();
 
   const cartItems = cartStore.getCartDisplayItems();
-
-  const [promoCode, setPromoCode] = useState('');
-  const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
-
-  const applyPromoCode = () => {
-    if (promoCode.toLowerCase() === 'save10') {
-      setAppliedPromo('SAVE10');
-      setPromoCode('');
-    }
-  };
-
   const subtotal = cartStore.getSubtotal();
-  const promoDiscount = appliedPromo === 'SAVE10' ? subtotal * 0.1 : 0;
-  const shipping = subtotal > 50 ? 0 : 9.99;
-  const tax = (subtotal - promoDiscount) * 0.08;
-  const total = subtotal - promoDiscount + shipping + tax;
+  const shipping = cartStore.getShipping();
+  const tax = 0;
+  const total = cartStore.getTotal();
 
-  const totalSavings = 10;
+  const totalSavings = cartStore.getAmountSaved();
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" className="p-2">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Shopping Cart</h1>
-            <p className="text-muted-foreground">{cartItems.length} items in your cart</p>
-          </div>
-        </div>
+        <BackChevron title="Shopping Cart" muted="items in your cart" />
 
         {cartItems.length === 0 ? (
           /* Empty Cart */
@@ -64,57 +44,33 @@ export default function CartPage() {
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {totalSavings > 0 && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                <div className="bg-green-50 border border-green-600/40 rounded-xl p-4 mb-4">
                   <div className="flex items-center gap-2">
                     <Tag className="h-4 w-4 text-green-600" />
                     <span className="font-medium text-green-800">
-                      {`You're saving ${formatPrice(totalSavings)} on this order!`}
+                      You&apos;re saving {formatPrice(totalSavings)} on this order!
                     </span>
                   </div>
                 </div>
               )}
 
               {cartItems.map((item, index) => (
-                <Item key={index} index={index} />
+                <CartItem key={index} item={item} index={index} />
               ))}
             </div>
 
             {/* Order Summary */}
             <div className="space-y-6">
               {/* Promo Code */}
-              <Card>
+              <Card className="gap-2">
                 <CardHeader>
                   <CardTitle className="text-lg">Promo Code</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {appliedPromo ? (
-                    <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-md p-3">
-                      <div className="flex items-center gap-2">
-                        <Tag className="h-4 w-4 text-green-600" />
-                        <span className="font-medium text-green-800">{appliedPromo}</span>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setAppliedPromo(null)}
-                        className="text-green-600 hover:text-green-700"
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Enter promo code"
-                        value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value)}
-                      />
-                      <Button variant="outline" onClick={applyPromoCode}>
-                        Apply
-                      </Button>
-                    </div>
-                  )}
-                  <p className="text-xs text-muted-foreground">{'Try "SAVE10" for 10% off your order'}</p>
+                  <div className="flex gap-2">
+                    <Input placeholder="Enter promo code" />
+                    <Button variant="outline">Apply</Button>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -128,13 +84,6 @@ export default function CartPage() {
                     <span>Subtotal ({cartItems.length} items)</span>
                     <span>{formatPrice(subtotal)}</span>
                   </div>
-
-                  {appliedPromo && (
-                    <div className="flex justify-between text-green-600">
-                      <span>Promo discount ({appliedPromo})</span>
-                      <span>-{formatPrice(promoDiscount)}</span>
-                    </div>
-                  )}
 
                   <div className="flex justify-between">
                     <span>Shipping</span>
@@ -156,20 +105,17 @@ export default function CartPage() {
                   </div>
 
                   {shipping > 0 && (
-                    <p className="text-xs text-muted-foreground">
-                      Add {formatPrice(50.01 - subtotal)} for free shipping
-                    </p>
+                    <p className="text-xs text-muted-foreground">Add {formatPrice(50 - subtotal)} for free shipping</p>
                   )}
                 </CardContent>
               </Card>
 
               {/* Checkout Button */}
               <div className="space-y-3">
-                <Button className="w-full" size="lg">
-                  <Link href="/checkout">Proceed to Checkout</Link>
+                <Button className="w-full" size="lg" onClick={() => navStore.push('/checkout')}>
+                  Proceed to Checkout
                 </Button>
-
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" onClick={() => navStore.back()}>
                   Continue Shopping
                 </Button>
               </div>

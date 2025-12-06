@@ -4,7 +4,7 @@ import * as api from '@/api/entities/stripe';
 import { useOrdersStore } from '@/entities/orders';
 import { useCartStore } from '@/features/cart';
 import { createZustand } from '@/shared/lib/utils';
-import { useInitStore } from '@/widgets/init';
+import { useInitStore, useNavStore } from '@/widgets/init';
 
 import { StripeStoreState } from '../types';
 
@@ -43,7 +43,7 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
     if (self.order || self.clientSecret) return;
 
     self.setOptions({
-      amount: cartStore.getTotalPrice(),
+      amount: cartStore.getTotal(),
       currency: initStore.viewerParams.currency.toLowerCase(),
     });
 
@@ -107,7 +107,10 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
     }
 
     console.info({ paymentIntent });
+
     toast.success('Success!');
+    useNavStore.getState().push('/order-complete');
+    localStorage.removeItem('cartItems');
 
     set({ isProcessing: false, clientSecret: null });
   },

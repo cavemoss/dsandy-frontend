@@ -22,10 +22,11 @@ export interface ProductsState {
   getProductImages: () => string[];
   getDisplayPrices: () => DisplayPrice;
   getCartItem: (quantity: number) => CartItem;
+  getExactSCU: (productId: number, scuId: number) => ProductSCU;
   // actions
   init: () => Promise<void>;
   loadAllProducts: () => Promise<void>;
-  setCurrentProduct: (idParam: ParamValue) => void;
+  setCurrentProduct: (idParam: ParamValue, scuId?: string | null) => void;
   setSCU: (index: number) => void;
   setState: (callback: (state: ProductsState) => void) => void;
 }

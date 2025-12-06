@@ -22,6 +22,7 @@ export interface ProductSCU {
     offerBulkPrice: string;
     dsPrice: number;
     dsOfferPrice: number;
+    dsDiscount: number;
   };
 
   image: string;

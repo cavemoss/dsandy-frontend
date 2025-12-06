@@ -23,8 +23,9 @@ export interface CartState {
   getCartDisplayItems: () => CartDisplayItem[];
   getItemPrice: (index: number) => string;
   getSubtotal: () => number;
-  getTotalPrice: () => number;
-  getTotalItems: () => number;
+  getShipping: () => number;
+  getTotal: () => number;
+  getItemsCount: () => number;
   getAmountSaved: () => number;
   // Actions
   init: () => void;

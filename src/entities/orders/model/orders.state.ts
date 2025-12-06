@@ -2,13 +2,28 @@ import * as api from '@/api/entities';
 import { useCustomersStore } from '@/entities/customers';
 import { useProductsStore } from '@/entities/products';
 import { useCartStore } from '@/features/cart';
-import { useCheckoutStore, useStripeStore } from '@/features/checkout';
-import { createZustand, objectByKey } from '@/shared/lib/utils';
+import { useStripeStore } from '@/features/checkout';
+import { createZustand, deepClone, objectByKey } from '@/shared/lib/utils';
 
 import { OrdersState } from '../types';
 
 export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) => ({
   orders: [],
+
+  contactInfo: {
+    email: '',
+    phone: '',
+    firstName: '',
+    lastName: '',
+  },
+
+  shippingInfo: {
+    address: '',
+    country: '',
+    province: '',
+    city: '',
+    zipCode: '',
+  },
 
   // Actions
 
@@ -28,7 +43,7 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
 
   async updateOrderInfo() {
     const { order } = useStripeStore.getState();
-    const { contactInfo, shippingInfo } = useCheckoutStore.getState();
+    const { contactInfo, shippingInfo } = get();
 
     if (!order) return;
 
@@ -47,7 +62,7 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
     const cartStore = useCartStore.getState();
     const productsStore = useProductsStore.getState();
 
-    const { contactInfo, shippingInfo } = useCheckoutStore.getState();
+    const { contactInfo, shippingInfo } = get();
     const { options: paymentInfo } = useStripeStore.getState();
 
     try {
@@ -71,4 +86,6 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
       console.error('Error when placing an order', { error });
     }
   },
+
+  setState: (clb) => set((s) => (clb(s), deepClone(s))),
 }));
