@@ -7,7 +7,6 @@ import { Separator } from '@shadcd/separator';
 import { Switch } from '@shadcd/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shadcd/tabs';
 import { CreditCard, Edit, Mail, MapPin, Plus, Settings, Trash2, User } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import OrdersHistory from '@/entities/customers/ui/OrdersHistory';
@@ -83,7 +82,7 @@ export default function AccountPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <BackChevron router={useRouter()} title="My Account" muted="Manage your profile and preferences" />
+          <BackChevron title="My Account" muted="Manage your profile and preferences" />
 
           <Button variant="outline">Logout</Button>
         </div>
