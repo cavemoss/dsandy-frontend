@@ -3,6 +3,7 @@ import { Card, CardContent } from '@shadcd/card';
 import { Trash2 } from 'lucide-react';
 
 import Counter from '@/shared/components/Counter';
+import { Badge } from '@/shared/shadcd/components/ui/badge';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 
 import { useCartStore } from '../model';
@@ -16,7 +17,8 @@ interface Params {
 export function CartItem({ index, item }: Params) {
   const cartStore = useCartStore();
 
-  const itemPrice = cartStore.getItemPrice(index);
+  const itemPrice = cartStore.getItemPriceFormatted(index);
+  const isDiscount = item.discount != null;
 
   return (
     <Card>
@@ -37,7 +39,14 @@ export function CartItem({ index, item }: Params) {
                 </p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="font-bold">{item.displayPrice.discounted}</span>
-                  <span className="text-sm text-muted-foreground line-through">{item.displayPrice.original}</span>
+                  <span className="text-sm text-muted-foreground line-through">
+                    {isDiscount && item.displayPrice.original}
+                  </span>
+                  {isDiscount && (
+                    <Badge variant="secondary" className="bg-red-100 text-red-800">
+                      {item.discount} OFF
+                    </Badge>
+                  )}
                 </div>
               </div>
               <Button

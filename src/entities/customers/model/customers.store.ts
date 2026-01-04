@@ -4,48 +4,20 @@ import * as api from '@/api/entities';
 import { useAuthStore } from '@/features/auth';
 import { createZustand, deepClone, deepCompare } from '@/shared/lib/utils';
 import { DialogEnum, useDialogsStore } from '@/widgets/dialogs';
-import { useInitStore } from '@/widgets/init';
+import { useInitStore, useNavStore } from '@/widgets/init';
 
 import { CustomersState } from '../types';
 
 export const useCustomersStore = createZustand<CustomersState>('customers', (set, get) => ({
-  currentCustomer: null,
+  customer: null,
 
-  currentCustomerModel: null,
-
-  credentials: {
-    email: '',
-    password: '',
-  },
-
-  info: {
-    firstName: '',
-    lastName: '',
-    phone: '',
-  },
+  customerModel: null,
 
   // Getters
 
   isChanged: () => {
-    const s = get();
-    return !deepCompare(s.currentCustomer || {}, s.currentCustomerModel || {});
-  },
-
-  isPasswordValid: () => {
-    const REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    const { password } = get().credentials;
-    return REGEX.test(password);
-  },
-
-  isEmailValid: () => {
-    const REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const { email } = get().credentials;
-    return REGEX.test(email);
-  },
-
-  areCredentialsValid: () => {
-    const state = get();
-    return state.isEmailValid() && state.isPasswordValid();
+    const self = get();
+    return deepCompare(self.customer!, self.customerModel!);
   },
 
   // Actions
@@ -56,12 +28,12 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
 
   async loadCurrentCustomer() {
     try {
-      const currentCustomer = await api.customers.getByJwtToken();
+      const customer = await api.customers.getByJwtToken();
 
-      if (currentCustomer) {
+      if (customer) {
         set({
-          currentCustomer,
-          currentCustomerModel: deepClone(currentCustomer),
+          customer,
+          customerModel: deepClone(customer),
         });
       }
     } catch (error) {
@@ -79,56 +51,47 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
     }
   },
 
-  async login() {
-    try {
-      const result = await api.auth.loginCustomer(useAuthStore.getState().credentials);
-      localStorage.setItem('jwtToken', result.accessToken);
+  async createCustomer() {
+    const authStore = useAuthStore.getState();
 
-      void get().loadCurrentCustomer();
-    } catch (error) {
-      console.debug('Unable to login', { error });
-    }
-  },
-
-  async register() {
-    const { customerInfo: info, credentials } = useAuthStore.getState();
+    const { customerInfo: info, credentials } = authStore;
     const { viewerParams: preferences } = useInitStore.getState();
 
-    useAuthStore.setState({ isLoading: true });
-
     try {
-      await api.customers.create({
+      const result = await api.customers.create({
         email: credentials.email,
         password: credentials.password,
         info,
         preferences,
       });
 
+      if ('errors' in result) {
+        return useAuthStore.setState({ errors: result.errors });
+      }
+
       toast.success('Account successfully created!');
       useDialogsStore.getState().toggleDialog(DialogEnum.SIGNUP);
 
-      void get().login();
+      void authStore.loginCustomer();
     } catch (error) {
       const msg = 'Unable to create account';
       console.debug(msg, { error });
       toast.error(msg);
-    } finally {
-      useAuthStore.setState({ isLoading: false });
     }
   },
 
-  resetData() {
-    set((s) => {
-      s.credentials.password = '';
-      s.credentials.email = '';
-      s.info.firstName = '';
-      s.info.lastName = '';
-      s.info.phone = '';
-      return deepClone(s);
-    });
+  onLoginSuccess: () => {
+    const { info } = get().customer!;
+    toast.success(`Welcome back, ${info.firstName} ${info.lastName}`);
+    useNavStore.getState().push('/account');
   },
 
-  setCustomerModel: (clb) => set((s) => (clb(s.currentCustomerModel!), deepClone(s))),
+  logOut: () => {
+    localStorage.removeItem('jwtToken');
+    useNavStore.getState().push('/');
+    set({ customer: null, customerModel: null });
+    toast.info('Logged out');
+  },
 
   setState: (clb) => set((s) => (clb(s), deepClone(s))),
 }));

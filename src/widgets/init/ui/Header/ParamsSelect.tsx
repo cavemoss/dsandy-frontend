@@ -78,20 +78,20 @@ export default function ParamsSelect() {
 
         <SelectSearchable
           options={countryOptions}
-          model={model.select((s) => s.viewerParams, 'country')}
+          model={model.Select((s) => s.viewerParams, 'country')}
           icon={<span className="text-xl">{currentCountry.flag}</span>}
           label={<>Country</>}
           onChange={onSelectCountry}
         />
 
         <LabeledSelect
-          model={model.select((s) => s.viewerParams, 'currency')}
+          model={model.Select((s) => s.viewerParams, 'currency')}
           options={currencyOptions}
           label={<>Currency</>}
         />
 
         <LabeledSelect
-          model={model.select((s) => s.viewerParams, 'language')}
+          model={model.Select((s) => s.viewerParams, 'language')}
           options={localeOptions}
           label={<>Language</>}
         />

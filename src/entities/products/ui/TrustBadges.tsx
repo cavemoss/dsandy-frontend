@@ -2,7 +2,7 @@ import { RotateCcw, Shield, Truck } from 'lucide-react';
 
 export function ProductTrustBudges() {
   return (
-    <div className="grid grid-cols-3 gap-4 pt-6">
+    <div className="grid grid-cols-3 gap-4 py-3">
       <div className="text-center space-y-2">
         <Truck className="h-8 w-8 mx-auto text-primary" />
         <div className="text-sm">

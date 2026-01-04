@@ -1,16 +1,16 @@
 'use client';
 
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shadcd/card';
+import { Skeleton } from '@shadcd/skeleton';
 import { AddressElement, Elements } from '@stripe/react-stripe-js';
-import { loadStripe, StripeAddressElementChangeEvent, StripeAddressElementOptions } from '@stripe/stripe-js';
+import { loadStripe, StripeAddressElementOptions } from '@stripe/stripe-js';
 import { Truck } from 'lucide-react';
 import { useState } from 'react';
 
 import { useOrdersStore } from '@/entities/orders';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
-import { Skeleton } from '@/shared/shadcd/components/ui/skeleton';
 import { useInitStore } from '@/widgets/init';
 
-import { useStripeStore } from '../../model';
+import { useStripeStore } from '../..';
 import PaymentSection from './PaymentSection';
 
 export function CheckoutForm() {
@@ -36,23 +36,11 @@ export function CheckoutForm() {
     display: {
       name: 'split',
     },
-  };
-
-  const onChangeAddress = ({ value }: StripeAddressElementChangeEvent) => {
-    ordersState.setState((state) => {
-      const { shippingInfo: si, contactInfo: ci } = state;
-
-      ci.firstName = value.firstName!;
-      ci.lastName = value.lastName!;
-      ci.phone = value.phone!;
-
-      si.address = value.address.line1;
-      si.country = value.address.country;
-      if (value.address.line2) si.address2 = value.address.line2;
-      si.province = value.address.state;
-      si.city = value.address.city;
-      si.zipCode = value.address.postal_code;
-    });
+    defaultValues: {
+      address: {
+        country: initStore.viewerParams.country,
+      },
+    },
   };
 
   return (
@@ -68,7 +56,7 @@ export function CheckoutForm() {
         <CardContent>
           <AddressElement
             options={addressOptions}
-            onChange={onChangeAddress}
+            onChange={ordersState.setAddress}
             onLoaderStart={() => setSkeletonShown(false)}
           />
           {skeletonShown && (

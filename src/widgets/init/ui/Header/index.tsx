@@ -14,6 +14,7 @@ import Customer from './Customer';
 import Logo from './Logo';
 import { MenuBar } from './Menu';
 import ParamsSelect from './ParamsSelect';
+import SearchBar from './SearchBar';
 
 export function Header() {
   const cartStore = useCartStore();
@@ -22,7 +23,7 @@ export function Header() {
 
   const favoriteItemsCount = Object.keys(favoritesStore.items).length;
   const cartItemsCount = cartStore.getItemsCount();
-  const customerInfo = customersStore.currentCustomer?.info;
+  const customerInfo = customersStore.customer?.info;
 
   return (
     <>
@@ -42,12 +43,7 @@ export function Header() {
             </div>
 
             {/* Search bar - hidden on mobile */}
-            <div className="hidden md:flex flex-1 max-w-xl mx-8">
-              <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input placeholder="Search products..." className="pl-10 pr-4" />
-              </div>
-            </div>
+            <SearchBar />
 
             {/* Right side actions */}
             <div className="flex items-center gap-2">

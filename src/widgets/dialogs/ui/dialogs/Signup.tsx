@@ -4,10 +4,12 @@ import { Dialog } from '@radix-ui/react-dialog';
 import { Button } from '@shadcd/button';
 import { Checkbox } from '@shadcd/checkbox';
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@shadcd/dialog';
+import { FieldDescription } from '@shadcd/field';
 import { Separator } from '@shadcd/separator';
 import { Mail, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { AuthErrorEnum } from '@/api/entities';
 import { useCustomersStore } from '@/entities/customers';
 import { useAuthStore } from '@/features/auth';
 import LabeledInput from '@/shared/components/LabeledInput';
@@ -17,7 +19,6 @@ import FacebookSvg from '@/shared/components/svg-icons/FaceBook';
 import GoogleSvg from '@/shared/components/svg-icons/Google';
 import { InputModel } from '@/shared/lib/types';
 import { Model } from '@/shared/lib/utils';
-import { FieldDescription } from '@/shared/shadcd/components/ui/field';
 
 import { DialogEnum, useDialogsStore } from '../..';
 
@@ -29,40 +30,48 @@ export default function SignupDialog() {
   // Refs
 
   const isOpened = useDialogsStore((state) => state[DialogEnum.SIGNUP]);
-  const isLoading = useAuthStore((state) => state.isLoading);
 
   const [confirmPwd, setConfirmPwd] = useState('');
   const [errorTrigger, setErrorTrigger] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Models
 
-  const m = new Model(authStore, errorTrigger);
+  const m = new Model(authStore, errorTrigger, { onChange: authStore.clearErrors });
 
   const genericErrorMessage = <>Please fill out the data</>;
 
   const firstNameModel = m
-    .input((s) => s.customerInfo, 'firstName')
+    .Input((s) => s.customerInfo, 'firstName')
     .setError(!authStore.customerInfo.firstName && genericErrorMessage);
 
   const lastNameModel = m
-    .input((s) => s.customerInfo, 'lastName')
+    .Input((s) => s.customerInfo, 'lastName')
     .setError(!authStore.customerInfo.lastName && genericErrorMessage);
 
   const phoneModel = m
-    .input((s) => s.customerInfo, 'phone')
+    .Input((s) => s.customerInfo, 'phone')
     .setError(![0, 14].includes(authStore.customerInfo.phone.length) && genericErrorMessage);
 
-  const emailModel = m.input((s) => s.credentials, 'email').setError(!authStore.isEmailValid() && <>Invalid Email</>);
+  const emailModel = m
+    .Input((s) => s.credentials, 'email')
+    .setError(
+      !authStore.isEmailValid() ? (
+        <>Invalid Email</>
+      ) : (
+        authStore.errors.email === AuthErrorEnum.DUPLICATE && <>This account already exists</>
+      )
+    );
 
   const passwordModel = m
-    .input((s) => s.credentials, 'password')
+    .Input((s) => s.credentials, 'password')
     .setError(
       !authStore.credentials.password ? (
         <>Please fill out the data</>
       ) : !authStore.isPasswordValid() ? (
         <>Password is too week</>
       ) : authStore.credentials.password !== confirmPwd ? (
-        <>Passwords don not mach</>
+        <>Passwords don&apos;t mach</>
       ) : (
         false
       )
@@ -71,7 +80,7 @@ export default function SignupDialog() {
   const confirmPwdModel: InputModel = {
     value: confirmPwd,
     onChange: (e) => setConfirmPwd(e.target.value),
-    error: errorTrigger && authStore.credentials.password !== confirmPwd && <>Passwords don not mach</>,
+    error: errorTrigger && authStore.credentials.password !== confirmPwd && <>Passwords don&apos;t mach</>,
   };
 
   const isAllValid = m.isAllValid && !confirmPwdModel.error;
@@ -80,14 +89,22 @@ export default function SignupDialog() {
 
   const handleSubmit = () => {
     setErrorTrigger(true);
-    if (isAllValid) customersStore.register();
+
+    if (!isAllValid) return;
+    setLoading(true);
+
+    customersStore.createCustomer();
+    setLoading(false);
   };
 
   // Hooks
 
   useEffect(() => {
     if (!isOpened) {
-      setTimeout(customersStore.resetData, 1000);
+      setTimeout(() => {
+        authStore.resetState();
+        setErrorTrigger(false);
+      }, 1000);
     }
   }, [isOpened]);
 
@@ -140,7 +157,7 @@ export default function SignupDialog() {
         </div>
 
         <Button type="submit" className="w-full" disabled={errorTrigger && !isAllValid} onClick={handleSubmit}>
-          {isLoading ? (
+          {loading ? (
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               Creating account...

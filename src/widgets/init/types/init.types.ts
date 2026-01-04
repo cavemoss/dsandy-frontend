@@ -17,8 +17,8 @@ export interface CountryData {
 
 export interface InitState {
   initialized: boolean;
-  countryData: CountryData[];
   subdomain: SubdomainDTO;
+  countryData: CountryData[];
   viewerParams: ViewerParams;
   // getters
   isAdminPanel: () => boolean;

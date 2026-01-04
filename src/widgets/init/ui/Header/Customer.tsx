@@ -8,17 +8,18 @@ import {
   DropdownMenuTrigger,
 } from '@shadcd/dropdown-menu';
 import { Archive, LogIn, User, UserPlus } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 import { CustomerInfoDTO } from '@/api/entities';
 import { DialogEnum, useDialogsStore } from '@/widgets/dialogs';
+
+import { useNavStore } from '../../model';
 
 interface Params {
   info?: CustomerInfoDTO;
 }
 
 export default function Customer({ info }: Params) {
-  const router = useRouter();
+  const navStore = useNavStore();
   const dialogsStore = useDialogsStore();
 
   const avatarFallback = `${info?.firstName[0]?.toUpperCase()}${info?.lastName[0]?.toUpperCase()}`;
@@ -26,7 +27,7 @@ export default function Customer({ info }: Params) {
   return (
     <>
       {info ? (
-        <Button variant="ghost" className="pr-1" onClick={() => router.push('/account')}>
+        <Button variant="ghost" className="pr-1" onClick={() => navStore.push('/account')}>
           <span className="text-gray-600">
             {info.firstName} {info.lastName}
           </span>
@@ -53,7 +54,7 @@ export default function Customer({ info }: Params) {
               <UserPlus /> Create Account
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navStore.push('/orders')}>
               <Archive /> My Orders
             </DropdownMenuItem>
           </DropdownMenuContent>

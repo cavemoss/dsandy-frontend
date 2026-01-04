@@ -17,7 +17,7 @@ axios.interceptors.request.use((cfg) => {
     return cfg;
   }
 
-  const customerId = useCustomersStore.getState().currentCustomer?.id;
+  const customerId = useCustomersStore.getState().customer?.id;
   if (customerId) headers['x-customer-id'] = customerId;
 
   const { viewerParams } = useInitStore.getState();

@@ -14,7 +14,13 @@ export const deepCompare = (...args: object[]): boolean =>
   args.map((obj) => JSON.stringify(obj)).every((json, idx, array) => json === array[0]);
 
 export class Model<S extends { setState: (clb: (s: S) => void) => void }> {
-  constructor(private readonly state: S, readonly trigger?: boolean) {}
+  constructor(
+    private readonly state: S,
+    private readonly trigger?: boolean,
+    private readonly params?: {
+      onChange: () => void;
+    }
+  ) {}
 
   #errors: (React.ReactNode | false)[] = [];
 
@@ -28,7 +34,7 @@ export class Model<S extends { setState: (clb: (s: S) => void) => void }> {
     return ptr;
   }
 
-  input<T extends object>(
+  Input<T extends object>(
     clb: (state: S) => T,
     key: keyof T,
 
@@ -48,6 +54,7 @@ export class Model<S extends { setState: (clb: (s: S) => void) => void }> {
         this.state.setState((s) => {
           clb(s)[key] = e.target.value as T[keyof T];
         });
+        this.params?.onChange();
       },
 
       id: params?.id,
@@ -59,7 +66,7 @@ export class Model<S extends { setState: (clb: (s: S) => void) => void }> {
     };
   }
 
-  select<T extends object>(
+  Select<T extends object>(
     clb: (state: S) => T,
     key: keyof T
   ): SelectModel & {
@@ -74,6 +81,7 @@ export class Model<S extends { setState: (clb: (s: S) => void) => void }> {
         this.state.setState((s) => {
           clb(s)[key] = value as T[keyof T];
         });
+        this.params?.onChange();
       },
 
       setError(error) {

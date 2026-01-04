@@ -13,22 +13,45 @@ interface Params {
 }
 
 export function LabeledPhoneInput(params: Params & { mask?: string }) {
-  const { mask = '+1 (###) ###-####' } = params;
+  const masks: string[] = ['+7 (###) ###-##-##', '+34 (###) ####-####', '+4 (123) ###-####'];
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const t = event.target;
+
+    let flag = false;
+
+    const mask =
+      masks.find((m) => {
+        const vd = t.value.replace(/\D/g, '');
+        const md = m.replace(/\D/g, '');
+
+        if (vd.startsWith(md)) {
+          flag = vd === md;
+          return true;
+        }
+      }) ?? '####';
+
+    const code = mask.slice(0, Math.max(mask.indexOf('#'), 0));
+
+    if (flag && t.value != code) {
+      t.value = code;
+      return params.model.onChange(event);
+    }
+
+    const idx = t.value.length < code.length ? 0 : code.length;
+
     t.value = [...t.value]
-      .slice(t.value.indexOf(' '))
+      .slice(idx)
       .filter((char) => /^\d+$/.test(char))
       .join('');
 
     let index = 0;
-    const ptr = [...mask];
+    const m = [...mask];
     const result: string[] = [];
 
-    for (let i = 0; i < ptr.length; i++) {
+    for (let i = 0; i < m.length; i++) {
       if (!t.value[index]) break;
-      result[i] = ptr[i] === '#' ? t.value[index++] : ptr[i];
+      result[i] = m[i] === '#' ? t.value[index++] : m[i];
     }
 
     t.value = result.join('');
@@ -37,5 +60,5 @@ export function LabeledPhoneInput(params: Params & { mask?: string }) {
 
   const model: InputModel = { ...params.model, onChange };
 
-  return <LabeledInput {...params} icon={params.withIcon && <Phone />} model={model} placeholder={mask} />;
+  return <LabeledInput {...params} icon={params.withIcon && <Phone />} model={model} />;
 }

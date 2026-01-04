@@ -6,29 +6,34 @@ import { Model } from '@/shared/lib/utils';
 import { Button } from '@/shared/shadcd/components/ui/button';
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
 import { TabsContent } from '@/shared/shadcd/components/ui/tabs';
+import { useNavStore } from '@/widgets/init';
 
 import { useCustomersStore } from '../model';
 
 export default function PersonalInfo() {
   const store = useCustomersStore();
-  const model = new Model(store);
+  const navStore = useNavStore();
 
-  const currentCustomer = useCustomersStore((state) => state.currentCustomerModel);
+  const current = useCustomersStore((state) => state.customerModel);
 
-  if (!currentCustomer) return <></>;
+  if (!current) return navStore.push('/'), (<></>);
 
   const isChanged = store.isChanged();
 
-  const fistNameModel = model.input((s) => s.currentCustomerModel!.info, 'firstName');
+  // Models
 
-  const lastNameModel = model.input((s) => s.currentCustomerModel!.info, 'lastName');
+  const m = new Model(store);
 
-  const emailModel = model.input((s) => s.currentCustomerModel!, 'email');
+  const fistNameModel = m.Input((s) => s.customerModel!.info, 'firstName');
 
-  const phoneModel = model.input((s) => s.currentCustomerModel!.info, 'phone');
+  const lastNameModel = m.Input((s) => s.customerModel!.info, 'lastName');
+
+  const emailModel = m.Input((s) => s.customerModel!, 'email');
+
+  const phoneModel = m.Input((s) => s.customerModel!.info, 'phone');
 
   return (
-    <TabsContent value="profile">
+    <TabsContent value="profile" className="mb-0">
       <Card>
         <CardHeader className="flex items-center min-h-[36px]">
           <CardTitle className="flex items-center gap-2">
@@ -38,7 +43,7 @@ export default function PersonalInfo() {
           <CardAction className="ml-auto flex gap-2">
             {isChanged && (
               <>
-                <Button variant="ghost">
+                <Button variant="ghost" className="hover:bg-red-100 hover:text-red-600">
                   <X /> Cancel
                 </Button>
                 <Button variant="outline">Save Changes</Button>

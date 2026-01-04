@@ -3,8 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
-import { useInitStore } from '../model';
-import { useNavStore } from '../model/navigation.store';
+import { useInitStore, useNavStore } from '../model';
 
 export function Initialization() {
   const router = useRouter();

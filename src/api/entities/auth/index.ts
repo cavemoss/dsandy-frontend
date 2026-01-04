@@ -1,2 +1,2 @@
 export * as auth from './auth.routes';
-export type * from './auth.type';
+export * from './auth.type';

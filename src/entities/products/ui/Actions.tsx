@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import { useCartStore, useFavoritesStore } from '@/features/cart';
 import Counter from '@/shared/components/Counter';
+import { Spinner } from '@/shared/shadcd/components/ui/spinner';
 
 import { useProductsStore } from '../model';
 
@@ -16,7 +17,8 @@ export function ProductActions() {
 
   // Refs
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [addToCartLoading, setAddToCartLoading] = useState(false);
+  const [buyNowLoading, setBuyNowLoading] = useState(false);
 
   const scu = useProductsStore((state) => state.products.current.scu!);
   const quantity = useProductsStore((state) => state.products.current.quantity);
@@ -25,18 +27,29 @@ export function ProductActions() {
 
   const cartItem = productsStore.getCartItem(quantity);
 
-  const isCurrentProductInCart = cartStore.getCartItemIndex(cartItem.productId, cartItem.scuId) >= 0;
+  const isCurrentProductInCart = cartStore.getItemIndex(cartItem.productId, cartItem.scuId) >= 0;
 
-  const currentProductQuantity = cartStore.getCartItem(cartItem.productId, cartItem.scuId)?.quantity;
+  const currentProductQuantity = cartStore.getItem(cartItem.productId, cartItem.scuId)?.quantity;
 
   const isFavorite = favoritesStore.items[`${cartItem.productId}:${cartItem.scuId}`];
+
+  const isOutOfStock = scu.availableStock <= 0;
+
+  const isAddToCartDisabled = addToCartLoading || isCurrentProductInCart || isOutOfStock;
+
+  const isBuyNowDisabled = buyNowLoading || isOutOfStock;
 
   // Methods
 
   const addToCard = () => {
     cartStore.addToCart(cartItem);
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 400);
+    setAddToCartLoading(true);
+    setTimeout(() => setAddToCartLoading(false), 300);
+  };
+
+  const buyNow = () => {
+    setBuyNowLoading(true);
+    setTimeout(() => cartStore.handleBuyNow(cartItem), 300);
   };
 
   const setCurrentProductQuantity = (amount: number) => {
@@ -48,7 +61,7 @@ export function ProductActions() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex items-center gap-4">
         {isCurrentProductInCart ? (
           <Counter value={currentProductQuantity} setter={setCurrentProductQuantity} />
@@ -59,21 +72,19 @@ export function ProductActions() {
       </div>
 
       <div className="flex gap-3">
-        <Button className="flex-1" size="lg" disabled={isLoading || isCurrentProductInCart} onClick={() => addToCard()}>
-          {isLoading ? (
+        <Button className="flex-1" size="lg" disabled={isAddToCartDisabled} onClick={() => addToCard()}>
+          {addToCartLoading ? (
             <>
-              <div className="h-5 w-5 mr-2 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-              Adding...
+              <Spinner /> Adding...
             </>
           ) : isCurrentProductInCart ? (
             <>
-              <Check className="h-5 w-5 mr-2" />
-              Added!
+              <Check className="h-5 w-5 mr-2" /> Added!
             </>
           ) : (
             <>
               <ShoppingCart className="h-5 w-5 mr-2" />
-              {scu.availableStock > 0 ? 'Add to Cart' : 'Out of Stock'}
+              {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
             </>
           )}
         </Button>
@@ -85,8 +96,14 @@ export function ProductActions() {
         </Button>
       </div>
 
-      <Button variant="outline" className="w-full" size="lg">
-        Buy Now
+      <Button variant="outline" className="w-full" size="lg" disabled={isBuyNowDisabled} onClick={buyNow}>
+        {buyNowLoading ? (
+          <>
+            <Spinner /> Redirecting to checkout...
+          </>
+        ) : (
+          <>Buy Now</>
+        )}
       </Button>
     </div>
   );

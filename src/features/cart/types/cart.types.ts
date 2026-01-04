@@ -11,25 +11,34 @@ export interface CartDisplayItem {
   propertyName: string;
   propertyValueName: string;
   displayPrice: DisplayPrice;
+  discount: null | string;
   image: string;
   quantity: number;
 }
 
 export interface CartState {
   items: CartItem[];
+  item: CartItem | null;
   // Getters
-  getCartItemIndex: (productId: number, scuId: number) => number;
-  getCartItem: (productId: number, scuId: number) => CartItem;
-  getCartDisplayItems: () => CartDisplayItem[];
-  getItemPrice: (index: number) => string;
+  getItems: () => CartItem[];
+  getDisplayItems: () => CartDisplayItem[];
+
+  getItemIndex: (productId: number, scuId: number) => number;
+  getItem: (productId: number, scuId: number) => CartItem;
+
+  getItemPriceFormatted: (index: number) => string;
+
   getSubtotal: () => number;
   getShipping: () => number;
   getTotal: () => number;
+  getRealTotal: () => number;
+
   getItemsCount: () => number;
   getAmountSaved: () => number;
   // Actions
   init: () => void;
   addToCart: (item: CartItem) => void;
+  handleBuyNow: (item: CartItem) => void;
   removeFromCart: (index: number) => void;
   setItemQuantity: {
     (productId: number, scuId: number, amount: number): void;

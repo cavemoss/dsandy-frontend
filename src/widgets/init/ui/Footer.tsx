@@ -1,21 +1,10 @@
 import { Button } from '@shadcd/button';
 import { Input } from '@shadcd/input';
 import { Separator } from '@shadcd/separator';
-import {
-  CreditCard,
-  Facebook,
-  Instagram,
-  Mail,
-  MapPin,
-  Phone,
-  RotateCcw,
-  Shield,
-  Truck,
-  Twitter,
-  Youtube,
-} from 'lucide-react';
+import { Facebook, Instagram, Mail, MapPin, Phone, RotateCcw, Shield, Truck, Twitter, Youtube } from 'lucide-react';
 
 import Logo from './Header/Logo';
+import PaymentMethods from './PaymentMethods';
 
 export function Footer() {
   return (
@@ -158,7 +147,7 @@ export function Footer() {
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col md:flex-row items-center gap-4 text-sm text-muted-foreground">
-            <p>&copy; 2025 DSAndyStore. All rights reserved.</p>
+            <p>&copy; 2025 DSANDY LLC. All rights reserved.</p>
             <div className="flex gap-4">
               <a href="#" className="hover:text-foreground transition-colors">
                 Privacy Policy
@@ -173,14 +162,7 @@ export function Footer() {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">We accept:</span>
-            <div className="flex gap-1">
-              <div className="w-8 h-5 bg-muted rounded flex items-center justify-center">
-                <CreditCard className="h-3 w-3" />
-              </div>
-              <div className="w-8 h-5 bg-muted rounded flex items-center justify-center text-xs font-medium">V</div>
-              <div className="w-8 h-5 bg-muted rounded flex items-center justify-center text-xs font-medium">MC</div>
-              <div className="w-8 h-5 bg-muted rounded flex items-center justify-center text-xs font-medium">PP</div>
-            </div>
+            <PaymentMethods />
           </div>
         </div>
       </div>

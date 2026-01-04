@@ -1,7 +1,25 @@
 import * as api from '@/api/entities';
+import { useCustomersStore } from '@/entities/customers';
 import { createZustand, deepClone } from '@/shared/lib/utils';
 
 import { AuthState } from '../types/auth.types';
+
+const initialState = {
+  isLoading: false,
+
+  credentials: {
+    email: '',
+    password: '',
+  },
+
+  errors: {} as AuthState['errors'],
+
+  customerInfo: {
+    firstName: '',
+    lastName: '',
+    phone: '',
+  },
+};
 
 export const useAuthStore = createZustand<AuthState>('auth', (set, get) => ({
   isLoading: false,
@@ -10,6 +28,8 @@ export const useAuthStore = createZustand<AuthState>('auth', (set, get) => ({
     email: '',
     password: '',
   },
+
+  errors: {},
 
   customerInfo: {
     firstName: '',
@@ -38,26 +58,36 @@ export const useAuthStore = createZustand<AuthState>('auth', (set, get) => ({
 
     try {
       const result = await api.auth.loginTenant(self.credentials);
+
+      if ('errors' in result) return set({ errors: result.errors });
+
       localStorage.setItem('jwtToken', result.accessToken);
     } catch (error) {
       console.debug('Unable to login', { error });
     }
   },
 
-  resetData() {
-    set((s) => {
-      s.credentials = {
-        email: '',
-        password: '',
-      };
-      s.customerInfo = {
-        firstName: '',
-        lastName: '',
-        phone: '',
-      };
-      return deepClone(s);
-    });
+  async loginCustomer() {
+    const self = get();
+    const customersStore = useCustomersStore.getState();
+
+    try {
+      const result = await api.auth.loginCustomer(self.credentials);
+
+      if ('errors' in result) return set({ errors: result.errors });
+
+      localStorage.setItem('jwtToken', result.accessToken);
+
+      await customersStore.loadCurrentCustomer();
+      customersStore.onLoginSuccess();
+    } catch (error) {
+      console.debug('Unable to login', { error });
+    }
   },
+
+  clearErrors: () => set({ errors: {} }),
+
+  resetState: () => set(initialState),
 
   setState: (clb) => set((s) => (clb(s), deepClone(s))),
 }));

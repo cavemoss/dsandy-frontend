@@ -1,60 +1,9 @@
 import { SelectProps } from '@radix-ui/react-select';
 import React from 'react';
 
-import { USStates } from './constants';
 import { createZustand } from './utils';
 
-export type CurrencyCode =
-  | 'USD'
-  | 'GBP'
-  | 'CAD'
-  | 'EUR'
-  | 'UAH'
-  | 'MXN'
-  | 'TRY'
-  | 'RUB'
-  | 'BRL'
-  | 'AUD'
-  | 'INR'
-  | 'JPY'
-  | 'IDR'
-  | 'SEK'
-  | 'KRW'
-  | 'ILS'
-  | 'THB'
-  | 'CLP'
-  | 'VND';
-
-export type CountryCode =
-  | 'US'
-  | 'EN'
-  | 'RU'
-  | 'PT'
-  | 'ES'
-  | 'FR'
-  | 'ID'
-  | 'IT'
-  | 'TH'
-  | 'JA'
-  | 'AR'
-  | 'VI'
-  | 'TR'
-  | 'DE'
-  | 'HE'
-  | 'KO'
-  | 'NL'
-  | 'PL'
-  | 'MX'
-  | 'CL'
-  | 'IN';
-
-export enum SupplierEnum {
-  ALIEXPRESS,
-}
-
 export type DisplayPrice = { original: string; discounted: string };
-
-export type USStateCode = (typeof USStates)[number]['code'];
 
 export type InputModel = Required<Pick<React.ComponentProps<'input'>, 'value' | 'onChange'>> &
   Pick<React.ComponentProps<'input'>, 'id' | 'type'> & {
@@ -77,3 +26,5 @@ export interface Locale {
   code: string;
   name: string;
 }
+
+export type LocalStorageKey = 'cartItems' | 'favorites' | 'orders' | 'jwtToken' | 'viewerParams';

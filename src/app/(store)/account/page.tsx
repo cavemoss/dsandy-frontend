@@ -6,9 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@shadcd/card';
 import { Separator } from '@shadcd/separator';
 import { Switch } from '@shadcd/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shadcd/tabs';
-import { CreditCard, Edit, Mail, MapPin, Plus, Settings, Trash2, User } from 'lucide-react';
+import { CreditCard, Edit, LogOut, Mail, MapPin, Plus, Settings, Trash2, User } from 'lucide-react';
 import { useState } from 'react';
 
+import { useCustomersStore } from '@/entities/customers';
 import OrdersHistory from '@/entities/customers/ui/OrdersHistory';
 import PersonalInfo from '@/entities/customers/ui/PersonalInfo';
 import BackChevron from '@/shared/components/BackChevron';
@@ -28,15 +29,7 @@ interface Address {
 }
 
 export default function AccountPage() {
-  const [isEditing, setIsEditing] = useState(false);
-  const [isSaving] = useState(false);
-
-  const [profileData, setProfileData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-  });
+  const customersStore = useCustomersStore();
 
   const [addresses] = useState<Address[]>([
     {
@@ -73,10 +66,6 @@ export default function AccountPage() {
     orderUpdates: true,
   });
 
-  const handleProfileChange = (field: string, value: string) => {
-    setProfileData((prev) => ({ ...prev, [field]: value }));
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -84,7 +73,9 @@ export default function AccountPage() {
         <div className="flex items-center justify-between mb-8">
           <BackChevron title="My Account" muted="Manage your profile and preferences" />
 
-          <Button variant="outline">Logout</Button>
+          <Button variant="outline" onClick={() => customersStore.logOut()}>
+            <LogOut /> Logout
+          </Button>
         </div>
 
         <div className="grid lg:grid-cols-4 gap-6">
@@ -116,7 +107,7 @@ export default function AccountPage() {
               <PersonalInfo />
 
               {/* Addresses Tab */}
-              <TabsContent value="addresses">
+              <TabsContent value="addresses" className="mb-0">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="flex items-center gap-2">

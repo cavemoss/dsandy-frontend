@@ -6,19 +6,18 @@ import { useCartStore } from '@/features/cart';
 import { createZustand } from '@/shared/lib/utils';
 import { useInitStore, useNavStore } from '@/widgets/init';
 
+import { PAYMENT_TIMEOUT } from '../lib';
 import { StripeStoreState } from '../types';
 
 export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, get) => ({
-  clientSecret: null,
-
   isProcessing: false,
+
+  clientSecret: null,
 
   options: {
     amount: 100,
     currency: 'usd',
   },
-
-  order: null,
 
   // Getters
 
@@ -26,92 +25,106 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
 
   // Actions
 
-  setOptions: (opt) => {
-    set({
-      options: {
-        amount: opt.amount * 100,
-        currency: opt.currency,
-      },
-    });
+  setOptions() {
+    const options = {
+      amount: useCartStore.getState().getTotal() * 100,
+      currency: useInitStore.getState().viewerParams.currency.toLowerCase(),
+    };
+    console.log({ options });
+    return set({ options }), options;
   },
 
   async createPaymentIntent() {
     const self = get();
+    const navStore = useNavStore.getState();
     const initStore = useInitStore.getState();
     const cartStore = useCartStore.getState();
+    const ordersStore = useOrdersStore.getState();
 
-    if (self.order || self.clientSecret) return;
+    if (!cartStore.getItems().length) {
+      return navStore.replace('/checkout');
+    }
 
-    self.setOptions({
-      amount: cartStore.getTotal(),
-      currency: initStore.viewerParams.currency.toLowerCase(),
-    });
+    if (ordersStore.orders.currentId || self.clientSecret) {
+      return;
+    }
 
     try {
-      const order = await useOrdersStore.getState().placeOrder();
-
-      if (!order) return;
-
-      set({ order });
+      const options = self.setOptions();
+      const order = await ordersStore.placeOrder();
 
       const { clientSecret } = await api.stripe.createPaymentIntent({
         metadata: {
           orderId: order.id,
           tenantId: initStore.subdomain.tenantId,
         },
-        ...get().options,
+        ...options,
       });
 
+      setTimeout(() => {
+        set({ clientSecret: null });
+        navStore.push('/cart');
+      }, PAYMENT_TIMEOUT);
+
       set({ clientSecret });
-
-      const _20_MIN = 1000 * 60 * 20;
-
-      setTimeout(() => set({ clientSecret: null }), _20_MIN);
     } catch (error) {
-      console.debug('Failed to fetch client secret', { error });
+      console.debug('Failed to initiate payment', { error });
+      toast.error('Something went wrong');
     }
   },
 
   async confirmPayment(stripe, elements) {
-    const { clientSecret } = get();
+    const self = get();
+    const { clientSecret } = self;
 
     if (!clientSecret) return;
 
     set({ isProcessing: true });
 
-    const { error: submitError, selectedPaymentMethod } = await elements.submit();
+    try {
+      const { error: submitError, selectedPaymentMethod } = await elements.submit();
 
-    if (submitError) {
-      console.log('Stripe elements submit error', { submitError });
-      toast.error('There an error with your information');
+      if (submitError) {
+        console.debug('Stripe elements submit error', { submitError });
+        toast.error('There is an error with your information');
+        return;
+      }
 
-      return set({ isProcessing: false });
+      console.info({ selectedPaymentMethod });
+
+      await useOrdersStore.getState().updateOrderInfo();
+
+      const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        clientSecret,
+        confirmParams: { return_url: location.origin },
+        redirect: 'if_required',
+      });
+
+      if (confirmError) {
+        console.debug('Error confirming payment', { confirmError });
+        toast.error('Payment was unsuccessful');
+        return;
+      }
+
+      console.info({ paymentIntent });
+
+      toast.success('Success!');
+      useNavStore.getState().push('/order-complete');
+      localStorage.removeItem('cartItems');
+
+      self.cancelPayment();
+    } catch (error) {
+      console.debug('Payment confirmation failed', { error });
+      toast.error('Unknown error occurred');
+    } finally {
+      set({ isProcessing: false });
     }
+  },
 
-    console.info({ selectedPaymentMethod });
-
-    await useOrdersStore.getState().updateOrderInfo();
-
-    const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
-      elements,
-      clientSecret,
-      confirmParams: { return_url: location.origin },
-      redirect: 'if_required',
-    });
-
-    if (confirmError) {
-      console.error('Error confirming payment', { confirmError });
-      toast.error('There was an error with your payment');
-
-      return set({ isProcessing: false });
-    }
-
-    console.info({ paymentIntent });
-
-    toast.success('Success!');
-    useNavStore.getState().push('/order-complete');
-    localStorage.removeItem('cartItems');
-
+  cancelPayment() {
+    useOrdersStore.setState((s) => ((s.orders.currentId = null), s));
+    useCartStore.setState({ item: null, items: [] });
     set({ isProcessing: false, clientSecret: null });
   },
 }));

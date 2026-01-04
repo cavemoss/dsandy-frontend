@@ -64,7 +64,7 @@ export function formatPrice(amount: number) {
   return new Intl.NumberFormat(params.language, {
     style: 'currency',
     currency: params.currency,
-    minimumFractionDigits: 0,
+    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount);
 }

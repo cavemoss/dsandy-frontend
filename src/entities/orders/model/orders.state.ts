@@ -1,14 +1,21 @@
+import dayjs from 'dayjs';
+
 import * as api from '@/api/entities';
 import { useCustomersStore } from '@/entities/customers';
 import { useProductsStore } from '@/entities/products';
 import { useCartStore } from '@/features/cart';
 import { useStripeStore } from '@/features/checkout';
-import { createZustand, deepClone, objectByKey } from '@/shared/lib/utils';
+import { createZustand, deepClone } from '@/shared/lib/utils';
 
+import { actualizeAnonOrders, addAnonOrder, getAnonOrderIds } from '../lib';
 import { OrdersState } from '../types';
 
 export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) => ({
-  orders: [],
+  orders: {
+    all: [],
+    currentId: null,
+    lastId: null,
+  },
 
   contactInfo: {
     email: '',
@@ -25,55 +32,64 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
     zipCode: '',
   },
 
+  // Getters
+
+  getLastOrderId: () => '#' + get().orders.lastId?.toString().padStart(5, '0'),
+
   // Actions
 
   async init() {
-    if (useCustomersStore.getState().currentCustomer) {
-      await get().loadOrders();
-    }
+    await get().loadOrders();
   },
 
   async loadOrders() {
     try {
-      set({ orders: await api.orders.loadCustomersOrders() });
+      const orders: api.OrderDTO[] = [];
+
+      const anonOrderIds = getAnonOrderIds(true);
+      const { customer } = useCustomersStore.getState();
+
+      if (anonOrderIds) {
+        await api.orders.loadAnonOrders().then((orders) => {
+          actualizeAnonOrders(orders);
+          orders.push(...orders);
+        });
+      }
+
+      if (customer) {
+        await api.orders.loadCustomerOrders().then((orders) => {
+          orders.push(...orders);
+        });
+      }
+
+      orders.sort((a, b) => dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf());
+
+      set((state) => ((state.orders.all = orders), state));
     } catch (error) {
       console.debug('Failed to load orders', { error });
-    }
-  },
-
-  async updateOrderInfo() {
-    const { order } = useStripeStore.getState();
-    const { contactInfo, shippingInfo } = get();
-
-    if (!order) return;
-
-    try {
-      await api.orders.updateOrderInfo({
-        orderId: order.id,
-        contactInfo,
-        shippingInfo,
-      });
-    } catch (error) {
-      console.error('Error when placing an order', { error });
     }
   },
 
   async placeOrder() {
     const cartStore = useCartStore.getState();
     const productsStore = useProductsStore.getState();
+    const customersStore = useCustomersStore.getState();
+
+    const cartItems = cartStore.getItems();
 
     const { contactInfo, shippingInfo } = get();
     const { options: paymentInfo } = useStripeStore.getState();
 
+    const profitFloat = paymentInfo.amount / 100 - cartStore.getRealTotal();
+
     try {
-      return await api.orders.placeOrder({
+      const order = await api.orders.placeOrder({
         contactInfo,
         shippingInfo,
         paymentInfo,
 
-        orderItems: cartStore.items.map((item) => {
-          const { [item.productId]: product } = productsStore.getProductsByIds();
-          const { [item.scuId]: scu } = objectByKey(product.scus, 'id');
+        orderItems: cartItems.map((item) => {
+          const [product, scu] = productsStore.getProductAndSCU(item.productId, item.scuId);
 
           return {
             dProductId: product.id,
@@ -81,10 +97,78 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
             quantity: item.quantity,
           };
         }),
+
+        metadata: {
+          profit: parseFloat(profitFloat.toFixed(2)) * 100,
+
+          products: cartItems.reduce((result, item) => {
+            const [product, scu] = productsStore.getProductAndSCU(item.productId, item.scuId);
+
+            const ptr = (result[item.productId] ??= {
+              name: product.name,
+              variants: [],
+            });
+
+            ptr.variants.push({
+              attr: `${scu.propertyName}: ${scu.propertyValueName}`,
+              quantity: item.quantity,
+            });
+
+            return result;
+          }, {} as api.OrderMetadata['products']),
+        },
       });
-    } catch (error) {
-      console.error('Error when placing an order', { error });
+
+      if (!customersStore.customer) {
+        addAnonOrder(order.id);
+      }
+
+      set((state) => ((state.orders.currentId = order.id), state));
+
+      return order;
+    } catch (cause) {
+      throw new Error('Error occurred when placing an order', { cause });
     }
+  },
+
+  async updateOrderInfo() {
+    const self = get();
+
+    const orderId = self.orders.currentId;
+    const { contactInfo, shippingInfo } = self;
+
+    if (!orderId || !contactInfo.phone || !shippingInfo.address) {
+      throw new Error('Insufficient order info');
+    }
+
+    try {
+      await api.orders.updateOrderInfo({
+        orderId,
+        contactInfo,
+        shippingInfo,
+      });
+
+      set((state) => ((state.orders.lastId = orderId), state));
+    } catch (cause) {
+      throw new Error('Order update info request failed', { cause });
+    }
+  },
+
+  setAddress({ value }) {
+    const { shippingInfo: si, contactInfo: ci } = get();
+
+    ci.firstName = value.firstName!;
+    ci.lastName = value.lastName!;
+    ci.phone = value.phone!;
+
+    const { address } = value;
+
+    si.address = address.line1;
+    si.country = address.country;
+    if (address.line2) si.address2 = address.line2;
+    si.province = address.state;
+    si.city = address.city;
+    si.zipCode = address.postal_code;
   },
 
   setState: (clb) => set((s) => (clb(s), deepClone(s))),

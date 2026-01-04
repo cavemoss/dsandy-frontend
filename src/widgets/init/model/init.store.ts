@@ -1,7 +1,6 @@
 'use client';
 
 import { Country } from 'country-state-city';
-import Cookies from 'js-cookie';
 import { toast } from 'sonner';
 
 import { SubdomainDTO } from '@/api/entities';
@@ -15,14 +14,14 @@ import i18n from '@/localization/i18n';
 import { createZustand, deepClone, objectByKey } from '@/shared/lib/utils';
 
 import { fetchCountryData, getAnonViewerParams, InitState, ViewerParams } from '..';
-import { useNavStore } from './navigation.store';
+import { useNavStore } from './nav.store';
 
 export const useInitStore = createZustand<InitState>('init', (set, get) => ({
   initialized: false,
 
-  countryData: [],
-
   subdomain: {} as SubdomainDTO,
+
+  countryData: [],
 
   viewerParams: {
     country: 'US',
@@ -32,14 +31,12 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
 
   // Getters
 
-  isAdminPanel: () => {
-    const { hostname: h } = location;
-    return h.startsWith('admin.') || (h === 'localhost' && !!Cookies.get('isAdminPanel'));
-  },
+  isAdminPanel: () => location.hostname.startsWith('admin.'),
 
   getAvailableCountries: () => {
-    const countries = Country.getAllCountries().filter((c) => get().subdomain.config.countries.includes(c.isoCode));
-    countries.sort((a, b) => a.name.localeCompare(b.name));
+    const countries = Country.getAllCountries()
+      .filter((ctr) => get().subdomain.config.countries.includes(ctr.isoCode))
+      .sort((a, b) => a.name.localeCompare(b.name));
 
     return countries.map((ctr) => {
       const flag = ctr.isoCode
@@ -62,17 +59,16 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
 
   getAvailableCurrencies: () => {
     const self = get();
-    return self.countryData.find(({ code }) => self.viewerParams.country === code)!.currencies;
+    return self.countryData.find((ctr) => self.viewerParams.country === ctr.code)?.currencies ?? [];
   },
 
   // Actions
 
   init: async () => {
     const self = get();
+    const navStore = useNavStore.getState();
 
     if (self.initialized) return;
-
-    const navStore = useNavStore.getState();
 
     set({ countryData: await fetchCountryData() });
 
@@ -111,18 +107,18 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
   },
 
   setViewerParams: async () => {
-    const { currentCustomer } = useCustomersStore.getState();
+    const { customer } = useCustomersStore.getState();
 
-    if (currentCustomer) {
-      return set({ viewerParams: currentCustomer.preferences });
+    if (customer) {
+      return set({ viewerParams: customer.preferences });
     }
 
     let viewerParams: ViewerParams;
 
-    const localStorageItem = localStorage.getItem('viewerParams');
+    const lsItem = localStorage.getItem('viewerParams');
 
-    if (localStorageItem) {
-      viewerParams = JSON.parse(localStorageItem);
+    if (lsItem) {
+      viewerParams = JSON.parse(lsItem);
     } else {
       viewerParams = await getAnonViewerParams();
     }
@@ -150,11 +146,9 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
     const customersStore = useCustomersStore.getState();
     const self = get();
 
-    if (customersStore.currentCustomer) {
-      return customersStore.savePreferences();
-    }
+    if (customersStore.customer) await customersStore.savePreferences();
+    else localStorage.setItem('viewerParams', JSON.stringify(self.viewerParams));
 
-    localStorage.setItem('viewerParams', JSON.stringify(self.viewerParams));
     toast.success('Preferences saved');
   },
 

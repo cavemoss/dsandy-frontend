@@ -26,11 +26,25 @@ export interface OrderPaymentInfoDTO {
   amount: number;
 }
 
+export interface OrderMetadata {
+  profit: number;
+  products: {
+    [id: number]: {
+      name: string;
+      variants: {
+        attr: string;
+        quantity: number;
+      }[];
+    };
+  };
+}
+
 export interface PlaceOrderBodyDTO {
   contactInfo: OrderContactInfoDTO;
   shippingInfo: OrderShippingInfoDTO;
   orderItems: OrderItemDTO[];
   paymentInfo: OrderPaymentInfoDTO;
+  metadata: OrderMetadata;
 }
 
 export interface UpdateOrderInfoBodyDTO {
@@ -65,6 +79,7 @@ export interface OrderDTO {
   shippingInfo: OrderShippingInfoDTO;
   contactInfo: OrderContactInfoDTO;
   orderItems: OrderItemDTO[];
+  metadata: OrderMetadata;
   dProducts: DProductDTO[];
   createdAt: string;
 }

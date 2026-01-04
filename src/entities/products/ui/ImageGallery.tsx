@@ -1,9 +1,17 @@
 'use client';
 
-import { Button } from '@shadcd/button';
-import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
+import {
+  Carousel,
+  type CarouselApi,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@shadcd/carousel';
+import { useCallback, useEffect, useState } from 'react';
 
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
+import { cn } from '@/shared/shadcd/lib/utils';
 
 import { useProductsStore } from '../model';
 
@@ -14,80 +22,85 @@ interface Props {
 export function ProductImageGallery({ images }: Props) {
   const productsStore = useProductsStore();
 
+  const [api, setApi] = useState<CarouselApi>();
   const imageIndex = useProductsStore((state) => state.products.current.imageIndex);
 
-  const nextImage = () =>
+  const setImageIndex = (index: number) => {
     productsStore.setState((state) => {
-      const ptr = state.products.current;
-      ptr.imageIndex = (ptr.imageIndex + 1) % images.length;
+      state.products.current.imageIndex = index;
     });
+  };
 
-  const prevImage = () =>
-    productsStore.setState((state) => {
-      const ptr = state.products.current;
-      ptr.imageIndex = (ptr.imageIndex - 1 + images.length) % images.length;
+  const scrollTo = useCallback(
+    (index: number) => {
+      api?.scrollTo(index);
+    },
+    [api]
+  );
+
+  useEffect(() => {
+    if (!api) return;
+
+    scrollTo(imageIndex);
+
+    api.on('select', () => {
+      setImageIndex(api.selectedScrollSnap());
     });
+  }, [api]);
+
+  useEffect(() => {
+    scrollTo(imageIndex);
+  }, [imageIndex]);
 
   return (
-    <div className="space-y-4">
-      {/* Main Image */}
-      <div className="relative group bg-gray-50 rounded-lg overflow-hidden aspect-square">
-        <ImageWithFallback
-          src={images[imageIndex]}
-          alt={`Image ${imageIndex + 1}`}
-          className="w-full h-full object-cover brightness-95"
-        />
-
-        {/* Navigation Arrows */}
-        {images.length > 1 && (
-          <>
-            <Button
-              variant="outline"
-              size="sm"
-              className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 backdrop-blur-sm"
-              onClick={prevImage}
+    <div className="flex relative">
+      {/* Thumbnail Strip - Left Side */}
+      <div className="absolute flex flex-col gap-2 w-22 p-4 overflow-y-scroll h-full">
+        {images.map((image, index) => (
+          <div key={index}>
+            <div
+              onClick={() => scrollTo(index)}
+              className={cn(
+                'relative w-full aspect-square rounded-lg border-2 overflow-hidden transition-all',
+                imageIndex === index ? 'border-primary ring-2 ring-primary ring-offset-2' : 'hover:border-primary'
+              )}
+              aria-label={`View ${index}`}
+              aria-current={imageIndex === index ? 'true' : 'false'}
             >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 backdrop-blur-sm"
-              onClick={nextImage}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </>
-        )}
+              <ImageWithFallback src={image} className="w-full h-full object-cover" />
 
-        {/* Zoom Icon */}
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="bg-white/80 backdrop-blur-sm rounded-full p-2">
-            <ZoomIn className="h-4 w-4" />
+              {imageIndex === index && (
+                <div className="absolute inset-0 ring-1 ring-inset ring-foreground/10 rounded-lg" />
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Main Image Carousel */}
+      <div className="flex-1">
+        <div className="relative ml-22">
+          <Carousel setApi={setApi} className="w-full rounded-xl overflow-hidden">
+            <CarouselContent>
+              {images.map((image, index) => (
+                <CarouselItem key={index}>
+                  <ImageWithFallback
+                    src={image}
+                    className="w-full h-full aspect-square rounded-xl overflow-hidden object-cover brightness-95"
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-4 bg-card/80 backdrop-blur-sm border-border hover:bg-card shadow-thumbnail" />
+            <CarouselNext className="right-4 bg-card/80 backdrop-blur-sm border-border hover:bg-card shadow-thumbnail" />
+          </Carousel>
+
+          {/* Image Counter */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-foreground/80 backdrop-blur-sm text-primary-foreground px-3 py-1.5 rounded-full text-sm font-medium tracking-wide">
+            {imageIndex + 1} / {images.length}
           </div>
         </div>
       </div>
-
-      {/* Thumbnail Images */}
-      {images.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {images.map((image, index) => (
-            <button
-              key={index}
-              onClick={() => productsStore.setState((state) => (state.products.current.imageIndex = index))}
-              className={`flex-shrink-0 rounded-md overflow-hidden border-2 transition-colors ${
-                imageIndex === index ? 'border-primary' : 'border-transparent'
-              }`}
-            >
-              <ImageWithFallback
-                src={image}
-                alt={`thumbnail ${index + 1}`}
-                className="w-16 h-16 object-cover brightness-95"
-              />
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

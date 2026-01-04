@@ -6,11 +6,13 @@ import { Skeleton } from '@shadcd/skeleton';
 import { Spinner } from '@shadcd/spinner';
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { CreditCard, Sparkles } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
 
 import { useStripeStore } from '@/features/checkout';
 
 export default function PaymentSection() {
+  const pathname = usePathname();
   const stripe = useStripe();
   const elements = useElements();
   const stripeStore = useStripeStore();
@@ -18,7 +20,7 @@ export default function PaymentSection() {
   const clientSecret = useStripeStore((state) => state.clientSecret);
   const isProcessing = useStripeStore((state) => state.isProcessing);
 
-  const [isElementMounted, setIsElementMounted] = useState(true);
+  const [isElementMounted, setIsElementMounted] = useState(false);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,6 +28,19 @@ export default function PaymentSection() {
   };
 
   useEffect(() => void stripeStore.createPaymentIntent(), []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: Event) => {
+      e.preventDefault();
+      stripeStore.cancelPayment();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [pathname]);
 
   return (
     <Card>
@@ -38,9 +53,9 @@ export default function PaymentSection() {
 
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-6">
-          {clientSecret && <PaymentElement onLoaderStart={() => setIsElementMounted(false)} />}
+          {clientSecret && <PaymentElement onLoaderStart={() => setIsElementMounted(true)} />}
 
-          {isElementMounted && (
+          {!isElementMounted && (
             <div className="space-y-2">
               <Skeleton className="w-full h-12" />
               <Skeleton className="w-full h-12" />
@@ -49,7 +64,7 @@ export default function PaymentSection() {
             </div>
           )}
 
-          <Button type="submit" disabled={isProcessing} className="w-full">
+          <Button type="submit" disabled={isProcessing || !isElementMounted} className="w-full">
             {isProcessing ? (
               <>
                 <Spinner /> Processing payment...

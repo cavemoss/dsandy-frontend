@@ -1,23 +1,32 @@
-import dayjs from 'dayjs';
 import { Package } from 'lucide-react';
 
 import { useOrdersStore } from '@/entities/orders';
-import { useProductsStore } from '@/entities/products';
-import { objectByKey } from '@/shared/lib/utils';
-import { Badge } from '@/shared/shadcd/components/ui/badge';
+import OrderCard from '@/entities/orders/ui/Card';
+import OrderSeparator from '@/entities/orders/ui/Separator';
+import { Button } from '@/shared/shadcd/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
-import { Separator } from '@/shared/shadcd/components/ui/separator';
 import { TabsContent } from '@/shared/shadcd/components/ui/tabs';
-import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 
 export default function OrdersHistory() {
-  const ordersStore = useOrdersStore();
-  const productsStore = useProductsStore();
+  const orders = useOrdersStore((state) => state.orders.all);
 
-  const orders = useOrdersStore((state) => state.orders);
+  if (!orders.length) {
+    return (
+      <TabsContent value="orders" className="mb-0">
+        <Card>
+          <CardContent className="py-6 flex flex-col items-center">
+            <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+            <h2 className="text-xl font-medium mb-2">Your order history empty</h2>
+            <p className="text-muted-foreground mb-6">Start shopping to add items to your cart</p>
+            <Button>Continue Shopping</Button>
+          </CardContent>
+        </Card>
+      </TabsContent>
+    );
+  }
 
   return (
-    <TabsContent value="orders">
+    <TabsContent value="orders" className="mb-0">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 min-h-[36px]">
@@ -26,42 +35,13 @@ export default function OrdersHistory() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {orders.map((order, idx) => (
+          {orders.map((order) => (
             <>
-              <div className="flex items-center gap-2">
-                <p className="text-base text-gray-600 whitespace-nowrap">
-                  Order #{order.id.toString().padStart(5, '0')}
-                </p>
-                <Badge variant="outline" className="text-gray-400">
-                  {dayjs(order.createdAt).format('MMM D YYYY')}
-                </Badge>
-                <Separator className="shrink-1" />
-              </div>
+              <OrderSeparator order={order} />
 
-              {order.orderItems.map((item, idx) => {
-                const product = productsStore.getProductsByIds()[item.dProductId];
-                const scu = objectByKey(product.scus, 'propertyValueId')[item.skuAttr.split(':')[1]];
-
-                return (
-                  <div key={idx} className="flex gap-3 border rounded-lg p-4">
-                    <ImageWithFallback className="h-30 brightness-95 rounded-sm" src={scu.image} />
-
-                    <div>
-                      <span className="font-medium line-clamp-2">{product.name}</span>
-                      <p className="text-sm text-muted-foreground">
-                        {scu.propertyName}: {scu.propertyValueName}
-                      </p>
-                      <p className="text-sm mt-3">
-                        {item.quantity} item • ${(scu.priceInfo.dsOfferPrice * item.quantity).toFixed(2)}
-                      </p>
-                    </div>
-
-                    <div className="ml-auto">
-                      <Badge>Delivered</Badge>
-                    </div>
-                  </div>
-                );
-              })}
+              {order.orderItems.map((item, index) => (
+                <OrderCard key={index} order={order} item={item} inner />
+              ))}
             </>
           ))}
         </CardContent>

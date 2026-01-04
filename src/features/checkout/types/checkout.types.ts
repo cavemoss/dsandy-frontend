@@ -1,6 +1,6 @@
 import { Stripe, StripeElements, StripeElementsOptions } from '@stripe/stripe-js';
 
-import { OrderContactInfoDTO, OrderDTO, OrderShippingInfoDTO } from '@/api/entities';
+import { OrderContactInfoDTO, OrderShippingInfoDTO } from '@/api/entities';
 import { SelectOption } from '@/shared/lib/types';
 
 export interface CheckoutState {
@@ -11,19 +11,19 @@ export interface CheckoutState {
 }
 
 export interface StripeStoreState {
+  isProcessing: boolean;
   clientSecret: string | null;
   options: {
     amount: number;
     currency: string;
   };
-  isProcessing: boolean;
-  order: OrderDTO | null;
   // getters
   getElementsOptions: () => StripeElementsOptions;
   // actions
-  setOptions: (opt: this['options']) => void;
+  setOptions: () => this['options'];
   createPaymentIntent: () => Promise<void>;
   confirmPayment: (stripe: Stripe, elements: StripeElements) => Promise<void>;
+  cancelPayment: () => void;
 }
 
 export interface ShippingFormState {

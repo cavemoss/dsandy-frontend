@@ -4,7 +4,7 @@ import { Button } from '@shadcd/button';
 import { Card, CardContent } from '@shadcd/card';
 import { Heart, ShoppingCart, Undo } from 'lucide-react';
 
-import ProductCard from '@/entities/products/ui/ProductCard';
+import ProductCard from '@/entities/products/ui/Card';
 import { useFavoritesStore } from '@/features/cart';
 import BackChevron from '@/shared/components/BackChevron';
 import { formatPrice } from '@/widgets/init';
@@ -17,14 +17,14 @@ export default function FavoritesPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center mb-8">
+        <div className="flex items-center">
           <BackChevron
             title="My Favorites"
             muted="saved items"
-            addon={<span className="text-green-600 ml-2">• Save {formatPrice(122)} total</span>}
+            addon={<span className="text-green-600">• Save {formatPrice(122)} total</span>}
           />
-          <div className="ml-auto flex gap-2">
-            {keys.length > 0 && (
+          {keys.length > 0 && (
+            <div className="ml-auto flex gap-2">
               <Button
                 variant="ghost"
                 className="hover:bg-red-100 hover:text-red-600"
@@ -32,12 +32,12 @@ export default function FavoritesPage() {
               >
                 <Undo /> Clear All
               </Button>
-            )}
-            <Button variant="outline">
-              <ShoppingCart />
-              Add All
-            </Button>
-          </div>
+              <Button variant="outline">
+                <ShoppingCart />
+                Add All
+              </Button>
+            </div>
+          )}
         </div>
 
         {keys.length === 0 ? (

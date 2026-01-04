@@ -3,12 +3,12 @@
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { ProductReviews } from '@/entities/feedback';
 import {
   ProductActions,
   ProductDetailTabs,
   ProductImageGallery,
   ProductInfo,
+  ProductReviews,
   ProductSCUSelect,
   ProductTrustBudges,
   useProductsStore,
@@ -17,7 +17,6 @@ import {
 export default function ProductPage() {
   const params = useParams();
   const searchParams = useSearchParams();
-
   const productsStore = useProductsStore();
 
   const product = useProductsStore((state) => state.products.current.item);
@@ -34,20 +33,20 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+      <div className="container mx-auto py-8 space-y-18">
+        <div className="grid grid-cols-2 gap-8">
           <ProductImageGallery images={productImages} />
 
-          <div className="space-y-6">
+          <div className="flex flex-col gap-2">
             <ProductInfo product={product} scu={scu} />
-            <ProductSCUSelect all={product.scus} current={scu} />
+            <ProductSCUSelect productId={product.id} all={product.scus} current={scu} />
             <ProductActions />
             <ProductTrustBudges />
           </div>
         </div>
 
         <ProductDetailTabs product={product} />
-        <ProductReviews averageRating={product.feedback.rating} totalReviews={100} />
+        <ProductReviews />
       </div>
     </div>
   );

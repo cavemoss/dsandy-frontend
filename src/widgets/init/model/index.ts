@@ -1,2 +1,2 @@
 export * from './init.store';
-export * from './navigation.store';
+export * from './nav.store';

@@ -12,9 +12,9 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
       scu: null,
       imageIndex: 0,
       quantity: 1,
+      reviews: null,
     },
   },
-  error: false,
 
   // Getters
 
@@ -26,24 +26,23 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
     const { [productId]: product } = get().getProductsByIds();
     const { [scuId]: scu } = objectByKey(product.scus, 'id');
 
-    return { product, scu };
+    return [product, scu];
   },
 
   getProductImages: () => {
     const { item: product } = get().products.current;
-    return [...product!.images, ...product!.scus.map((scu) => scu.image)];
+    return [...product!.scus.map((scu) => scu.image), ...product!.images];
   },
 
   getDisplayPrices: () => {
     const price = get().products.current.scu!.priceInfo;
-    console.log(price.dsOfferPrice, formatPrice(price.dsOfferPrice));
     return {
       original: formatPrice(price.dsPrice),
       discounted: formatPrice(price.dsOfferPrice),
     };
   },
 
-  getInStock: () => get().products.current.scu!.availableStock,
+  getInStock: () => get().products.current.scu!.availableStock > 0,
 
   getCartItem: (quantity) => {
     const { item, scu } = get().products.current;
@@ -67,24 +66,44 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
       set((state) => ((state.products.all = products), state));
     } catch (error) {
       console.debug('Error fetching products', { error });
-      set({ error: true });
+    }
+  },
+
+  async loadProductReviews(page = 1) {
+    const { aliProductId } = get().products.current.item!;
+
+    try {
+      const reviews = await api.products.getReviews({
+        aliProductId,
+        page,
+        pageSize: 5,
+      });
+      set((state) => ((state.products.current.reviews = reviews), deepClone(state)));
+    } catch (error) {
+      console.debug('Error fetching product reviews', { error });
     }
   },
 
   setCurrentProduct(idParam, scuId) {
-    const productId: number = Array.isArray(idParam) ? NaN : Number(idParam);
-    const product = get().products.all.find((p) => p.id === productId);
+    const self = get();
 
-    if (!product) return;
+    const productId: number = Array.isArray(idParam) ? NaN : Number(idParam);
+
+    const product = self.getProductsByIds()[productId];
+    const scu = objectByKey(product.scus, 'id')[scuId!] ?? product.scus[0];
 
     set((state) => {
       const { current } = state.products;
 
+      current.reviews = null;
       current.item = product;
-      current.scu = objectByKey(product.scus, 'id')[scuId!] ?? product.scus[0];
+      current.scu = scu;
+      current.imageIndex = state.getProductImages().findIndex((img) => img === scu.image);
 
       return state;
     });
+
+    self.loadProductReviews();
   },
 
   setSCU(scuId) {
@@ -99,5 +118,5 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
     });
   },
 
-  setState: (callback) => set((state) => (callback(state), deepClone(state))),
+  setState: (clb) => set((s) => (clb(s), deepClone(s))),
 }));

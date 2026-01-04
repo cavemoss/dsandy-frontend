@@ -2,12 +2,11 @@
 import { Button } from '@shadcd/button';
 import { Checkbox } from '@shadcd/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@shadcd/dialog';
-import { Label } from '@shadcd/label';
 import { Separator } from '@shadcd/separator';
 import { Mail } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useCustomersStore } from '@/entities/customers';
+import { AuthErrorEnum } from '@/api/entities';
 import { useAuthStore } from '@/features/auth';
 import LabeledInput from '@/shared/components/LabeledInput';
 import LabeledPasswordInput from '@/shared/components/LabeledPasswordInput';
@@ -15,32 +14,69 @@ import FacebookSvg from '@/shared/components/svg-icons/FaceBook';
 import GoogleSvg from '@/shared/components/svg-icons/Google';
 import { Model } from '@/shared/lib/utils';
 import { FieldDescription } from '@/shared/shadcd/components/ui/field';
+import { Spinner } from '@/shared/shadcd/components/ui/spinner';
 
-import { useDialogsStore } from '../..';
-import { DialogEnum } from '../../types/dialogs.types';
+import { DialogEnum, useDialogsStore } from '../..';
 
 export default function LoginDialog() {
-  const customersStore = useCustomersStore();
   const dialogsStore = useDialogsStore();
   const authStore = useAuthStore();
 
   const isOpened = useDialogsStore((state) => state[DialogEnum.LOGIN]);
 
   const [errorTrigger, setErrorTrigger] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const m = new Model(authStore, errorTrigger);
+  const m = new Model(authStore, errorTrigger, { onChange: authStore.clearErrors });
+
+  const emailModel = m
+    .Input((s) => s.credentials, 'email')
+    .setError(
+      !authStore.isEmailValid() ? (
+        <>Invalid email</>
+      ) : authStore.errors.email === AuthErrorEnum.NOT_FOUND ? (
+        <>This account does&apos;nt exist</>
+      ) : (
+        false
+      )
+    );
+
+  const passwordModel = m
+    .Input((s) => s.credentials, 'password')
+    .setError(
+      authStore.credentials.password.length < 2 ? (
+        <>Please enter password</>
+      ) : (
+        authStore.errors.password === AuthErrorEnum.INVALID && <>Wrong password</>
+      )
+    );
+
+  const isDisabled = loading || (errorTrigger && !m.isAllValid);
 
   const handleSubmit = async () => {
     setErrorTrigger(true);
-    setIsLoading(true);
-    await customersStore.login();
-    setIsLoading(false);
+
+    if (!m.isAllValid) return;
+    setLoading(true);
+
+    await authStore.loginCustomer();
+    setLoading(false);
   };
 
-  const emailModel = m.input((s) => s.credentials, 'email');
+  useEffect(() => {
+    if (!isOpened) {
+      setTimeout(() => {
+        authStore.resetState();
+        setErrorTrigger(false);
+      }, 1000);
+    }
+  }, [isOpened]);
 
-  const passwordModel = m.input((s) => s.credentials, 'password');
+  useEffect(() => {
+    if (!loading && m.isAllValid) {
+      dialogsStore.toggleDialog(DialogEnum.LOGIN);
+    }
+  }, [loading]);
 
   return (
     <Dialog open={isOpened} onOpenChange={() => dialogsStore.toggleDialog(DialogEnum.LOGIN)}>
@@ -58,9 +94,7 @@ export default function LoginDialog() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Checkbox id="rememberMe" />
-              <Label htmlFor="rememberMe" className="text-sm">
-                Remember me
-              </Label>
+              <FieldDescription>Remember me</FieldDescription>
             </div>
             <Button variant="link" className="p-0 h-auto text-sm">
               Forgot password?
@@ -68,14 +102,13 @@ export default function LoginDialog() {
           </div>
         </div>
 
-        <Button type="submit" className="w-full" onClick={handleSubmit}>
-          {isLoading ? (
+        <Button type="submit" className="w-full" disabled={isDisabled} onClick={handleSubmit}>
+          {loading ? (
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Signing in...
+              <Spinner /> Signing in...
             </div>
           ) : (
-            'Sign In'
+            <>Sign In</>
           )}
         </Button>
 
