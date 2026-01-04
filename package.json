@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "tsc --noEmit",
+    "deploy": "tsc --noEmit && git add . && git commit -m \"deploy: auto\" && git push origin main"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
