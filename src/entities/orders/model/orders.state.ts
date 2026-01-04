@@ -44,7 +44,7 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
 
   async loadOrders() {
     try {
-      const orders: api.OrderDTO[] = [];
+      const result: api.OrderDTO[] = [];
 
       const anonOrderIds = getAnonOrderIds(true);
       const { customer } = useCustomersStore.getState();
@@ -62,9 +62,9 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
         });
       }
 
-      orders.sort((a, b) => dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf());
+      result.sort((a, b) => dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf());
 
-      set((state) => ((state.orders.all = orders), state));
+      set((state) => ((state.orders.all = result), state));
     } catch (error) {
       console.debug('Failed to load orders', { error });
     }
