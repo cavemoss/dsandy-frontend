@@ -52,13 +52,13 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
       if (anonOrderIds) {
         await api.orders.loadAnonOrders().then((orders) => {
           actualizeAnonOrders(orders);
-          orders.push(...orders);
+          result.push(...orders);
         });
       }
 
       if (customer) {
         await api.orders.loadCustomerOrders().then((orders) => {
-          orders.push(...orders);
+          result.push(...orders);
         });
       }
 

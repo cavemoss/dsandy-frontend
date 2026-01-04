@@ -1,4 +1,4 @@
-import { CircleCheck, Truck } from 'lucide-react';
+import { CircleCheck } from 'lucide-react';
 
 import { OrderDTO, OrderItemDTO, OrderStatus } from '@/api/entities';
 import { useProductsStore } from '@/entities/products';
@@ -31,9 +31,9 @@ export default function OrderCard({ order, item, inner }: Params) {
         );
       case OrderStatus.IN_DELIVERY:
         return (
-          <Truck>
-            <CircleCheck className="-ml-0.5" /> In Delivery
-          </Truck>
+          <Badge>
+            <Spinner className="-ml-0.5" /> In Delivery
+          </Badge>
         );
       case OrderStatus.DELIVERED:
         return (
@@ -71,7 +71,7 @@ export default function OrderCard({ order, item, inner }: Params) {
   return inner ? (
     <div className="flex gap-3 border rounded-lg p-4">{node}</div>
   ) : (
-    <Card>
+    <Card id={order.id + ''}>
       <CardContent className="flex gap-3">{node}</CardContent>
     </Card>
   );
