@@ -12,7 +12,7 @@ import { useCartStore, useFavoritesStore } from '@/features/cart';
 
 import Customer from './Customer';
 import Logo from './Logo';
-import { MenuBar } from './Menu';
+import MenuBar from './MenuBar';
 import ParamsSelect from './ParamsSelect';
 import SearchBar from './SearchBar';
 
@@ -99,7 +99,7 @@ export function Header() {
         </div>
 
         {/* Navigation */}
-        <nav className="border-t bg-muted/50 hidden md:block py-4">
+        <nav className="border-t bg-muted/50 hidden md:block py-2">
           <MenuBar />
         </nav>
       </header>
