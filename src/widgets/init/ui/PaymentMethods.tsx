@@ -28,7 +28,7 @@ export default function PaymentMethods() {
           viewBox="0 0 24 16"
           className="p-Logo p-Logo--md p-CardBrandIcon"
         >
-          <g clip-path="url(#clip0_4934_35103)">
+          <g clipPath="url(#clip0_4934_35103)">
             <path fill="#00579f" d="M22 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2"></path>
             <path
               fill="#fff"
@@ -36,9 +36,9 @@ export default function PaymentMethods() {
             ></path>
             <path
               fill="#fff"
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M18.584 5.108h1.174l1.224 5.802h-1.405l-.18-.87h-1.95c-.055.154-.318.87-.318.87h-1.592l2.254-5.32c.156-.377.431-.482.793-.482m-.093 2.124-.606 1.623h1.261c-.062-.29-.35-1.679-.35-1.679l-.106-.5a31 31 0 0 1-.2.556"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             ></path>
             <path
               fill="#fff"
@@ -65,7 +65,7 @@ export default function PaymentMethods() {
           viewBox="0 0 24 16"
           className="p-Logo p-Logo--md p-CardBrandIcon"
         >
-          <g clip-path="url(#clip0_4934_35113)">
+          <g clipPath="url(#clip0_4934_35113)">
             <path fill="#0193ce" d="M22 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2"></path>
             <path
               fill="#fff"
@@ -74,9 +74,9 @@ export default function PaymentMethods() {
             <path fill="#fff" d="M14.19 9.009h1.9l.885-.946-.76-.946h-2.024v.63h1.772v.631H14.19z"></path>
             <path
               fill="#fff"
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="m5.478 9.514-.262.756H2.595l2.228-4.54h2.102l.258.504V5.73h2.621l.525 1.261.524-1.261h2.49v4.54h-1.972v-.63l-.256.63H9.542l-.262-.63v.63H6.396l-.262-.756zm6.424.126h.782l.004-3.28h-1.31l-1.05 2.27L9.28 6.36H7.97v3.027L6.395 6.36H5.347L3.774 9.64h.918l.262-.757h1.704l.262.757h1.836V7.117l1.18 2.523h.786l1.18-2.523zM6.396 8.252l-.524-1.387-.656 1.387z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             ></path>
           </g>
           <defs>

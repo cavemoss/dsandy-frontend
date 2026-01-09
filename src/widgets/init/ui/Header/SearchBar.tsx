@@ -44,7 +44,7 @@ export default function SearchBar() {
 
   return (
     <Popover open={popoverOpen} onOpenChange={(open) => !open && setPopoverOpen(false)}>
-      <PopoverTrigger className="w-lg">
+      <PopoverTrigger className="w-lg hidden sm:block">
         <InputGroup>
           <InputGroupInput placeholder="Search..." onInput={onInput} />
           <InputGroupAddon>

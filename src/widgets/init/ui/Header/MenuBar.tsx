@@ -14,6 +14,10 @@ import * as React from 'react';
 
 import { useIsMobile } from '@/shared/shadcd/hooks/use-mobile';
 
+interface Props {
+  mobile?: true;
+}
+
 const components: { title: string; href: string; description: string }[] = [
   {
     title: 'Alert Dialog',
@@ -49,8 +53,18 @@ const components: { title: string; href: string; description: string }[] = [
   },
 ];
 
-export default function MenuBar() {
+export default function MenuBar({ mobile }: Props) {
   const isMobile = useIsMobile();
+
+  return (
+    <NavigationMenu className="m-auto" viewport={isMobile}>
+      <NavigationMenuList className="flex-wrap">
+        <NavigationMenuLink asChild>
+          <Link href="/docs">Product Catalog</Link>
+        </NavigationMenuLink>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
 
   return (
     <NavigationMenu className="m-auto" viewport={isMobile}>

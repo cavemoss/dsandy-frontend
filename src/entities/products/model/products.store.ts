@@ -30,8 +30,8 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
   },
 
   getProductImages: () => {
-    const { item: product } = get().products.current;
-    return [...product!.scus.map((scu) => scu.image), ...product!.images];
+    const product = get().products.current.item;
+    return [...product!.images, ...product!.scus.map((scu) => scu.image)];
   },
 
   getDisplayPrices: () => {

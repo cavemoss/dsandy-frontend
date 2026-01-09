@@ -28,6 +28,8 @@ export default function ProductCard({ productId, scuId }: Props) {
   const product = productsStore.getProductsByIds()[productId];
   const scu = productsStore.getExactSCU(productId, scuId);
 
+  if (!product || !scu) return <></>;
+
   const isInStock = scu.availableStock > 0;
   const isDiscount = scu.priceInfo.dsDiscount != null;
 

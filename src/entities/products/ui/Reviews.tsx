@@ -6,8 +6,12 @@ import { Progress } from '@shadcd/progress';
 import { useProductsStore } from '@/entities/products';
 import StarRating from '@/shared/components/StarRating';
 import { Skeleton } from '@/shared/shadcd/components/ui/skeleton';
+import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
+import { useDialogsStore } from '@/widgets/dialogs';
 
 export function ProductReviews() {
+  const dialogsStore = useDialogsStore();
+
   const reviews = useProductsStore((state) => state.products.current.reviews);
   const productFeedback = useProductsStore((state) => state.products.current.item?.feedback);
 
@@ -67,6 +71,16 @@ export function ProductReviews() {
                       </div>
 
                       <p className="text-muted-foreground">{review.text}</p>
+                      <div className="flex gap-2">
+                        {review.thumbnails?.map((src, index) => (
+                          <ImageWithFallback
+                            onClick={() => dialogsStore.viewImages(review.images!, index)}
+                            className="w-20 aspect-square rounded-xl"
+                            src={src}
+                            key={index}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>

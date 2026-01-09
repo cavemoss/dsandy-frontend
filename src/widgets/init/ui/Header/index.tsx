@@ -2,9 +2,8 @@
 
 import { Badge } from '@shadcd/badge';
 import { Button } from '@shadcd/button';
-import { Input } from '@shadcd/input';
 import { Sheet, SheetContent, SheetTrigger } from '@shadcd/sheet';
-import { Heart, Menu, Search, ShoppingCart } from 'lucide-react';
+import { Heart, Menu, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 
 import { useCustomersStore } from '@/entities/customers';
@@ -27,31 +26,21 @@ export function Header() {
 
   return (
     <>
-      {/* Top bar */}
       <div className="bg-primary text-primary-foreground py-2">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm">Free shipping on orders over $50 | 30-day return policy</p>
-        </div>
+        <p className=" text-center text-sm">Free shipping on orders over $50 | 30-day return policy</p>
       </div>
 
       <header className="border-b bg-background sticky top-0 z-50">
         {/* Main header */}
         <div className="container mx-auto py-4">
-          <div className="grid grid-cols-3">
-            <div className="flex items-center">
-              <Logo className="text-[1.6rem]" />
-            </div>
-
-            {/* Search bar - hidden on mobile */}
+          <div className="flex w-full md:grid grid-cols-3 px-4 md:px-0">
+            <Logo className="text-[1.6rem]" />
             <SearchBar />
 
-            {/* Right side actions */}
-            <div className="flex items-center gap-2">
-              <div className="ml-auto"></div>
+            <div className="items-center ml-auto gap-2 hidden md:flex">
               <ParamsSelect />
               <Customer info={customerInfo} />
 
-              {/* Favorites */}
               <Link href="/favorites">
                 <Button variant="ghost" size="icon" className="relative">
                   <Heart className="h-5 w-5" />
@@ -63,7 +52,6 @@ export function Header() {
                 </Button>
               </Link>
 
-              {/* Cart */}
               <Link href="/cart">
                 <Button variant="ghost" size="icon" className="relative">
                   <ShoppingCart className="h-5 w-5" />
@@ -74,27 +62,16 @@ export function Header() {
                   )}
                 </Button>
               </Link>
-
-              {/* Mobile menu */}
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right">
-                  <MenuBar />
-                </SheetContent>
-              </Sheet>
             </div>
-          </div>
 
-          {/* Mobile search bar */}
-          <div className="md:hidden mt-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input placeholder="Search products..." className="pl-10" />
-            </div>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="ml-auto md:hidden">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right"></SheetContent>
+            </Sheet>
           </div>
         </div>
 

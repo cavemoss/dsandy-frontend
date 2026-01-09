@@ -30,5 +30,5 @@ export interface ProductsState {
   loadProductReviews: (page?: number) => Promise<void>;
   setCurrentProduct: (idParam: ParamValue, scuId?: string | null) => void;
   setSCU: (index: number) => void;
-  setState: (callback: (state: ProductsState) => void) => void;
+  setState: (clb: (s: this) => void) => void;
 }

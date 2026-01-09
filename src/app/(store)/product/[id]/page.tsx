@@ -13,6 +13,7 @@ import {
   ProductTrustBudges,
   useProductsStore,
 } from '@/entities/products';
+import { Skeleton } from '@/shared/shadcd/components/ui/skeleton';
 
 export default function ProductPage() {
   const params = useParams();
@@ -27,17 +28,59 @@ export default function ProductPage() {
     productsStore.setCurrentProduct(params.id, scuId);
   }, []);
 
-  if (!product || !scu) return <></>;
+  const skeleton = (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto md:py-8 space-y-18">
+        <div className="flex flex-col md:grid grid-cols-2 gap-3 md:gap-8">
+          <Skeleton className="flex-1 aspect-square rounded-xl" />
+          <div className="flex flex-1 flex-col gap-2 px-4 md:px-0">
+            <div className="w-full space-y-2">
+              <Skeleton className="w-full h-9" />
+              <Skeleton className="w-[50%] h-9" />
+              <Skeleton className="w-[30%] h-4" />
+              <Skeleton className="w-[60%] h-9 mt-6" />
+            </div>
+            <div className="w-full my-auto space-y-2">
+              <Skeleton className="w-[20%] h-4" />
+              <div className="flex gap-2">
+                {new Array(5).fill(0).map((el, idx) => (
+                  <div key={idx} className="space-y-1 flex flex-col w-20">
+                    <Skeleton className="w-full aspect-square" />
+                    <Skeleton className="w-full h-4" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="w-full space-y-2">
+              <Skeleton className="w-30 h-10" />
+              <div className="flex w-full gap-2">
+                <Skeleton className="flex-1 h-10" />
+                <Skeleton className="w-14 h-10" />
+                <Skeleton className="w-14 h-10" />
+              </div>
+              <Skeleton className="w-full h-10" />
+              <div className="flex w-full justify-between">
+                <Skeleton className="w-30 h-30" />
+                <Skeleton className="w-30 h-30" />
+                <Skeleton className="w-30 h-30" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (!product || !scu) return skeleton;
 
   const productImages = productsStore.getProductImages();
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto py-8 space-y-18">
-        <div className="grid grid-cols-2 gap-8">
+      <div className="container mx-auto md:py-8 space-y-18">
+        <div className="flex flex-col md:grid grid-cols-2 gap-3 md:gap-8">
           <ProductImageGallery images={productImages} />
-
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 px-4 md:px-0">
             <ProductInfo product={product} scu={scu} />
             <ProductSCUSelect productId={product.id} all={product.scus} current={scu} />
             <ProductActions />
