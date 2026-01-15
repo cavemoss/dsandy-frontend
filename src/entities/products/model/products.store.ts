@@ -24,7 +24,7 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
 
   getProductAndSCU: (productId, scuId) => {
     const { [productId]: product } = get().getProductsByIds();
-    const { [scuId]: scu } = objectByKey(product.scus, 'id');
+    const { [scuId]: scu } = objectByKey(product?.scus, 'id');
 
     return [product, scu];
   },
@@ -51,7 +51,7 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
 
   getExactSCU: (productId, scuId) => {
     const product = get().getProductsByIds()[productId];
-    return objectByKey(product.scus, 'id')[scuId];
+    return objectByKey(product?.scus, 'id')[scuId];
   },
 
   // Actions

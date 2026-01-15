@@ -23,9 +23,9 @@ export function AdminLoginForm({ className, ...props }: React.ComponentProps<'di
 
   // Models
 
-  const emailModel = m.Input((s) => s.credentials, 'email');
+  const emailModel = m.newInput((s) => s.credentials, 'email');
 
-  const passwordModel = m.Input((s) => s.credentials, 'password');
+  const passwordModel = m.newInput((s) => s.credentials, 'password');
 
   // Hooks
 

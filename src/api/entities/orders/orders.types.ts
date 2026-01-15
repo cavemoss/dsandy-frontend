@@ -71,6 +71,14 @@ export interface DProductDTO {
   };
 }
 
+export interface DProductCategoryDTO {
+  id: number;
+  subdomainName: string;
+  title: string;
+  description: string | null;
+  image: string | null;
+}
+
 export interface OrderDTO {
   id: number;
   subdomainName: string;

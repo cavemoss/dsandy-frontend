@@ -22,7 +22,14 @@ export default function LabeledPasswordInput({ model, label, placeholder, disabl
   const node = (
     <>
       <InputGroup className={model.error ? errorInput : ''}>
-        <InputGroupInput {...model} type={shown ? 'text' : 'password'} placeholder={placeholder} disabled={disabled} />
+        <InputGroupInput
+          id={model.id}
+          value={model.value}
+          onChange={model.onChange}
+          type={shown ? 'text' : 'password'}
+          placeholder={placeholder}
+          disabled={disabled}
+        />
         <InputGroupAddon>
           <Lock />
         </InputGroupAddon>

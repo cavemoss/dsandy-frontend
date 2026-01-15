@@ -31,6 +31,8 @@ interface Address {
 export default function AccountPage() {
   const customersStore = useCustomersStore();
 
+  const customer = useCustomersStore((state) => state.customer);
+
   const [addresses] = useState<Address[]>([
     {
       id: '1',
@@ -85,8 +87,10 @@ export default function AccountPage() {
               <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <User className="h-10 w-10 text-primary" />
               </div>
-              <h3 className="font-medium">Jane Doe</h3>
-              <p className="text-sm text-muted-foreground">jane@doe.com</p>
+              <h3 className="font-medium">
+                {customer?.info.firstName} {customer?.info.lastName}
+              </h3>
+              <p className="text-sm text-muted-foreground">{customer?.email}</p>
               <Badge variant="secondary" className="mt-2">
                 Premium Member
               </Badge>

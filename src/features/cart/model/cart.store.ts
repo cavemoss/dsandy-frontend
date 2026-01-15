@@ -24,7 +24,7 @@ export const useCartStore = createZustand<CartState>('cart', (set, get) => ({
     } else {
       result = result.filter((item) => {
         const scu = productsStore.getExactSCU(item.productId, item.scuId);
-        return scu.availableStock > 0;
+        return scu?.availableStock > 0;
       });
     }
 

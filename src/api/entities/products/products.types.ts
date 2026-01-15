@@ -36,6 +36,7 @@ export interface Product {
   specifications: [string, string][];
   descriptionHtml: string;
   scus: ProductSCU[];
+  categoryIds: number[];
 }
 
 export interface GetProductReviewsQuery {

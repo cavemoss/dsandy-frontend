@@ -3,7 +3,7 @@ import { devtools } from 'zustand/middleware';
 
 import { InputModel, SelectModel } from './types';
 
-export const objectByKey = <T extends object>(array: T[], key: keyof T): Record<string, T> =>
+export const objectByKey = <T extends object>(array: T[] = [], key: keyof T): Record<string, T> =>
   Object.fromEntries(array.map((obj) => [obj[key], obj]));
 
 export const createZustand = <T>(name: string, init: StateCreator<T>) => create(devtools(init, { name }));
@@ -17,76 +17,71 @@ export class Model<S extends { setState: (clb: (s: S) => void) => void }> {
   constructor(
     private readonly state: S,
     private readonly trigger?: boolean,
-    private readonly params?: {
+    private readonly config?: {
       onChange: () => void;
     }
   ) {}
 
-  #errors: (React.ReactNode | false)[] = [];
+  private readonly errors: (React.ReactNode | false)[] = [];
 
-  get isAllValid() {
-    return this.#errors.every((error) => !error);
-  }
-
-  #setError<T extends InputModel | SelectModel>(ptr: T, error: React.ReactNode | false): T {
-    this.#errors.push(!!error);
+  private setError<T extends InputModel | SelectModel>(ptr: T, error: React.ReactNode | false): T {
+    this.errors.push(!!error);
     ptr.error = this.trigger && error;
     return ptr;
   }
 
-  Input<T extends object>(
+  get isAllValid() {
+    return this.errors.every((error) => !error);
+  }
+
+  newInput<T extends object>(
     clb: (state: S) => T,
     key: keyof T,
-
-    params?: {
+    config: {
+      /** Error display condition */
+      error?: React.ReactNode | false;
+    } = {},
+    params: {
       id?: string;
       type?: InputModel['type'];
-    }
-  ): InputModel & {
-    setError: (error: React.ReactNode | false) => InputModel;
-  } {
-    const self = this;
-
-    return {
+    } = {}
+  ) {
+    const result: InputModel = {
       value: clb(this.state)[key] as InputModel['value'],
+      id: params.id,
+      type: params.type ?? 'text',
 
       onChange: (e) => {
         this.state.setState((s) => {
           clb(s)[key] = e.target.value as T[keyof T];
         });
-        this.params?.onChange();
-      },
-
-      id: params?.id,
-      type: params?.type ?? 'text',
-
-      setError(error) {
-        return self.#setError(this, error);
+        this.config?.onChange();
       },
     };
+
+    this.setError(result, config.error);
+    return result;
   }
 
-  Select<T extends object>(
+  newSelect<T extends object>(
     clb: (state: S) => T,
-    key: keyof T
-  ): SelectModel & {
-    setError: (error: React.ReactNode | false) => SelectModel;
-  } {
-    const self = this;
-
-    return {
+    key: keyof T,
+    config: {
+      error?: React.ReactNode | false;
+    } = {}
+  ) {
+    const result: SelectModel = {
       value: clb(this.state)[key] as SelectModel['value'],
 
       onValueChange: (value) => {
         this.state.setState((s) => {
           clb(s)[key] = value as T[keyof T];
         });
-        this.params?.onChange();
-      },
-
-      setError(error) {
-        return self.#setError(this, error);
+        this.config?.onChange();
       },
     };
+
+    this.setError(result, config.error);
+    return result;
   }
 }

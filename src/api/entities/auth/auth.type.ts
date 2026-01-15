@@ -3,6 +3,11 @@ export interface LoginDTO {
   password: string;
 }
 
+export interface ResetPasswordDTO {
+  token: string;
+  password: string;
+}
+
 export enum AuthErrorEnum {
   INVALID = 1,
   NOT_FOUND,

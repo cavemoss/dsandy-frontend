@@ -76,7 +76,6 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
     const customersStore = useCustomersStore.getState();
 
     const cartItems = cartStore.getItems();
-
     const { contactInfo, shippingInfo } = get();
     const { options: paymentInfo } = useStripeStore.getState();
 

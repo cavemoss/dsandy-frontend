@@ -1,5 +1,5 @@
 import axios from '@/api/config/axios';
-import { getAnonOrderIds } from '@/entities/orders/lib';
+import { getAnonOrderIds } from '@/entities/orders';
 
 import { OrderDTO, PlaceOrderBodyDTO, UpdateOrderInfoBodyDTO } from './orders.types';
 

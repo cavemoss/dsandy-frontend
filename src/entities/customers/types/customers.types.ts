@@ -9,7 +9,9 @@ export interface CustomersState {
   init: () => Promise<void>;
   loadCurrentCustomer: () => Promise<void>;
   savePreferences: () => Promise<void>;
+  savePersonalInfo: () => Promise<void>;
   createCustomer: () => Promise<void>;
+  cancelChanges: () => void;
   onLoginSuccess: () => void;
   logOut: () => void;
   setState: (clb: (s: this) => void) => void;

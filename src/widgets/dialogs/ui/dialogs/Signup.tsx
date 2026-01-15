@@ -34,48 +34,43 @@ export default function SignupDialog() {
   const [confirmPwd, setConfirmPwd] = useState('');
   const [errorTrigger, setErrorTrigger] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [phoneValid, setPhoneFilled] = useState(false);
 
   // Models
 
   const m = new Model(authStore, errorTrigger, { onChange: authStore.clearErrors });
 
-  const genericErrorMessage = <>Please fill out the data</>;
+  const firstNameModel = m.newInput((s) => s.customerInfo, 'firstName', {
+    error: !authStore.customerInfo.firstName && <>Please fill out the data</>,
+  });
 
-  const firstNameModel = m
-    .Input((s) => s.customerInfo, 'firstName')
-    .setError(!authStore.customerInfo.firstName && genericErrorMessage);
+  const lastNameModel = m.newInput((s) => s.customerInfo, 'lastName', {
+    error: !authStore.customerInfo.firstName && <>Please fill out the data</>,
+  });
 
-  const lastNameModel = m
-    .Input((s) => s.customerInfo, 'lastName')
-    .setError(!authStore.customerInfo.lastName && genericErrorMessage);
+  const phoneModel = m.newInput((s) => s.customerInfo, 'phone', {
+    error: !phoneValid && <>Invalid phone</>,
+  });
 
-  const phoneModel = m
-    .Input((s) => s.customerInfo, 'phone')
-    .setError(![0, 14].includes(authStore.customerInfo.phone.length) && genericErrorMessage);
+  const emailModel = m.newInput((s) => s.credentials, 'email', {
+    error: !authStore.isEmailValid() ? (
+      <>Invalid Email</>
+    ) : (
+      authStore.errors.email === AuthErrorEnum.DUPLICATE && <>This account already exists</>
+    ),
+  });
 
-  const emailModel = m
-    .Input((s) => s.credentials, 'email')
-    .setError(
-      !authStore.isEmailValid() ? (
-        <>Invalid Email</>
-      ) : (
-        authStore.errors.email === AuthErrorEnum.DUPLICATE && <>This account already exists</>
-      )
-    );
-
-  const passwordModel = m
-    .Input((s) => s.credentials, 'password')
-    .setError(
-      !authStore.credentials.password ? (
-        <>Please fill out the data</>
-      ) : !authStore.isPasswordValid() ? (
-        <>Password is too week</>
-      ) : authStore.credentials.password !== confirmPwd ? (
-        <>Passwords don&apos;t mach</>
-      ) : (
-        false
-      )
-    );
+  const passwordModel = m.newInput((s) => s.credentials, 'password', {
+    error: !authStore.credentials.password ? (
+      <>Please fill out the data</>
+    ) : !authStore.isPasswordValid() ? (
+      <>Password is too week</>
+    ) : authStore.credentials.password !== confirmPwd ? (
+      <>Passwords don&apos;t mach</>
+    ) : (
+      false
+    ),
+  });
 
   const confirmPwdModel: InputModel = {
     value: confirmPwd,
@@ -103,6 +98,7 @@ export default function SignupDialog() {
     if (!isOpened) {
       setTimeout(() => {
         authStore.resetState();
+        setConfirmPwd('');
         setErrorTrigger(false);
       }, 1000);
     }
@@ -117,36 +113,35 @@ export default function SignupDialog() {
         </DialogHeader>
 
         <div className="space-y-4 my-6">
-          {/* Name Fields */}
           <div className="grid grid-cols-2 gap-3">
             <LabeledInput model={firstNameModel} icon={<User />} label={<>First Name</>} placeholder="Jane" />
 
             <LabeledInput model={lastNameModel} label={<>Last Name</>} placeholder="Doe" />
           </div>
 
-          {/* Email */}
           <LabeledInput model={emailModel} icon={<Mail />} label={<>Email Address</>} placeholder="jane@gmail.com" />
 
-          {/* Phone */}
-          <LabeledPhoneInput model={phoneModel} label={<>Phone Number (Optional)</>} withIcon />
+          <LabeledPhoneInput
+            model={phoneModel}
+            onReset={() => authStore.setState((s) => (s.customerInfo.phone = ''))}
+            setValid={setPhoneFilled}
+            label={<>Phone Number (Optional)</>}
+            withIcon
+          />
 
-          {/* Password */}
           <LabeledPasswordInput model={passwordModel} label={<>Password</>} placeholder="Create a strong password" />
 
-          {/* Confirm Password */}
           <LabeledPasswordInput
             model={confirmPwdModel}
             label={<>Confirm Password</>}
             placeholder="Confirm your password"
           />
 
-          {/* Terms & Newsletter */}
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
               <Checkbox />
               <FieldDescription>
-                I agree to the
-                <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
               </FieldDescription>
             </div>
             <div className="flex items-center space-x-2">

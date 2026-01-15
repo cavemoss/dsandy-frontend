@@ -17,7 +17,7 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
 
   isChanged: () => {
     const self = get();
-    return deepCompare(self.customer!, self.customerModel!);
+    return !deepCompare(self.customer!, self.customerModel!);
   },
 
   // Actions
@@ -47,7 +47,25 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
         preferences: useInitStore.getState().viewerParams,
       });
     } catch (error) {
-      console.debug('Error loading customer data', { error });
+      console.debug('Error when saving preferences', { error });
+    }
+  },
+
+  async savePersonalInfo() {
+    const self = get();
+
+    const customer = self.customerModel;
+
+    if (!customer) return;
+
+    const { info, email } = customer;
+
+    try {
+      await api.customers.patch({ info, email });
+      await self.loadCurrentCustomer();
+      toast.success('Personal info updated successfully!');
+    } catch (error) {
+      console.debug('Error when saving personal info', { error });
     }
   },
 
@@ -78,6 +96,13 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
       console.debug(msg, { error });
       toast.error(msg);
     }
+  },
+
+  cancelChanges() {
+    set((state) => {
+      state.customerModel = state.customer;
+      return deepClone(state);
+    });
   },
 
   onLoginSuccess: () => {

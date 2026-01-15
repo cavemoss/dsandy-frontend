@@ -14,6 +14,8 @@ export interface AuthState {
   // action
   loginTenant: () => Promise<void>;
   loginCustomer: () => Promise<void>;
+  forgotPassword: () => Promise<void>;
+  resetPassword: (token: string) => Promise<void>;
   clearErrors: () => void;
   resetState: () => void;
   setState: (clb: (s: this) => void) => void;

@@ -33,6 +33,11 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
 
   isAdminPanel: () => location.hostname.startsWith('admin.'),
 
+  getPageConfig: (page, subPage) => {
+    const ptr = get().subdomain.navigation[page];
+    return subPage ? ptr?.subOptions?.[subPage] : ptr;
+  },
+
   getAvailableCountries: () => {
     const countries = Country.getAllCountries()
       .filter((ctr) => get().subdomain.config.countries.includes(ctr.isoCode))

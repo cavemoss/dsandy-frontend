@@ -13,4 +13,4 @@ export const getByJwtToken = async () => {
 export const create = (dto: CreateCustomerDTO) =>
   axios.post<CustomerDTO | AuthErrorResponseDTO>(ROUTE, dto).then((res) => res.data);
 
-export const patch = (dto: UpdateCustomerDTO) => axios.patch(ROUTE, dto);
+export const patch = (dto: UpdateCustomerDTO) => axios.patch<CustomerDTO>(ROUTE, dto).then((res) => res.data);

@@ -14,10 +14,7 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
 
   clientSecret: null,
 
-  options: {
-    amount: 100,
-    currency: 'usd',
-  },
+  options: { amount: 100, currency: 'usd' },
 
   // Getters
 
@@ -27,10 +24,9 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
 
   setOptions() {
     const options = {
-      amount: useCartStore.getState().getTotal() * 100,
+      amount: Math.round(useCartStore.getState().getTotal() * 100),
       currency: useInitStore.getState().viewerParams.currency.toLowerCase(),
     };
-    console.log({ options });
     return set({ options }), options;
   },
 

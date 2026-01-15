@@ -22,6 +22,7 @@ export interface InitState {
   viewerParams: ViewerParams;
   // getters
   isAdminPanel: () => boolean;
+  getPageConfig: (page: string, subPage?: string) => SubdomainDTO['navigation'][string] | undefined;
   getAvailableCountries: () => Country[];
   getCurrentCountry: () => Country;
   getAvailableCurrencies: () => Currency[];

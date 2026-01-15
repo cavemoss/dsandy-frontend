@@ -1,5 +1,5 @@
 import { CustomerDTO } from '../customers';
-import { DProductDTO, OrderDTO } from '../orders';
+import { DProductCategoryDTO, DProductDTO, OrderDTO } from '../orders';
 
 export interface SubdomainConfig {
   storeName: string;
@@ -16,11 +16,37 @@ export interface SubdomainConfig {
   autoCalculateDiscountMult: boolean;
 }
 
+export type CustomPageConfig =
+  | {
+      type: 'catalog';
+      ids?: number[];
+    }
+  | {
+      type: 'blog';
+      blogId: number;
+    };
+
+export interface SubdomainNavigationConfig {
+  [url: string]: {
+    label: string;
+    subLabel: string;
+    config?: CustomPageConfig;
+    subOptions?: {
+      [url: string]: {
+        label: string;
+        subLabel: string;
+        config: CustomPageConfig;
+      };
+    };
+  };
+}
 export interface SubdomainDTO {
   name: string;
   tenantId: number;
   config: SubdomainConfig;
+  navigation: SubdomainNavigationConfig;
   dProducts: DProductDTO[];
+  dProductCategories: DProductCategoryDTO[];
   orders: OrderDTO[];
   customers: CustomerDTO[];
 }

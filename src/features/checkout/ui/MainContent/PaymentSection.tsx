@@ -6,13 +6,11 @@ import { Skeleton } from '@shadcd/skeleton';
 import { Spinner } from '@shadcd/spinner';
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { CreditCard, Sparkles } from 'lucide-react';
-import { usePathname } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
 
 import { useStripeStore } from '@/features/checkout';
 
 export default function PaymentSection() {
-  const pathname = usePathname();
   const stripe = useStripe();
   const elements = useElements();
   const stripeStore = useStripeStore();
@@ -28,19 +26,6 @@ export default function PaymentSection() {
   };
 
   useEffect(() => void stripeStore.createPaymentIntent(), []);
-
-  useEffect(() => {
-    const handleBeforeUnload = (e: Event) => {
-      e.preventDefault();
-      stripeStore.cancelPayment();
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [pathname]);
 
   return (
     <Card>

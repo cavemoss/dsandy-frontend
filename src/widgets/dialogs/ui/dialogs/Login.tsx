@@ -27,31 +27,34 @@ export default function LoginDialog() {
   const [errorTrigger, setErrorTrigger] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Models
+
   const m = new Model(authStore, errorTrigger, { onChange: authStore.clearErrors });
 
-  const emailModel = m
-    .Input((s) => s.credentials, 'email')
-    .setError(
-      !authStore.isEmailValid() ? (
-        <>Invalid email</>
-      ) : authStore.errors.email === AuthErrorEnum.NOT_FOUND ? (
-        <>This account does&apos;nt exist</>
-      ) : (
-        false
-      )
-    );
+  const emailModel = m.newInput((s) => s.credentials, 'email', {
+    error: !authStore.isEmailValid() ? (
+      <>Invalid email</>
+    ) : authStore.errors.email === AuthErrorEnum.NOT_FOUND ? (
+      <>This account does&apos;nt exist</>
+    ) : (
+      false
+    ),
+  });
 
-  const passwordModel = m
-    .Input((s) => s.credentials, 'password')
-    .setError(
+  const passwordModel = m.newInput((s) => s.credentials, 'password', {
+    error:
       authStore.credentials.password.length < 2 ? (
         <>Please enter password</>
       ) : (
         authStore.errors.password === AuthErrorEnum.INVALID && <>Wrong password</>
-      )
-    );
+      ),
+  });
+
+  // Computed
 
   const isDisabled = loading || (errorTrigger && !m.isAllValid);
+
+  // Methods
 
   const handleSubmit = async () => {
     setErrorTrigger(true);
@@ -62,6 +65,8 @@ export default function LoginDialog() {
     await authStore.loginCustomer();
     setLoading(false);
   };
+
+  // Hooks
 
   useEffect(() => {
     if (!isOpened) {
@@ -96,7 +101,11 @@ export default function LoginDialog() {
               <Checkbox id="rememberMe" />
               <FieldDescription>Remember me</FieldDescription>
             </div>
-            <Button variant="link" className="p-0 h-auto text-sm">
+            <Button
+              variant="link"
+              className="p-0 h-auto text-sm"
+              onClick={() => dialogsStore.toggleDialog(DialogEnum.PASSWORD_RESET)}
+            >
               Forgot password?
             </Button>
           </div>

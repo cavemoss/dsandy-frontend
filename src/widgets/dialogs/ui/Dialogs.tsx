@@ -1,5 +1,7 @@
+import AlertBox from './dialogs/Alert';
 import ImageViewer from './dialogs/ImageViewer';
 import LoginDialog from './dialogs/Login';
+import PasswordReset from './dialogs/PasswordReset';
 import SignupDialog from './dialogs/Signup';
 
 export function Dialogs() {
@@ -7,6 +9,8 @@ export function Dialogs() {
     <>
       <LoginDialog />
       <SignupDialog />
+      <PasswordReset />
+      <AlertBox />
       <ImageViewer />
     </>
   );

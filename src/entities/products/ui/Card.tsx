@@ -25,8 +25,7 @@ export default function ProductCard({ productId, scuId }: Props) {
 
   const isInCart = cartStore.getItemIndex(productId, scuId) >= 0;
 
-  const product = productsStore.getProductsByIds()[productId];
-  const scu = productsStore.getExactSCU(productId, scuId);
+  const [product, scu] = productsStore.getProductAndSCU(productId, scuId);
 
   if (!product || !scu) return <></>;
 
