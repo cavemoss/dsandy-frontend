@@ -31,9 +31,10 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
       const customer = await api.customers.getByJwtToken();
 
       if (customer) {
-        set({
-          customer,
-          customerModel: deepClone(customer),
+        set((s) => {
+          s.customer = customer;
+          s.customerModel = customer;
+          return deepClone(s);
         });
       }
     } catch (error) {
@@ -54,15 +55,14 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
   async savePersonalInfo() {
     const self = get();
 
-    const customer = self.customerModel;
-
-    if (!customer) return;
-
-    const { info, email } = customer;
+    if (!self.customerModel) return;
 
     try {
+      const { info, email } = self.customerModel;
+
       await api.customers.patch({ info, email });
       await self.loadCurrentCustomer();
+
       toast.success('Personal info updated successfully!');
     } catch (error) {
       console.debug('Error when saving personal info', { error });

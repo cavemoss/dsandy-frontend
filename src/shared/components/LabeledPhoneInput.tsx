@@ -1,6 +1,8 @@
 import { ChevronsUpDown, Phone } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { isoToFlag } from '@/widgets/init';
+
 import { PhoneFormat, phoneFormats } from '../lib/const';
 import { InputModel } from '../lib/types';
 import {
@@ -104,14 +106,13 @@ export function LabeledPhoneInput(params: Params) {
                 {code} <ChevronsUpDown className="size-3" />
               </InputGroupButton>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="max-h-60">
-              {phoneFormats
-                .map(({ code }) => code)
-                .map((code, index) => (
-                  <DropdownMenuItem onClick={() => onChangeCode(index)} key={index}>
-                    {code}
-                  </DropdownMenuItem>
-                ))}
+            <DropdownMenuContent align="end" className="max-h-60 ">
+              {phoneFormats.map(({ code, iso }, index) => (
+                <DropdownMenuItem onClick={() => onChangeCode(index)} key={index}>
+                  <span className="text-lg">{isoToFlag(iso)}</span>
+                  <span>{code}</span>
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </InputGroupAddon>

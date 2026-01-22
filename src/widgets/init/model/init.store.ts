@@ -13,7 +13,7 @@ import { useCartStore, useFavoritesStore } from '@/features/cart';
 import i18n from '@/localization/i18n';
 import { createZustand, deepClone, objectByKey } from '@/shared/lib/utils';
 
-import { fetchCountryData, getAnonViewerParams, InitState, ViewerParams } from '..';
+import { fetchCountryData, getAnonViewerParams, InitState, isoToFlag, ViewerParams } from '..';
 import { useNavStore } from './nav.store';
 
 export const useInitStore = createZustand<InitState>('init', (set, get) => ({
@@ -43,14 +43,11 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
       .filter((ctr) => get().subdomain.config.countries.includes(ctr.isoCode))
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    return countries.map((ctr) => {
-      const flag = ctr.isoCode
-        .split('')
-        .map((char) => String.fromCodePoint(0x1f1e6 + char.charCodeAt(0) - 'A'.charCodeAt(0)))
-        .join('');
-
-      return { name: ctr.name, code: ctr.isoCode, flag };
-    });
+    return countries.map((ctr) => ({
+      name: ctr.name,
+      code: ctr.isoCode,
+      flag: isoToFlag(ctr.isoCode),
+    }));
   },
 
   getCurrentCountry: () => {

@@ -1,8 +1,7 @@
 import { Package } from 'lucide-react';
 
 import { useOrdersStore } from '@/entities/orders';
-import OrderCard from '@/entities/orders/ui/Card';
-import OrderSeparator from '@/entities/orders/ui/Separator';
+import OrderItemsGroup from '@/entities/orders/ui/ItemGroup';
 import { Button } from '@/shared/shadcd/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
 import { TabsContent } from '@/shared/shadcd/components/ui/tabs';
@@ -35,14 +34,8 @@ export default function OrdersHistory() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {orders.map((order) => (
-            <>
-              <OrderSeparator order={order} />
-
-              {order.orderItems.map((item, index) => (
-                <OrderCard key={index} order={order} item={item} inner />
-              ))}
-            </>
+          {orders.map((order, index) => (
+            <OrderItemsGroup order={order} key={index} />
           ))}
         </CardContent>
       </Card>

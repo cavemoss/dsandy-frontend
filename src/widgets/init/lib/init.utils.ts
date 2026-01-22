@@ -68,3 +68,9 @@ export function formatPrice(amount: number) {
     maximumFractionDigits: 2,
   }).format(amount);
 }
+
+export const isoToFlag = (iso: string) =>
+  iso
+    .split('')
+    .map((char) => String.fromCodePoint(0x1f1e6 + char.charCodeAt(0) - 'A'.charCodeAt(0)))
+    .join('');

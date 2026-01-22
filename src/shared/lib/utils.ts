@@ -11,7 +11,7 @@ export const createZustand = <T>(name: string, init: StateCreator<T>) => create(
 export const deepClone = <T>(object: T): T => JSON.parse(JSON.stringify(object));
 
 export const deepCompare = (...args: object[]): boolean =>
-  args.map((obj) => JSON.stringify(obj)).every((json, idx, array) => json === array[0]);
+  args.map((obj) => JSON.stringify(obj || {})).every((json, idx, array) => json === array[0]);
 
 export class Model<S extends { setState: (clb: (s: S) => void) => void }> {
   constructor(
