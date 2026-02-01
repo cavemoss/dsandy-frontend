@@ -34,9 +34,11 @@ export function CartItem({ index, item }: Params) {
             <div className="flex justify-between">
               <div>
                 <h3 className="font-medium line-clamp-1">{item.productName}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {item.propertyName}: {item.propertyValueName}
-                </p>
+                {item.properties.map((prop, idx) => (
+                  <p key={idx} className="text-sm text-muted-foreground">
+                    {prop.name}: {prop.value}
+                  </p>
+                ))}
                 <div className="flex items-center gap-2 mt-1">
                   <span className="font-bold">{item.displayPrice.discounted}</span>
                   <span className="text-sm text-muted-foreground line-through">

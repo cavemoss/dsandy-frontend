@@ -14,7 +14,7 @@ export interface OrdersState {
   getLastOrderId: () => string;
   // actions
   init: () => Promise<void>;
-  loadOrders: () => Promise<void>;
+  loadOrders: (actualizeAnon?: boolean) => Promise<void>;
   placeOrder: () => Promise<OrderDTO>;
   updateOrderInfo: () => Promise<void>;
   setAddress: (event: StripeAddressElementChangeEvent) => void;

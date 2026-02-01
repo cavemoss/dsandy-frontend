@@ -29,7 +29,7 @@ export default function SearchBar() {
     clearTimeout(debounceTimeout);
     setSearching(true);
 
-    const products = productsStore.products.all.filter((p) => p.name.toLocaleLowerCase().includes(search));
+    const products = productsStore.products.all.filter((p) => p.aliName.toLocaleLowerCase().includes(search));
 
     const timeout = setTimeout(() => {
       setSearching(false);
@@ -44,7 +44,7 @@ export default function SearchBar() {
 
   return (
     <Popover open={popoverOpen} onOpenChange={(open) => !open && setPopoverOpen(false)}>
-      <PopoverTrigger className="w-lg hidden sm:block">
+      <PopoverTrigger className="w-full mx-12 hidden sm:block">
         <InputGroup>
           <InputGroupInput placeholder="Search..." onInput={onInput} />
           <InputGroupAddon>
@@ -56,12 +56,12 @@ export default function SearchBar() {
         </InputGroup>
       </PopoverTrigger>
 
-      <PopoverContent className="w-lg">
+      <PopoverContent className="w-full">
         {products.map((product, idx) => (
           <div key={idx} className="flex gap-2 justify-between" onClick={() => navStore.push(`/product/${product.id}`)}>
             <ImageWithFallback className="h-20 brightness-95 aspect-square rounded-md" src={product.images[0]} />
             <div className="flex flex-col gap-1">
-              <p className="line-clamp-2">{product.name}</p>
+              <p className="line-clamp-2">{product.aliName}</p>
               <div className="flex items-center gap-2">
                 <StarRating rating={product.feedback.rating} withLabel />
                 <span className="text-muted-foreground">({product.feedback.reviewsCount} reviews)</span>

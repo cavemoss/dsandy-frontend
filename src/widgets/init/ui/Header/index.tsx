@@ -33,7 +33,7 @@ export function Header() {
       <header className="border-b bg-background sticky top-0 z-50">
         {/* Main header */}
         <div className="container mx-auto py-4">
-          <div className="flex w-full md:grid grid-cols-3 px-4 md:px-0">
+          <div className="flex w-full md:grid grid-cols-3 gap-12 px-4 md:px-0">
             <Logo className="text-[1.6rem]" />
             <SearchBar />
 

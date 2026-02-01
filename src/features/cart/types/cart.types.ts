@@ -8,8 +8,10 @@ export interface CartItem {
 
 export interface CartDisplayItem {
   productName: string;
-  propertyName: string;
-  propertyValueName: string;
+  properties: {
+    name: string;
+    value: string;
+  }[];
   displayPrice: DisplayPrice;
   discount: null | string;
   image: string;

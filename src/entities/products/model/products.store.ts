@@ -20,7 +20,7 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
 
   getProductsByIds: () => objectByKey(get().products.all, 'id'),
 
-  getCurrentSCUsByIds: () => objectByKey(get().products.current.item!.scus, 'id'),
+  getCurrentSCUsByIds: () => objectByKey(get().products.current.item?.scus, 'id'),
 
   getProductAndSCU: (productId, scuId) => {
     const { [productId]: product } = get().getProductsByIds();
@@ -31,22 +31,27 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
 
   getProductImages: () => {
     const product = get().products.current.item;
-    return [...product!.images, ...product!.scus.map((scu) => scu.image)];
+
+    const otherImages = product?.images ?? [];
+    let scuImages = product?.scus.map((scu) => scu.image).filter((el) => el != null) ?? [];
+    scuImages = scuImages.filter((image, index, ptr) => ptr.findIndex((img) => img == image) == index);
+
+    return [...otherImages, ...scuImages];
   },
 
   getDisplayPrices: () => {
-    const price = get().products.current.scu!.priceInfo;
+    const price = get().products.current.scu?.priceInfo;
     return {
-      original: formatPrice(price.dsPrice),
-      discounted: formatPrice(price.dsOfferPrice),
+      original: formatPrice(price?.dsPrice ?? 0),
+      discounted: formatPrice(price?.dsOfferPrice ?? 0),
     };
   },
 
-  getInStock: () => get().products.current.scu!.availableStock > 0,
+  getInStock: () => (get().products.current.scu?.availableStock ?? 0) > 0,
 
   getCartItem: (quantity) => {
     const { item, scu } = get().products.current;
-    return { productId: item!.id, scuId: scu!.id, quantity };
+    return { productId: item?.id ?? 0, scuId: scu?.id ?? 0, quantity };
   },
 
   getExactSCU: (productId, scuId) => {
@@ -93,12 +98,12 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
     const scu = objectByKey(product.scus, 'id')[scuId!] ?? product.scus[0];
 
     set((state) => {
-      const { current } = state.products;
+      const ptr = state.products.current;
 
-      current.reviews = null;
-      current.item = product;
-      current.scu = scu;
-      current.imageIndex = state.getProductImages().findIndex((img) => img === scu.image);
+      ptr.reviews = null;
+      ptr.item = product;
+      ptr.scu = scu;
+      ptr.imageIndex = scuId ? state.getProductImages().findIndex((img) => img == scu.image) : 0;
 
       return state;
     });
@@ -111,8 +116,10 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
       const ptr = state.products.current;
 
       ptr.scu = state.getCurrentSCUsByIds()[scuId];
-      ptr.imageIndex = state.getProductImages().findIndex((img) => img === ptr.scu!.image);
       ptr.quantity = 1;
+
+      const imageIndex = state.getProductImages().findIndex((img) => img === ptr.scu?.image);
+      if (imageIndex >= 0) ptr.imageIndex = imageIndex;
 
       return deepClone(state);
     });

@@ -17,7 +17,7 @@ export interface OrderContactInfoDTO {
 
 export interface OrderItemDTO {
   dProductId: number;
-  skuAttr: `${number}:${number}`;
+  skuAttr: string;
   quantity: number;
 }
 
@@ -32,7 +32,7 @@ export interface OrderMetadata {
     [id: number]: {
       name: string;
       variants: {
-        attr: string;
+        properties: string[];
         quantity: number;
       }[];
     };
@@ -54,10 +54,11 @@ export interface UpdateOrderInfoBodyDTO {
 }
 
 export enum OrderStatus {
-  PLACED,
-  PROCESSING,
-  IN_DELIVERY,
-  DELIVERED,
+  PENDING,
+  CUSTOMER_PAYED,
+  PLACED_AT_ALI,
+  TO_BE_SHIPPED,
+  SHIPPED,
   COMPLEAT,
   REFUND_REQUESTED,
 }

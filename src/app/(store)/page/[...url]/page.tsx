@@ -42,7 +42,7 @@ export default function Page() {
                     {products
                       .filter((p) => p.categoryIds.includes(c.id))
                       .map((p, idx) => (
-                        <ProductCard key={idx} productId={p.id} scuId={1} />
+                        <ProductCard key={idx} productId={p.id} />
                       ))}
                   </div>
                 </div>
@@ -56,7 +56,7 @@ export default function Page() {
                 return p.categoryIds.includes(categoryIds[0]);
               })
               .map((p, idx) => (
-                <ProductCard key={idx} productId={p.id} scuId={1} />
+                <ProductCard key={idx} productId={p.id} />
               ))}
           </div>
         )}

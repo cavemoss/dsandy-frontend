@@ -26,15 +26,15 @@ export default function OrdersPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
-            {orders.map((order) => (
-              <>
+          <div className="space-y-8">
+            {orders.map((order, idx) => (
+              <div key={idx} className="space-y-4">
                 <OrderSeparator order={order} />
 
                 {order.orderItems.map((item, index) => (
                   <OrderCard order={order} item={item} key={index} />
                 ))}
-              </>
+              </div>
             ))}
           </div>
         )}

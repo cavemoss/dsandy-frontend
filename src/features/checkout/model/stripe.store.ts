@@ -14,7 +14,10 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
 
   clientSecret: null,
 
-  options: { amount: 100, currency: 'usd' },
+  options: {
+    amount: 100,
+    currency: 'usd',
+  },
 
   // Getters
 
@@ -27,7 +30,7 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
       amount: Math.round(useCartStore.getState().getTotal() * 100),
       currency: useInitStore.getState().viewerParams.currency.toLowerCase(),
     };
-    return set({ options }), options;
+    return (set({ options }), options);
   },
 
   async createPaymentIntent() {
@@ -105,6 +108,8 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
 
       console.info({ paymentIntent });
 
+      await useOrdersStore.getState().loadOrders(false);
+
       toast.success('Success!');
       useNavStore.getState().push('/order-complete');
       localStorage.removeItem('cartItems');
@@ -118,9 +123,10 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
     }
   },
 
-  cancelPayment() {
+  cancelPayment(clearCart) {
     useOrdersStore.setState((s) => ((s.orders.currentId = null), s));
-    useCartStore.setState({ item: null, items: [] });
+    useCartStore.setState({ item: null });
     set({ isProcessing: false, clientSecret: null });
+    if (clearCart) useCartStore.setState({ items: [] });
   },
 }));

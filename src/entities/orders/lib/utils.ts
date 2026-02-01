@@ -1,4 +1,7 @@
-import { OrderDTO } from '@/api/entities';
+import { OrderDTO, ProductSCU } from '@/api/entities';
+
+export const getSCUAttr = (scu: ProductSCU) =>
+  [scu, ...scu.combinations].map((el) => `${el.propertyId}:${el.propertyValueId}`).join(';');
 
 const KEY = 'anonOrderIds';
 

@@ -22,6 +22,7 @@ export function ProductImageGallery({ images }: Props) {
   const productsStore = useProductsStore();
 
   const [api, setApi] = useState<CarouselApi>();
+
   const imageIndex = useProductsStore((state) => state.products.current.imageIndex);
 
   const setImageIndex = (index: number) => {
@@ -34,7 +35,7 @@ export function ProductImageGallery({ images }: Props) {
     (index: number) => {
       api?.scrollTo(index);
     },
-    [api]
+    [api],
   );
 
   useEffect(() => {
@@ -52,27 +53,25 @@ export function ProductImageGallery({ images }: Props) {
   }, [imageIndex]);
 
   return (
-    <div className="flex relative">
-      <div className="flex-1">
-        <div className="relative">
-          <Carousel setApi={setApi} className="w-full rounded-xl md:overflow-hidden">
-            <CarouselContent>
-              {images.map((image, index) => (
-                <CarouselItem key={index}>
-                  <ImageWithFallback
-                    src={image}
-                    className="w-full h-full aspect-square md:rounded-xl overflow-hidden object-cover brightness-95"
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-4 bg-card/80 backdrop-blur-sm border-border hover:bg-card shadow-thumbnail" />
-            <CarouselNext className="right-4 bg-card/80 backdrop-blur-sm border-border hover:bg-card shadow-thumbnail" />
-          </Carousel>
+    <div className="overflow-y-scrol">
+      <div className="sticky top-39">
+        <Carousel setApi={setApi} className="w-full rounded-xl md:overflow-hidden">
+          <CarouselContent>
+            {images.map((image, index) => (
+              <CarouselItem key={index}>
+                <ImageWithFallback
+                  src={image}
+                  className="w-full h-full aspect-square md:rounded-xl overflow-hidden object-cover brightness-95"
+                />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="left-4 bg-card/80 backdrop-blur-sm border-border hover:bg-card shadow-thumbnail" />
+          <CarouselNext className="right-4 bg-card/80 backdrop-blur-sm border-border hover:bg-card shadow-thumbnail" />
+        </Carousel>
 
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-foreground/80 backdrop-blur-sm text-primary-foreground px-3 py-1.5 rounded-full text-sm font-medium tracking-wide">
-            {imageIndex + 1} / {images.length}
-          </div>
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-foreground/80 backdrop-blur-sm text-primary-foreground px-3 py-1.5 rounded-full text-sm font-medium tracking-wide">
+          {imageIndex + 1} / {images.length}
         </div>
       </div>
     </div>

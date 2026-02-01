@@ -7,7 +7,7 @@ import { useCartStore } from '@/features/cart';
 import { useStripeStore } from '@/features/checkout';
 import { createZustand, deepClone } from '@/shared/lib/utils';
 
-import { actualizeAnonOrders, addAnonOrder, getAnonOrderIds } from '../lib';
+import { actualizeAnonOrders, addAnonOrder, getAnonOrderIds, getSCUAttr } from '../lib';
 import { OrdersState } from '../types';
 
 export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) => ({
@@ -42,7 +42,7 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
     await get().loadOrders();
   },
 
-  async loadOrders() {
+  async loadOrders(actualizeAnon = true) {
     try {
       const result: api.OrderDTO[] = [];
 
@@ -51,7 +51,7 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
 
       if (anonOrderIds) {
         await api.orders.loadAnonOrders().then((orders) => {
-          actualizeAnonOrders(orders);
+          if (actualizeAnon) actualizeAnonOrders(orders);
           result.push(...orders);
         });
       }
@@ -92,7 +92,7 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
 
           return {
             dProductId: product.id,
-            skuAttr: `${scu.propertyId}:${scu.propertyValueId}`,
+            skuAttr: getSCUAttr(scu),
             quantity: item.quantity,
           };
         }),
@@ -100,21 +100,24 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
         metadata: {
           profit: parseFloat(profitFloat.toFixed(2)) * 100,
 
-          products: cartItems.reduce((result, item) => {
-            const [product, scu] = productsStore.getProductAndSCU(item.productId, item.scuId);
+          products: cartItems.reduce(
+            (result, item) => {
+              const [product, scu] = productsStore.getProductAndSCU(item.productId, item.scuId);
 
-            const ptr = (result[item.productId] ??= {
-              name: product.name,
-              variants: [],
-            });
+              const ptr = (result[item.productId] ??= {
+                name: product.aliName,
+                variants: [],
+              });
 
-            ptr.variants.push({
-              attr: `${scu.propertyName}: ${scu.propertyValueName}`,
-              quantity: item.quantity,
-            });
+              ptr.variants.push({
+                properties: [scu, ...scu.combinations].map((el) => `${el.propertyName}: ${el.propertyValueName}`),
+                quantity: item.quantity,
+              });
 
-            return result;
-          }, {} as api.OrderMetadata['products']),
+              return result;
+            },
+            {} as api.OrderMetadata['products'],
+          ),
         },
       });
 

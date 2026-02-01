@@ -23,14 +23,11 @@ export default function ProductPage() {
   const product = useProductsStore((state) => state.products.current.item);
   const scu = useProductsStore((state) => state.products.current.scu);
 
-  useEffect(() => {
-    const scuId = searchParams.get('scu');
-    productsStore.setCurrentProduct(params.id, scuId);
-  }, []);
+  const productImages = productsStore.getProductImages();
 
   const skeleton = (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto md:py-8 space-y-18">
+      <div className="container mx-auto md:py-8">
         <div className="flex flex-col md:grid grid-cols-2 gap-3 md:gap-8">
           <Skeleton className="flex-1 aspect-square rounded-xl" />
           <div className="flex flex-1 flex-col gap-2 px-4 md:px-0">
@@ -71,18 +68,23 @@ export default function ProductPage() {
     </div>
   );
 
-  if (!product || !scu) return skeleton;
+  useEffect(() => {
+    const scuId = searchParams.get('scu');
+    productsStore.setCurrentProduct(params.id, scuId);
+  }, []);
 
-  const productImages = productsStore.getProductImages();
+  if (!product || product.id !== Number(params.id) || !scu) {
+    return skeleton;
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto md:py-8 space-y-18">
+      <div className="container mx-auto md:py-8 md:space-y-18">
         <div className="flex flex-col md:grid grid-cols-2 gap-3 md:gap-8">
           <ProductImageGallery images={productImages} />
           <div className="flex flex-col gap-2 px-4 md:px-0">
             <ProductInfo product={product} scu={scu} />
-            <ProductSCUSelect productId={product.id} all={product.scus} current={scu} />
+            <ProductSCUSelect product={product} scu={scu} />
             <ProductActions />
             <ProductTrustBudges />
           </div>

@@ -43,9 +43,11 @@ export function CheckoutSummary() {
               </div>
               <div className="flex-1">
                 <p className="font-medium text-sm line-clamp-2">{item.productName}</p>
-                <p className="text-xs text-muted-foreground">
-                  {item.propertyName}: {item.propertyValueName}
-                </p>
+                {item.properties.map((prop, idx) => (
+                  <p key={idx} className="text-sm text-muted-foreground">
+                    {prop.name}: {prop.value}
+                  </p>
+                ))}
                 <p className="text-sm line-clamp-2">{item.displayPrice.discounted}</p>
               </div>
             </div>

@@ -40,16 +40,20 @@ export const useCartStore = createZustand<CartState>('cart', (set, get) => ({
     items.forEach((item) => {
       const [product, scu] = productsStore.getProductAndSCU(item.productId, item.scuId);
 
+      const properties = [scu, ...scu.combinations].map((el) => ({
+        name: el.propertyName,
+        value: el.propertyValueName,
+      }));
+
       result.push({
-        productName: product.name,
-        propertyName: scu.propertyName,
-        propertyValueName: scu.propertyValueName,
+        productName: product.title || product.aliName,
+        properties,
         displayPrice: {
           original: formatPrice(scu.priceInfo.dsPrice),
           discounted: formatPrice(scu.priceInfo.dsOfferPrice),
         },
         discount: scu.priceInfo.dsDiscount,
-        image: scu.image,
+        image: scu.image || product.images[0],
         quantity: item.quantity,
       });
     });
@@ -119,8 +123,8 @@ export const useCartStore = createZustand<CartState>('cart', (set, get) => ({
 
     self.getItems().forEach((item) => {
       const scu = productsStore.getExactSCU(item.productId, item.scuId);
-      subtotal += scu.priceInfo.dsPrice;
-      subtotalOffer += scu.priceInfo.dsOfferPrice;
+      subtotal += scu.priceInfo.dsPrice * item.quantity;
+      subtotalOffer += scu.priceInfo.dsOfferPrice * item.quantity;
     });
 
     return +(subtotal - subtotalOffer).toFixed(2);
@@ -133,19 +137,22 @@ export const useCartStore = createZustand<CartState>('cart', (set, get) => ({
     if (cartItems) set({ items: JSON.parse(cartItems) });
   },
 
-  addToCart: (item) =>
+  addToCart(item) {
     set((state) => {
       state.items.push(item);
       toast.success('Item added to cart');
       return deepClone(state);
-    }),
+    });
+  },
 
-  handleBuyNow: (item) => {
+  handleBuyNow(item) {
     set({ item });
     useNavStore.getState().push('/checkout');
   },
 
-  removeFromCart: (index) => set((state) => (state.items.splice(index, 1), deepClone(state))),
+  removeFromCart(index) {
+    set((state) => (state.items.splice(index, 1), deepClone(state)));
+  },
 
   setItemQuantity(arg1, arg2, arg3?) {
     set((state) => {

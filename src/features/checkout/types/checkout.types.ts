@@ -23,7 +23,7 @@ export interface StripeStoreState {
   setOptions: () => this['options'];
   createPaymentIntent: () => Promise<void>;
   confirmPayment: (stripe: Stripe, elements: StripeElements) => Promise<void>;
-  cancelPayment: () => void;
+  cancelPayment: (clearCart?: boolean) => void;
 }
 
 export interface ShippingFormState {

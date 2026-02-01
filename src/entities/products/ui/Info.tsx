@@ -16,6 +16,15 @@ export function ProductInfo({ product, scu }: Params) {
   const displayPrices = productsStore.getDisplayPrices();
   const isInStock = scu.availableStock > 0;
   const isDiscount = scu.priceInfo.dsDiscount != null;
+  const isCustomTitle = !!product.title;
+
+  const feedbackInfo = (
+    <div className="flex flex-row items-center gap-2">
+      <StarRating rating={product.feedback.rating} withLabel />
+      <span className="text-muted-foreground">({product.feedback.reviewsCount} reviews)</span>
+      <span className="text-muted-foreground">{product.feedback.salesCount} sold</span>
+    </div>
+  );
 
   const priceInfo = (
     <>
@@ -27,13 +36,9 @@ export function ProductInfo({ product, scu }: Params) {
         {isDiscount && <Badge variant="destructive">{scu.priceInfo.dsDiscount} OFF</Badge>}
 
         {isInStock ? (
-          <Badge variant="secondary" className="bg-green-100 text-green-800">
-            In Stock
-          </Badge>
+          <Badge className="bg-green-100 text-green-800">In Stock</Badge>
         ) : (
-          <Badge variant="secondary" className="bg-red-100 text-red-800">
-            Out Of Stock
-          </Badge>
+          <Badge className="bg-red-100 text-red-800">Out Of Stock</Badge>
         )}
       </div>
     </>
@@ -41,17 +46,15 @@ export function ProductInfo({ product, scu }: Params) {
 
   return (
     <div className="flex flex-col space-y-2">
-      <div className="flex md:hidden flex-wrap items-center gap-3">{priceInfo}</div>
-      <h1 className="hidden md:block text-xl md:text-3xl font-bold">{product.name}</h1>
+      {isCustomTitle && feedbackInfo}
 
-      {/* Feedback Info */}
-      <div className="flex flex-row items-center gap-2">
-        <StarRating rating={product.feedback.rating} withLabel />
-        <span className="text-muted-foreground">({product.feedback.reviewsCount} reviews)</span>
-        <span className="text-muted-foreground">{product.feedback.salesCount} sold</span>
-      </div>
+      <h1 className="text-xl md:text-3xl font-bold">{product.title || product.aliName}</h1>
 
-      <div className="hidden md:flex flex-wrap items-center gap-3">{priceInfo}</div>
+      {isCustomTitle && <h1 className="text-muted-foreground">{product.aliName}</h1>}
+
+      {!isCustomTitle && feedbackInfo}
+
+      <div className="flex flex-wrap items-center gap-3">{priceInfo}</div>
     </div>
   );
 }

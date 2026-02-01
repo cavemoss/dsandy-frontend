@@ -152,6 +152,7 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
     else localStorage.setItem('viewerParams', JSON.stringify(self.viewerParams));
 
     toast.success('Preferences saved');
+    setTimeout(() => location.reload(), 500);
   },
 
   setState: (clb) => set((s) => (clb(s), deepClone(s))),
