@@ -80,6 +80,16 @@ export interface DProductCategoryDTO {
   image: string | null;
 }
 
+export interface OrderTrackingDTO {
+  stages: {
+    name: string;
+    description: string;
+    timestamp: number;
+  }[];
+  carrier: string;
+  deliveryDays: number;
+}
+
 export interface OrderDTO {
   id: number;
   subdomainName: string;
@@ -87,8 +97,10 @@ export interface OrderDTO {
   status: OrderStatus;
   shippingInfo: OrderShippingInfoDTO;
   contactInfo: OrderContactInfoDTO;
+  paymentInfo: OrderPaymentInfoDTO;
   orderItems: OrderItemDTO[];
   metadata: OrderMetadata;
+  trackingData: OrderTrackingDTO | null;
   dProducts: DProductDTO[];
   createdAt: string;
 }

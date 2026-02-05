@@ -1,2 +1,2 @@
 export * as admin from './admin.routes';
-export type * from './admin.type';
+export type * from './admin.types';

@@ -43,9 +43,10 @@ export function ProductSCUSelect({ product, scu: currentSCU }: Params) {
     [] as (ProductSCU & { _ids?: number[] })[],
   );
 
-  const noScuImages = scus.some((scu) => !scu.image);
+  const noSCUImages = scus.some((scu) => !scu.image);
 
   const hasMoreSCUs = scus.length > MAX_VISIBLE_SCUS;
+
   const displayedSCUs = showAllSCUs ? scus : scus.slice(0, MAX_VISIBLE_SCUS);
 
   const scusByIds = objectByKey(product.scus, 'id');
@@ -59,7 +60,7 @@ export function ProductSCUSelect({ product, scu: currentSCU }: Params) {
         </div>
 
         <div className="grid grid-cols-[repeat(auto-fit,minmax(65px,1fr))] md:flex flex-wrap gap-2">
-          {noScuImages ? (
+          {noSCUImages ? (
             <Toggle
               options={scus.map((scu) => ({
                 value: scu.id,

@@ -9,7 +9,7 @@ export default function PaymentPage() {
 
   useEffect(() => {
     const handlePopState = () => {
-      stripeStore.cancelPayment(true);
+      stripeStore.cancelPayment(false);
       removeEventListener('popstate', handlePopState);
     };
 

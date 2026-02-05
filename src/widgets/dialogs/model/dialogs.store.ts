@@ -8,6 +8,7 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set, get)
   [DialogEnum.PASSWORD_RESET]: false,
   [DialogEnum.ALERT]: false,
   [DialogEnum.IMAGE_VIEWER]: false,
+  [DialogEnum.ORDER_TRACKING]: false,
 
   images: [],
 
@@ -19,10 +20,12 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set, get)
     description: '',
   },
 
+  order: null,
+
   toggleDialog(dialog) {
     set((state) => {
       Object.values(DialogEnum).forEach((d) => d !== dialog && (state[d] &&= false));
-      return (state[dialog] = !state[dialog]), deepClone(state);
+      return ((state[dialog] = !state[dialog]), deepClone(state));
     });
   },
 
@@ -34,6 +37,11 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set, get)
   triggerAlert(alertData) {
     if (alertData) set({ alertData });
     get().toggleDialog(DialogEnum.ALERT);
+  },
+
+  viewOrderTracking(order) {
+    if (order) set({ order });
+    get().toggleDialog(DialogEnum.ORDER_TRACKING);
   },
 
   setState: (clb) => set((s) => (clb(s), deepClone(s))),

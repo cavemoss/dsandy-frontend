@@ -4,8 +4,7 @@ import { Card, CardContent } from '@shadcd/card';
 import { Package } from 'lucide-react';
 
 import { useOrdersStore } from '@/entities/orders';
-import OrderCard from '@/entities/orders/ui/Card';
-import OrderSeparator from '@/entities/orders/ui/Separator';
+import OrderInfo from '@/entities/orders/ui/Info';
 import BackChevron from '@/shared/components/BackChevron';
 
 export default function OrdersPage() {
@@ -27,7 +26,11 @@ export default function OrdersPage() {
           </Card>
         ) : (
           <div className="space-y-8">
-            {orders.map((order, idx) => (
+            {orders.map((order) => (
+              <OrderInfo key={order.id} order={order} />
+            ))}
+
+            {/* {orders.map((order, idx) => (
               <div key={idx} className="space-y-4">
                 <OrderSeparator order={order} />
 
@@ -35,7 +38,7 @@ export default function OrdersPage() {
                   <OrderCard order={order} item={item} key={index} />
                 ))}
               </div>
-            ))}
+            ))} */}
           </div>
         )}
       </div>

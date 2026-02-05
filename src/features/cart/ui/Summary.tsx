@@ -74,7 +74,7 @@ export default function CartSummary() {
           </div>
 
           {shipping > 0 && (
-            <p className="text-xs text-muted-foreground">Add {formatPrice(50 - subtotal)} for free shipping</p>
+            <p className="text-xs text-muted-foreground">Add {formatPrice(20 - subtotal)} for free shipping</p>
           )}
         </CardContent>
       </Card>

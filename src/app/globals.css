@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -119,4 +119,20 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Target autofill styles for Chrome/Edge/etc. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important; /* Change 'white' to your background color */
+  box-shadow: 0 0 0 1000px transparent inset !important;
+  -webkit-text-fill-color: #000 !important; /* Adjust text color if needed */
+  transition: background-color 5000s ease-in-out 0s; /* Fallback delay trick */
+}
+
+/* For Firefox compatibility (uses :autofill) */
+input:autofill {
+  box-shadow: 0 0 0 1000px transparent inset !important; /* Match the above */
 }

@@ -62,7 +62,7 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
         });
       }
 
-      result.sort((a, b) => dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf());
+      result.sort((a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf());
 
       set((state) => ((state.orders.all = result), state));
     } catch (error) {

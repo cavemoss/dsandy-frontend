@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 
 import { useProductsStore } from '@/entities/products';
 import { createZustand, deepClone } from '@/shared/lib/utils';
-import { formatPrice, useNavStore } from '@/widgets/init';
+import { formatPrice, useInitStore, useNavStore } from '@/widgets/init';
 
 import { CartDisplayItem, CartItem, CartState } from '../types';
 
@@ -55,6 +55,7 @@ export const useCartStore = createZustand<CartState>('cart', (set, get) => ({
         discount: scu.priceInfo.dsDiscount,
         image: scu.image || product.images[0],
         quantity: item.quantity,
+        link: `/product/${product.id}?scu=${scu.id}`,
       });
     });
 
@@ -92,7 +93,8 @@ export const useCartStore = createZustand<CartState>('cart', (set, get) => ({
 
   getShipping: () => {
     const self = get();
-    return self.getSubtotal() > 50 ? 0 : 9.99;
+    const { freeShippingCap } = useInitStore.getState().subdomain.config.policies;
+    return self.getSubtotal() > freeShippingCap ? 0 : 9.99;
   },
 
   getTotal: () => {

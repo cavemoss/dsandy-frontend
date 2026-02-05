@@ -16,6 +16,7 @@ export interface CartDisplayItem {
   discount: null | string;
   image: string;
   quantity: number;
+  link: string;
 }
 
 export interface CartState {

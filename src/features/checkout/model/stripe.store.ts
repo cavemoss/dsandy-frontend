@@ -123,7 +123,7 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
     }
   },
 
-  cancelPayment(clearCart) {
+  cancelPayment(clearCart = true) {
     useOrdersStore.setState((s) => ((s.orders.currentId = null), s));
     useCartStore.setState({ item: null });
     set({ isProcessing: false, clientSecret: null });

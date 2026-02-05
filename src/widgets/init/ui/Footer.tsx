@@ -3,28 +3,34 @@ import { Input } from '@shadcd/input';
 import { Separator } from '@shadcd/separator';
 import { Facebook, Instagram, Mail, MapPin, Phone, RotateCcw, Shield, Truck, Twitter, Youtube } from 'lucide-react';
 
+import { formatPrice } from '../lib';
+import { useInitStore } from '../model';
 import Logo from './Header/Logo';
 import PaymentMethods from './PaymentMethods';
 
 export function Footer() {
+  const config = useInitStore((state) => state.subdomain.config);
+
   return (
     <footer className="bg-muted/30 border-t mt-auto">
       {/* Features section */}
       <div className="border-b bg-background/50">
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="flex items-center gap-3">
               <Truck className="h-8 w-8 text-primary" />
               <div>
                 <h4 className="font-medium">Free Shipping</h4>
-                <p className="text-sm text-muted-foreground">On orders over $50</p>
+                <p className="text-sm text-muted-foreground">
+                  On orders over {formatPrice(config.policies.freeShippingCap)}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <RotateCcw className="h-8 w-8 text-primary" />
               <div>
                 <h4 className="font-medium">Easy Returns</h4>
-                <p className="text-sm text-muted-foreground">30-day return policy</p>
+                <p className="text-sm text-muted-foreground">{config.policies.returnDays}-day return policy</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -50,7 +56,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company info */}
           <div>
-            <div className="min-h-[46px]">
+            <div className="min-h-11.5">
               <Logo className="text-xl" />
             </div>
 
@@ -107,21 +113,21 @@ export function Footer() {
                 <Mail className="h-4 w-4 mt-1 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">Email</p>
-                  <p className="text-sm">support@dropshop.com</p>
+                  <p className="text-sm">{config.service.email}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <Phone className="h-4 w-4 mt-1 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">Phone</p>
-                  <p className="text-sm">+1 (555) 123-4567</p>
+                  <p className="text-sm">{config.service.phone}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-1 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">Address</p>
-                  <p className="text-sm">123 Commerce St, City, State 12345</p>
+                  <p className="text-sm">{config.service.address}</p>
                 </div>
               </div>
             </div>

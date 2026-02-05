@@ -1,3 +1,5 @@
+'use client';
+
 import { Card, CardContent } from '@shadcd/card';
 import { Separator } from '@shadcd/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shadcd/tabs';
@@ -5,12 +7,15 @@ import DOMPurify from 'dompurify';
 
 import { Product } from '@/api/entities';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/shadcd/components/ui/accordion';
+import { useInitStore } from '@/widgets/init';
 
 interface Params {
   product: Product;
 }
 
 export function ProductDetailTabs({ product }: Params) {
+  const policies = useInitStore((state) => state.subdomain.config.policies);
+
   const specifications = (
     <div
       className="prose max-w-none"
@@ -47,7 +52,7 @@ export function ProductDetailTabs({ product }: Params) {
       <div>
         <h4 className="font-medium mb-2">Returns & Exchanges</h4>
         <ul className="space-y-1 text-muted-foreground">
-          <li>• 30-day return policy</li>
+          <li>• {policies.returnDays}-day return policy</li>
           <li>• Items must be unused and in original packaging</li>
           <li>• Free return shipping for defective items</li>
           <li>• Refunds processed within 5-7 business days</li>

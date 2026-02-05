@@ -1,6 +1,6 @@
 import axios from '@/api/config/axios';
 
-import { SubdomainDTO, TenantDTO } from './admin.type';
+import { SubdomainDTO, TenantDTO } from './admin.types';
 
 const ROUTE = '/admin';
 

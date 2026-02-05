@@ -5,33 +5,54 @@ import { Badge } from '@shadcd/badge';
 import { Card, CardContent } from '@shadcd/card';
 import { Progress } from '@shadcd/progress';
 import { BadgeCheck, Star } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { useProductsStore } from '@/entities/products';
 import Pagination from '@/shared/components/Pagination';
 import StarRating from '@/shared/components/StarRating';
 import { Skeleton } from '@/shared/shadcd/components/ui/skeleton';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
+import { useIsMobile } from '@/shared/shadcd/hooks/use-mobile';
 import { useDialogsStore } from '@/widgets/dialogs';
 
 export function ProductReviews() {
   const dialogsStore = useDialogsStore();
   const productsStore = useProductsStore();
 
+  const isMobile = useIsMobile();
+
   const reviews = useProductsStore((state) => state.products.current.reviews);
   const productFeedback = useProductsStore((state) => state.products.current.item?.feedback);
 
   const [loading, setLoading] = useState(false);
 
+  const targetRef = useRef<HTMLDivElement>(null);
+
   const skeletonShown = loading || !reviews;
 
-  const onChangePagination = async (page: number) => {
+  async function onChangePagination(page: number) {
     if (page === reviews?.pages.current) return;
+
+    setTimeout(scrollIntoView);
 
     setLoading(true);
     await productsStore.loadProductReviews(page);
     setLoading(false);
-  };
+  }
+
+  function scrollIntoView() {
+    if (!targetRef.current) return;
+
+    const offset = 150;
+
+    const elementPosition = targetRef.current.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.scrollY - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth',
+    });
+  }
 
   const content = (
     <>
@@ -151,11 +172,13 @@ export function ProductReviews() {
 
   return (
     <>
-      <Card className="hidden md:block">
+      <Card ref={isMobile ? undefined : targetRef} className="hidden md:block">
         <CardContent className="py-0 space-y-6">{content}</CardContent>
       </Card>
 
-      <div className="mx-4 mb-12 md:hidden">{content}</div>
+      <div ref={isMobile ? targetRef : undefined} className="mx-4 mb-12 md:hidden">
+        {content}
+      </div>
     </>
   );
 }

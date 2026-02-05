@@ -5,6 +5,7 @@ import { Trash2 } from 'lucide-react';
 import Counter from '@/shared/components/Counter';
 import { Badge } from '@/shared/shadcd/components/ui/badge';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
+import { useNavStore } from '@/widgets/init';
 
 import { useCartStore } from '../model';
 import { CartDisplayItem } from '../types';
@@ -15,6 +16,7 @@ interface Params {
 }
 
 export function CartItem({ index, item }: Params) {
+  const navStore = useNavStore();
   const cartStore = useCartStore();
 
   const itemPrice = cartStore.getItemPriceFormatted(index);
@@ -33,7 +35,12 @@ export function CartItem({ index, item }: Params) {
           <div className="flex-1 space-y-2">
             <div className="flex justify-between">
               <div>
-                <h3 className="font-medium line-clamp-1">{item.productName}</h3>
+                <h3
+                  onClick={() => navStore.push(item.link)}
+                  className="font-medium line-clamp-1 hover:underline cursor-pointer"
+                >
+                  {item.productName}
+                </h3>
                 {item.properties.map((prop, idx) => (
                   <p key={idx} className="text-sm text-muted-foreground">
                     {prop.name}: {prop.value}

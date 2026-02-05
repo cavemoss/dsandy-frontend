@@ -40,7 +40,11 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
 
   getAvailableCountries: () => {
     const countries = Country.getAllCountries()
-      .filter((ctr) => get().subdomain.config.countries.includes(ctr.isoCode))
+      .filter((ctr) => {
+        const { countries } = get().subdomain.config;
+        if (!countries.length) return true;
+        return countries.includes(ctr.isoCode);
+      })
       .sort((a, b) => a.name.localeCompare(b.name));
 
     return countries.map((ctr) => ({

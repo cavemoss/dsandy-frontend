@@ -1,10 +1,14 @@
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
-import { useInitStore } from '@/widgets/init';
+import { useInitStore, useNavStore } from '@/widgets/init';
 
 export default function Logo({ className }: { className: string }) {
+  const navStore = useNavStore();
+
   const subdomainConfig = useInitStore((state) => state.subdomain.config);
 
   const { fontBased, src } = subdomainConfig.logo;
+
+  const goToLandingPage = () => navStore.push(subdomainConfig.landingPage);
 
   if (fontBased) {
     const style: React.CSSProperties = {
@@ -12,16 +16,17 @@ export default function Logo({ className }: { className: string }) {
       color: fontBased.color,
       fontWeight: fontBased.bold ? 'bold' : 'normal',
       fontStyle: fontBased.italic ? 'italic' : 'normal',
+      cursor: 'pointer',
     };
 
     return (
-      <div className={className} style={style}>
+      <div onClick={goToLandingPage} className={className} style={style}>
         {subdomainConfig.storeName}
       </div>
     );
   }
 
   if (src) {
-    return <ImageWithFallback src={src} />;
+    return <ImageWithFallback onClick={goToLandingPage} src={src} />;
   }
 }

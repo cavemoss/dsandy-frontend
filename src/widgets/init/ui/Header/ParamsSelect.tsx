@@ -8,9 +8,10 @@ import { Button } from '@/shared/shadcd/components/ui/button';
 import { CardDescription, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/shadcd/components/ui/popover';
 import { Spinner } from '@/shared/shadcd/components/ui/spinner';
+import { cn } from '@/shared/shadcd/lib/utils';
 import { useInitStore } from '@/widgets/init';
 
-export default function ParamsSelect() {
+export default function ParamsSelect({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
 
   const initStore = useInitStore.getState();
@@ -61,8 +62,8 @@ export default function ParamsSelect() {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild className="w-[200px]">
-        <Button variant="outline" className="flex items-center gap-2 px-3 py-1.5 rounded-md">
+      <PopoverTrigger asChild className="w-full md:w-50">
+        <Button variant="outline" className={cn('flex items-center gap-2 px-3 py-1.5 rounded-md', className)}>
           <span className="text-xl">{currentCountry.flag}</span>
           <p className="truncate">
             {currentCountry.name} ({viewerParams.currency})

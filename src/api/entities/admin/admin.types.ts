@@ -6,14 +6,24 @@ export interface SubdomainConfig {
   logo: {
     src?: string;
     fontBased?: {
-      font: string;
-      color: string;
+      font?: string;
+      color?: string;
       bold?: boolean;
       italic?: boolean;
     };
   };
+  description: string;
   countries: string[];
-  autoCalculateDiscountMult: boolean;
+  landingPage: string;
+  policies: {
+    freeShippingCap: number;
+    returnDays: number;
+  };
+  service: {
+    email: string;
+    phone: string;
+    address: string;
+  };
 }
 
 export type CustomPageConfig =
