@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@shadcd/button';
 import { ArrowLeft } from 'lucide-react';
 import { ReactNode } from 'react';

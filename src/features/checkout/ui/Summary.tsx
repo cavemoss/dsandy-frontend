@@ -5,7 +5,7 @@ import { Button } from '@shadcd/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@shadcd/card';
 
 import { useCartStore } from '@/features/cart';
-import { Separator } from '@/shared/shadcd/components/ui/separator';
+import { Separator } from '@shadcd/separator';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 import { formatPrice } from '@/widgets/init';
 

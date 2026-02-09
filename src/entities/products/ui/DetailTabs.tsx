@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shadcd/tabs';
 import DOMPurify from 'dompurify';
 
 import { Product } from '@/api/entities';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/shadcd/components/ui/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@shadcd/accordion';
 import { useInitStore } from '@/widgets/init';
 
 interface Params {
@@ -63,9 +63,9 @@ export function ProductDetailTabs({ product }: Params) {
 
   return (
     <>
-      <Card className="mb-12 py-3 md:py-6 md:pt-0 hidden md:block">
-        <CardContent className="md:p-6 pt-0">
-          <Tabs defaultValue="description" className="w-full">
+      <Card className="mb-12 hidden md:block">
+        <CardContent>
+          <Tabs defaultValue="description" className="mb-8">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="description">Description</TabsTrigger>
               <TabsTrigger value="specifications">Specifications</TabsTrigger>

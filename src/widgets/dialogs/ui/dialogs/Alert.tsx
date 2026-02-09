@@ -12,7 +12,7 @@ export default function AlertBox() {
 
   return (
     <>
-      <Dialog open={isOpened} onOpenChange={() => dialogsStore.triggerAlert()}>
+      <Dialog open={isOpened} onOpenChange={() => dialogsStore.useAlert()}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>{data.title}</DialogTitle>
@@ -20,7 +20,7 @@ export default function AlertBox() {
           </DialogHeader>
 
           <div className="w-full flex flex-col sm:flex-row sm:justify-end">
-            <Button variant="outline" onClick={() => dialogsStore.triggerAlert()}>
+            <Button variant="outline" onClick={() => dialogsStore.useAlert()}>
               Cancel
             </Button>
           </div>

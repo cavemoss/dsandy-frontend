@@ -7,9 +7,9 @@ import { useAuthStore } from '@/features/auth';
 import LabeledPasswordInput from '@/shared/components/LabeledPasswordInput';
 import { InputModel } from '@/shared/lib/types';
 import { Model } from '@/shared/lib/utils';
-import { Button } from '@/shared/shadcd/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
-import { Spinner } from '@/shared/shadcd/components/ui/spinner';
+import { Button } from '@shadcd/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shadcd/card';
+import { Spinner } from '@shadcd/spinner';
 
 export default function ResetPassword() {
   const searchParams = useSearchParams();

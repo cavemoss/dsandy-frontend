@@ -6,7 +6,7 @@ import { Input } from '@shadcd/input';
 import { Separator } from '@shadcd/separator';
 import { useState } from 'react';
 
-import { Spinner } from '@/shared/shadcd/components/ui/spinner';
+import { Spinner } from '@shadcd/spinner';
 import { formatPrice, useNavStore } from '@/widgets/init';
 
 import { useCartStore } from '../model';

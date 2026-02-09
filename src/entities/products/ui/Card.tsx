@@ -6,7 +6,7 @@ import { Check, ShoppingCart, Trash2 } from 'lucide-react';
 
 import { useCartStore, useFavoritesStore } from '@/features/cart';
 import StarRating from '@/shared/components/StarRating';
-import { Badge } from '@/shared/shadcd/components/ui/badge';
+import { Badge } from '@shadcd/badge';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 import { formatPrice, useNavStore } from '@/widgets/init';
 

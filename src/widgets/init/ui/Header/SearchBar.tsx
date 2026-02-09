@@ -4,9 +4,9 @@ import { FormEvent, useState } from 'react';
 import { Product } from '@/api/entities';
 import { useProductsStore } from '@/entities/products';
 import StarRating from '@/shared/components/StarRating';
-import { InputGroup, InputGroupAddon, InputGroupInput } from '@/shared/shadcd/components/ui/input-group';
-import { Popover, PopoverContent, PopoverTrigger } from '@/shared/shadcd/components/ui/popover';
-import { Spinner } from '@/shared/shadcd/components/ui/spinner';
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@shadcd/input-group';
+import { Popover, PopoverContent, PopoverTrigger } from '@shadcd/popover';
+import { Spinner } from '@shadcd/spinner';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 
 import { useNavStore } from '../../model';
@@ -43,8 +43,19 @@ export default function SearchBar() {
   };
 
   return (
+    <div className="hidden sm:block">
+      <InputGroup>
+        <InputGroupInput placeholder="Search..." onInput={onInput} />
+        <InputGroupAddon>
+          <Search />
+        </InputGroupAddon>
+      </InputGroup>
+    </div>
+  );
+
+  return (
     <Popover open={popoverOpen} onOpenChange={(open) => !open && setPopoverOpen(false)}>
-      <PopoverTrigger className="w-full mx-12 hidden sm:block">
+      <PopoverTrigger className="w-full hidden sm:block">
         <InputGroup>
           <InputGroupInput placeholder="Search..." onInput={onInput} />
           <InputGroupAddon>

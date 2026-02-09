@@ -9,10 +9,12 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set, get)
   [DialogEnum.ALERT]: false,
   [DialogEnum.IMAGE_VIEWER]: false,
   [DialogEnum.ORDER_TRACKING]: false,
+  [DialogEnum.PERSONAL_INFO]: false,
 
-  images: [],
-
-  imageIndex: 0,
+  imageViewerData: {
+    images: [],
+    index: 0,
+  },
 
   alertData: {
     type: 'info',
@@ -20,27 +22,31 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set, get)
     description: '',
   },
 
-  order: null,
+  orderTrackingData: {
+    order: null,
+  },
 
-  toggleDialog(dialog) {
+  toggleDialog(dialog, noMobile) {
+    if (noMobile) return;
+
     set((state) => {
       Object.values(DialogEnum).forEach((d) => d !== dialog && (state[d] &&= false));
       return ((state[dialog] = !state[dialog]), deepClone(state));
     });
   },
 
-  viewImages(images = [], imageIndex = 0) {
-    set({ images, imageIndex });
+  useImageViewer(images = [], index = 0) {
+    set({ imageViewerData: { images, index } });
     get().toggleDialog(DialogEnum.IMAGE_VIEWER);
   },
 
-  triggerAlert(alertData) {
+  useAlert(alertData) {
     if (alertData) set({ alertData });
     get().toggleDialog(DialogEnum.ALERT);
   },
 
-  viewOrderTracking(order) {
-    if (order) set({ order });
+  useOrderTracking(order) {
+    if (order) set({ orderTrackingData: { order } });
     get().toggleDialog(DialogEnum.ORDER_TRACKING);
   },
 

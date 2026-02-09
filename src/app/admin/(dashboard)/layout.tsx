@@ -10,8 +10,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/shared/shadcd/components/ui/breadcrumb';
-import { SidebarProvider, SidebarTrigger } from '@/shared/shadcd/components/ui/sidebar';
+} from '@shadcd/breadcrumb';
+import { SidebarProvider, SidebarTrigger } from '@shadcd/sidebar';
 import { useInitStore } from '@/widgets/init';
 
 export default function AdminDashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {

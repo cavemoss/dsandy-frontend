@@ -13,8 +13,8 @@ import LabeledPasswordInput from '@/shared/components/LabeledPasswordInput';
 import FacebookSvg from '@/shared/components/svg-icons/FaceBook';
 import GoogleSvg from '@/shared/components/svg-icons/Google';
 import { Model } from '@/shared/lib/utils';
-import { FieldDescription } from '@/shared/shadcd/components/ui/field';
-import { Spinner } from '@/shared/shadcd/components/ui/spinner';
+import { FieldDescription } from '@shadcd/field';
+import { Spinner } from '@shadcd/spinner';
 
 import { DialogEnum, useDialogsStore } from '../..';
 

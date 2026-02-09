@@ -79,7 +79,7 @@ export const useAuthStore = createZustand<AuthState>('auth', (set, get) => ({
 
       if (errors) return set({ errors });
 
-      useDialogsStore.getState().triggerAlert({
+      useDialogsStore.getState().useAlert({
         type: 'info',
         title: 'Done!',
         description: "We've sent the password reset link tou your email",

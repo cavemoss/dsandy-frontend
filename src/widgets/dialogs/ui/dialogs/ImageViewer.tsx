@@ -11,14 +11,13 @@ export default function ImageViewer() {
   const dialogsStore = useDialogsStore();
 
   const isOpen = useDialogsStore((state) => state[DialogEnum.IMAGE_VIEWER]);
-  const images = useDialogsStore((state) => state.images);
-  const imageIndex = useDialogsStore((state) => state.imageIndex);
+  const images = useDialogsStore((state) => state.imageViewerData.images);
+  const imageIndex = useDialogsStore((state) => state.imageViewerData.index);
 
   const [api, setApi] = useState<CarouselApi>();
-  const [canShow, setCanShow] = useState(false);
 
   const setImageIndex = (index: number) => {
-    dialogsStore.setState((state) => (state.imageIndex = index));
+    dialogsStore.setState((state) => (state.imageViewerData.index = index));
   };
 
   const scrollTo = useCallback(
@@ -36,8 +35,6 @@ export default function ImageViewer() {
     api.on('select', () => {
       setImageIndex(api.selectedScrollSnap());
     });
-
-    api.on('settle', () => setCanShow(true));
   }, [api]);
 
   useEffect(() => {
@@ -47,7 +44,7 @@ export default function ImageViewer() {
   if (!isOpen) return <></>;
 
   return (
-    <div className="fixed bg-black/60 inset-0 flex z-100" onClick={() => dialogsStore.viewImages()}>
+    <div className="fixed bg-black/60 inset-0 flex z-100" onClick={() => dialogsStore.useImageViewer()}>
       <div className="m-auto w-full flex flex-col items-center transition-opacity">
         <Carousel setApi={setApi} className="w-full">
           <CarouselContent>

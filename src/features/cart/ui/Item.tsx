@@ -3,7 +3,7 @@ import { Card, CardContent } from '@shadcd/card';
 import { Trash2 } from 'lucide-react';
 
 import Counter from '@/shared/components/Counter';
-import { Badge } from '@/shared/shadcd/components/ui/badge';
+import { Badge } from '@shadcd/badge';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 import { useNavStore } from '@/widgets/init';
 

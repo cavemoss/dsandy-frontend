@@ -2,7 +2,7 @@
 
 import { IconCreditCard, IconDotsVertical, IconLogout, IconNotification, IconUserCircle } from '@tabler/icons-react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/shared/shadcd/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@shadcd/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +11,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/shared/shadcd/components/ui/dropdown-menu';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/shared/shadcd/components/ui/sidebar';
+} from '@shadcd/dropdown-menu';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@shadcd/sidebar';
 
 import { useAdminStore } from '../model';
 

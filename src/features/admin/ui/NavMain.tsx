@@ -2,13 +2,7 @@
 
 import { type Icon, IconChartBar, IconListDetails, IconPackage, IconPalette, IconSettings } from '@tabler/icons-react';
 
-import {
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/shared/shadcd/components/ui/sidebar';
+import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@shadcd/sidebar';
 
 import { useAdminStore } from '../model';
 import { AdminPanelView } from '../types';

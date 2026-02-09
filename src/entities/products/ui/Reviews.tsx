@@ -10,7 +10,7 @@ import { useRef, useState } from 'react';
 import { useProductsStore } from '@/entities/products';
 import Pagination from '@/shared/components/Pagination';
 import StarRating from '@/shared/components/StarRating';
-import { Skeleton } from '@/shared/shadcd/components/ui/skeleton';
+import { Skeleton } from '@shadcd/skeleton';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 import { useIsMobile } from '@/shared/shadcd/hooks/use-mobile';
 import { useDialogsStore } from '@/widgets/dialogs';
@@ -43,7 +43,7 @@ export function ProductReviews() {
   function scrollIntoView() {
     if (!targetRef.current) return;
 
-    const offset = 150;
+    const offset = isMobile ? 100 : 150;
 
     const elementPosition = targetRef.current.getBoundingClientRect().top;
     const offsetPosition = elementPosition + window.scrollY - offset;
@@ -144,10 +144,10 @@ export function ProductReviews() {
                   <div>{review.text}</div>
 
                   {!!review.thumbnails && (
-                    <div className="flex gap-2 mb-6">
+                    <div className="flex flex-wrap gap-2 mb-6">
                       {review.thumbnails.map((src, index) => (
                         <ImageWithFallback
-                          onClick={() => dialogsStore.viewImages(review.images!, index)}
+                          onClick={() => dialogsStore.useImageViewer(review.images!, index)}
                           className="w-20 aspect-square rounded-xl brightness-95"
                           src={src}
                           key={index}

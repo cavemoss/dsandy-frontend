@@ -15,11 +15,7 @@ import { useIsMobile } from '@/shared/shadcd/hooks/use-mobile';
 
 import { useInitStore } from '../../model';
 
-interface Props {
-  mobile?: true;
-}
-
-export default function MenuBar({ mobile }: Props) {
+export default function MenuBar() {
   const isMobile = useIsMobile();
 
   const navigation = useInitStore((state) => state.subdomain.navigation);

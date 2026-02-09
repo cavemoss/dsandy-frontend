@@ -17,7 +17,7 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
 
   isChanged: () => {
     const self = get();
-    return !deepCompare(self.customer!, self.customerModel!);
+    return !deepCompare(self.customer, self.customerModel);
   },
 
   // Actions
@@ -113,7 +113,7 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
 
   logOut: () => {
     localStorage.removeItem('jwtToken');
-    useNavStore.getState().push('/');
+    useNavStore.getState().push(useInitStore.getState().subdomain.config.landingPage);
     set({ customer: null, customerModel: null });
     toast.info('Logged out');
   },

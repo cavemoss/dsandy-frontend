@@ -1,4 +1,5 @@
 import AlertBox from './dialogs/Alert';
+import EditPersonalInfoModal from './dialogs/EditPersonalInfo';
 import ImageViewer from './dialogs/ImageViewer';
 import LoginDialog from './dialogs/Login';
 import OrderTrackingModal from './dialogs/OrderTracking';
@@ -14,6 +15,7 @@ export function Dialogs() {
       <AlertBox />
       <ImageViewer />
       <OrderTrackingModal />
+      <EditPersonalInfoModal />
     </>
   );
 }

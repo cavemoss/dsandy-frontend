@@ -10,8 +10,8 @@ export const createZustand = <T>(name: string, init: StateCreator<T>) => create(
 
 export const deepClone = <T>(object: T): T => JSON.parse(JSON.stringify(object));
 
-export const deepCompare = (...args: object[]): boolean =>
-  args.map((obj) => JSON.stringify(obj || {})).every((json, idx, array) => json === array[0]);
+export const deepCompare = (...args: (object | null)[]): boolean =>
+  args.map((obj) => JSON.stringify(obj ?? {})).every((json, idx, array) => json === array[0]);
 
 export class Model<S extends { setState: (clb: (s: S) => void) => void }> {
   constructor(
@@ -19,7 +19,7 @@ export class Model<S extends { setState: (clb: (s: S) => void) => void }> {
     private readonly trigger?: boolean,
     private readonly config?: {
       onChange: () => void;
-    }
+    },
   ) {}
 
   private readonly errors: (React.ReactNode | false)[] = [];
@@ -44,7 +44,7 @@ export class Model<S extends { setState: (clb: (s: S) => void) => void }> {
     params: {
       id?: string;
       type?: InputModel['type'];
-    } = {}
+    } = {},
   ) {
     const result: InputModel = {
       value: clb(this.state)[key] as InputModel['value'],
@@ -68,7 +68,7 @@ export class Model<S extends { setState: (clb: (s: S) => void) => void }> {
     key: keyof T,
     config: {
       error?: React.ReactNode | false;
-    } = {}
+    } = {},
   ) {
     const result: SelectModel = {
       value: clb(this.state)[key] as SelectModel['value'],

@@ -8,7 +8,7 @@ import { AuthErrorEnum } from '@/api/entities';
 import { useAuthStore } from '@/features/auth';
 import LabeledInput from '@/shared/components/LabeledInput';
 import { Model } from '@/shared/lib/utils';
-import { Spinner } from '@/shared/shadcd/components/ui/spinner';
+import { Spinner } from '@shadcd/spinner';
 
 import { DialogEnum, useDialogsStore } from '../..';
 

@@ -29,7 +29,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/shared/shadcd/components/ui/sidebar';
+} from '@shadcd/sidebar';
 
 const data = {
   user: {

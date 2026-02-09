@@ -14,7 +14,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarProvider,
-} from '@/shared/shadcd/components/ui/sidebar';
+} from '@shadcd/sidebar';
 
 import { useInitStore } from '../../model';
 import ParamsSelect from './ParamsSelect';
@@ -40,7 +40,7 @@ export default function BurgerMenu() {
         <div className="px-4">
           <ParamsSelect />
 
-          <SidebarProvider className="mt-3">
+          <SidebarProvider className="mt-7">
             <SidebarMenu>
               {Object.entries(navigation).map(([url, option], index) => {
                 if (option.subOptions) {

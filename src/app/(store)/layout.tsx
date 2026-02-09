@@ -1,6 +1,6 @@
 'use client';
 
-import { Spinner } from '@/shared/shadcd/components/ui/spinner';
+import { Spinner } from '@shadcd/spinner';
 import { Footer, Header, useInitStore } from '@/widgets/init';
 
 export default function StoreLayout({ children }: Readonly<{ children: React.ReactNode }>) {

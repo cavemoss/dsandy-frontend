@@ -13,7 +13,7 @@ import {
   ProductTrustBudges,
   useProductsStore,
 } from '@/entities/products';
-import { Skeleton } from '@/shared/shadcd/components/ui/skeleton';
+import { Skeleton } from '@shadcd/skeleton';
 
 export default function ProductPage() {
   const params = useParams();

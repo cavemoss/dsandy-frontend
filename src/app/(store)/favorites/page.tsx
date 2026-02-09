@@ -7,8 +7,11 @@ import { Heart, ShoppingCart, Undo } from 'lucide-react';
 import ProductCard from '@/entities/products/ui/Card';
 import { useFavoritesStore } from '@/features/cart';
 import BackChevron from '@/shared/components/BackChevron';
+import { useIsMobile } from '@/shared/shadcd/hooks/use-mobile';
 
 export default function FavoritesPage() {
+  const isMobile = useIsMobile();
+
   const items = useFavoritesStore((state) => state.items);
 
   const keys = Object.keys(items);
@@ -18,7 +21,7 @@ export default function FavoritesPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center">
           <BackChevron title="My Favorites" muted="Saved items" />
-          {keys.length > 0 && (
+          {keys.length > 0 && !isMobile && (
             <div className="ml-auto flex gap-2">
               <Button
                 variant="ghost"

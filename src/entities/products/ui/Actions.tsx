@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import { useCartStore, useFavoritesStore } from '@/features/cart';
 import Counter from '@/shared/components/Counter';
-import { Spinner } from '@/shared/shadcd/components/ui/spinner';
+import { Spinner } from '@shadcd/spinner';
 
 import { useProductsStore } from '../model';
 

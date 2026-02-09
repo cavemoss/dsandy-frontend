@@ -4,10 +4,10 @@ import { LabeledSelect } from '@/shared/components/form';
 import SelectSearchable from '@/shared/components/SelectSearchable';
 import { SelectOption } from '@/shared/lib/types';
 import { Model } from '@/shared/lib/utils';
-import { Button } from '@/shared/shadcd/components/ui/button';
-import { CardDescription, CardHeader, CardTitle } from '@/shared/shadcd/components/ui/card';
-import { Popover, PopoverContent, PopoverTrigger } from '@/shared/shadcd/components/ui/popover';
-import { Spinner } from '@/shared/shadcd/components/ui/spinner';
+import { Button } from '@shadcd/button';
+import { CardDescription, CardHeader, CardTitle } from '@shadcd/card';
+import { Popover, PopoverContent, PopoverTrigger } from '@shadcd/popover';
+import { Spinner } from '@shadcd/spinner';
 import { cn } from '@/shared/shadcd/lib/utils';
 import { useInitStore } from '@/widgets/init';
 

@@ -4,7 +4,7 @@ import { Card, CardContent } from '@shadcd/card';
 import { Package } from 'lucide-react';
 
 import { useOrdersStore } from '@/entities/orders';
-import OrderInfo from '@/entities/orders/ui/Info';
+import { OrderItemGroup2 } from '@/entities/orders/ui/ItemGroup2';
 import BackChevron from '@/shared/components/BackChevron';
 
 export default function OrdersPage() {
@@ -27,7 +27,7 @@ export default function OrdersPage() {
         ) : (
           <div className="space-y-8">
             {orders.map((order) => (
-              <OrderInfo key={order.id} order={order} />
+              <OrderItemGroup2 key={order.id} order={order} />
             ))}
 
             {/* {orders.map((order, idx) => (
