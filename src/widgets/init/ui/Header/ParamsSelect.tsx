@@ -1,13 +1,13 @@
+import { Button } from '@shadcd/button';
+import { CardDescription, CardHeader, CardTitle } from '@shadcd/card';
+import { Popover, PopoverContent, PopoverTrigger } from '@shadcd/popover';
+import { Spinner } from '@shadcd/spinner';
 import { useState } from 'react';
 
 import { LabeledSelect } from '@/shared/components/form';
 import SelectSearchable from '@/shared/components/SelectSearchable';
 import { SelectOption } from '@/shared/lib/types';
 import { Model } from '@/shared/lib/utils';
-import { Button } from '@shadcd/button';
-import { CardDescription, CardHeader, CardTitle } from '@shadcd/card';
-import { Popover, PopoverContent, PopoverTrigger } from '@shadcd/popover';
-import { Spinner } from '@shadcd/spinner';
 import { cn } from '@/shared/shadcd/lib/utils';
 import { useInitStore } from '@/widgets/init';
 
@@ -81,7 +81,7 @@ export default function ParamsSelect({ className }: { className?: string }) {
           options={countryOptions}
           model={model.newSelect((s) => s.viewerParams, 'country')}
           icon={<span className="text-xl">{currentCountry.flag}</span>}
-          label={<>Country</>}
+          label={<>Shipping to</>}
           onChange={onSelectCountry}
         />
 

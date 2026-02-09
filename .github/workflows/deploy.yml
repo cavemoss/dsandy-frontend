@@ -19,5 +19,4 @@ jobs:
             cd ~/dsandy/frontend
             git pull
             cd ~/dsandy
-            docker-compose rm -f frontend
-            docker-compose up -d --build frontend
+            docker compose up -d --build frontend
