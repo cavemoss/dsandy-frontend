@@ -14,7 +14,7 @@ export function OrderStatusBadge({ order, inner }: Params) {
     case OrderStatus.PLACED_AT_ALI:
       return (
         <Badge variant="secondary">
-          <Loader className="-ml-0.5" /> Processing
+          <Loader className="-ml-0.5" /> Pending
         </Badge>
       );
     case OrderStatus.TO_BE_SHIPPED:
