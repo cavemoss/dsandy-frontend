@@ -23,7 +23,7 @@ export default function Page() {
 
     return (
       <>
-        <BackChevron title={page.label} muted={page.subLabel} />
+        <BackChevron title={page.label} desc={page.subLabel} />
         {categoryIds.length > 1 ? (
           <div className="space-y-14">
             {categories

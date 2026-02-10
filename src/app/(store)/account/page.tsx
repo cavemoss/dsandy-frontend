@@ -11,7 +11,7 @@ export default function AccountPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <BackChevron title="My Account" muted="Manage your profile and preferences" />
+        <BackChevron title="My Account" desc="Manage your profile and preferences" />
 
         <div className="grid lg:grid-cols-4 gap-6">
           <CustomerProfileCard />

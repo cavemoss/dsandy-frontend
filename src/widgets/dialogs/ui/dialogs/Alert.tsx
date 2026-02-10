@@ -13,16 +13,27 @@ export default function AlertBox() {
   return (
     <>
       <Dialog open={isOpened} onOpenChange={() => dialogsStore.useAlert()}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-125">
           <DialogHeader>
             <DialogTitle>{data.title}</DialogTitle>
             <DialogDescription>{data.description}</DialogDescription>
           </DialogHeader>
 
-          <div className="w-full flex flex-col sm:flex-row sm:justify-end">
-            <Button variant="outline" onClick={() => dialogsStore.useAlert()}>
-              Cancel
-            </Button>
+          <div className="w-full flex flex-col gap-2 sm:flex-row sm:justify-end">
+            {data.type == 'info' ? (
+              <Button variant="outline" onClick={() => dialogsStore.useAlert()}>
+                Cancel
+              </Button>
+            ) : (
+              <>
+                <Button className="w-22" variant="outline" onClick={() => dialogsStore.useAlert()}>
+                  Cancel
+                </Button>
+                <Button className="w-22" onClick={() => dialogsStore.toggleDialog(DialogEnum.ALERT)}>
+                  Confirm
+                </Button>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>

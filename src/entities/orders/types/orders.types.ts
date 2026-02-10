@@ -10,8 +10,6 @@ export interface OrdersState {
   };
   contactInfo: OrderContactInfoDTO;
   shippingInfo: OrderShippingInfoDTO;
-  // getters
-  getLastOrderId: () => string;
   // actions
   init: () => Promise<void>;
   loadOrders: (actualizeAnon?: boolean) => Promise<void>;

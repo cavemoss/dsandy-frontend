@@ -20,6 +20,7 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set, get)
     type: 'info',
     title: '',
     description: '',
+    onConfirm() {},
   },
 
   orderTrackingData: {
@@ -41,7 +42,7 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set, get)
   },
 
   useAlert(alertData) {
-    if (alertData) set({ alertData });
+    if (alertData) set((s) => (Object.assign(s.alertData, alertData), s));
     get().toggleDialog(DialogEnum.ALERT);
   },
 

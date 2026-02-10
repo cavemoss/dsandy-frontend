@@ -21,7 +21,11 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
 
   // Getters
 
-  getElementsOptions: () => ({ mode: 'payment', ...get().options }),
+  getElementsOptions: () => ({
+    mode: 'payment',
+    paymentMethodCreation: 'manual',
+    ...get().options,
+  }),
 
   // Actions
 
@@ -74,9 +78,8 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
 
   async confirmPayment(stripe, elements) {
     const self = get();
-    const { clientSecret } = self;
-
-    if (!clientSecret) return;
+    const ordersStore = useOrdersStore.getState();
+    const initStore = useInitStore.getState();
 
     set({ isProcessing: true });
 
@@ -91,22 +94,44 @@ export const useStripeStore = createZustand<StripeStoreState>('stripe', (set, ge
 
       console.info({ selectedPaymentMethod });
 
-      await useOrdersStore.getState().updateOrderInfo();
+      const options = self.setOptions();
+      const order = await ordersStore.placeOrder();
 
-      const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
-        elements,
-        clientSecret,
-        confirmParams: { return_url: location.origin },
-        redirect: 'if_required',
-      });
+      const { confirmationToken, error: confirmError } = await stripe.createConfirmationToken({ elements });
 
       if (confirmError) {
-        console.debug('Error confirming payment', { confirmError });
+        console.debug('Error creating confirmation token', { confirmError });
         toast.error('Payment was unsuccessful');
         return;
       }
 
-      console.info({ paymentIntent });
+      console.info({ confirmationToken });
+
+      const paymentIntent = await api.stripe.createConfirmIntent({
+        confirmationTokenId: confirmationToken.id,
+        returnUrl: location.origin,
+        ...options,
+        metadata: {
+          orderId: order.id,
+          tenantId: initStore.subdomain.tenantId,
+        },
+      });
+
+      if (paymentIntent.status === 'requires_action') {
+        const { error } = await stripe.handleNextAction({
+          clientSecret: paymentIntent.clientSecret,
+        });
+
+        if (error) {
+          console.debug('Handle next action error', { confirmError });
+          toast.error('There was an error with your payment, please contact tech support');
+          return;
+        }
+      } else if (paymentIntent.status !== 'succeeded') {
+        console.debug('Unexpected payment intent status', { confirmError });
+        toast.error('There was an error with your payment, please contact tech support');
+        return;
+      }
 
       await useOrdersStore.getState().loadOrders(false);
 

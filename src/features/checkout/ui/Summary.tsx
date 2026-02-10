@@ -3,13 +3,14 @@
 import { Badge } from '@shadcd/badge';
 import { Button } from '@shadcd/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@shadcd/card';
+import { Separator } from '@shadcd/separator';
 
 import { useCartStore } from '@/features/cart';
-import { Separator } from '@shadcd/separator';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
+import { cn } from '@/shared/shadcd/lib/utils';
 import { formatPrice } from '@/widgets/init';
 
-export function CheckoutSummary() {
+export function CheckoutSummary({ className }: { className?: string }) {
   const cartStore = useCartStore();
 
   const subtotal = cartStore.getSubtotal();
@@ -21,7 +22,7 @@ export function CheckoutSummary() {
   const someItemsAreHidden = cartDisplayItems.length > 3;
 
   return (
-    <div className="space-y-6 mr-auto w-100 sticky top-0">
+    <div className={cn(className, 'space-y-6 mr-auto w-full md:w-100 md:sticky top-0')}>
       <Card>
         <CardHeader>
           <CardTitle>Order Summary</CardTitle>
@@ -36,7 +37,7 @@ export function CheckoutSummary() {
                   className="w-16 h-16 object-cover rounded-md brightness-95"
                 />
                 {item.quantity > 1 && (
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 items-center justify-center text-xs">
                     {item.quantity}
                   </Badge>
                 )}
@@ -60,21 +61,32 @@ export function CheckoutSummary() {
           )}
 
           <div className="space-y-2 mt-4">
-            <div className="flex justify-between text-sm text-gray-500">
+            <div className="flex justify-between text-sm sm:text-gray-500">
               <span>Subtotal</span>
-              <Badge variant="secondary">{formatPrice(subtotal)}</Badge>
+              <span className="sm:hidden">{formatPrice(subtotal)}</span>
+              <Badge className="hidden sm:block" variant="secondary">
+                {formatPrice(subtotal)}
+              </Badge>
             </div>
-            <div className="flex justify-between text-sm text-gray-500">
+            <div className="flex justify-between text-sm sm:text-gray-500">
               <span>Shipping</span>
+              <span className="sm:hidden">{formatPrice(shipping)}</span>
               {shipping > 0 ? (
-                <Badge variant="secondary">{formatPrice(shipping)}</Badge>
+                <Badge className="hidden sm:block" variant="secondary">
+                  {formatPrice(shipping)}
+                </Badge>
               ) : (
-                <Badge variant="outline">FREE</Badge>
+                <Badge className="hidden sm:block" variant="outline">
+                  FREE
+                </Badge>
               )}
             </div>
-            <div className="flex justify-between text-sm text-gray-500">
+            <div className="flex justify-between text-sm sm:text-gray-500">
               <span>Tax</span>
-              <Badge variant="secondary">{formatPrice(tax)}</Badge>
+              <span className="sm:hidden">{formatPrice(tax)}</span>
+              <Badge className="hidden sm:block" variant="secondary">
+                {formatPrice(tax)}
+              </Badge>
             </div>
             <Separator />
             <div className="flex justify-between font-bold mt-6">

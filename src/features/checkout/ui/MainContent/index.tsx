@@ -44,35 +44,37 @@ export function CheckoutForm() {
   };
 
   return (
-    <Elements stripe={stripePromise} options={stripeOptions}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Truck />
-            Shipping Address
-          </CardTitle>
-          <CardDescription>Enter your delivery details.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <AddressElement
-            options={addressOptions}
-            onChange={ordersState.setAddress}
-            onLoaderStart={() => setSkeletonShown(false)}
-          />
-          {skeletonShown && (
-            <div className="space-y-2">
-              <Skeleton className="w-full h-12" />
-              <Skeleton className="w-full h-12" />
-              <Skeleton className="w-full h-12" />
-              <Skeleton className="w-full h-12" />
-            </div>
-          )}
-        </CardContent>
-      </Card>
+    <div className="ml-auto w-full md:w-150">
+      <Elements stripe={stripePromise} options={stripeOptions}>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Truck />
+              Shipping Address
+            </CardTitle>
+            <CardDescription>Enter your delivery details.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AddressElement
+              options={addressOptions}
+              onChange={ordersState.setAddress}
+              onLoaderStart={() => setSkeletonShown(false)}
+            />
+            {skeletonShown && (
+              <div className="space-y-2">
+                <Skeleton className="w-full h-12" />
+                <Skeleton className="w-full h-12" />
+                <Skeleton className="w-full h-12" />
+                <Skeleton className="w-full h-12" />
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-      <div className="min-h-screen -mt-6 py-12">
-        <PaymentSection />
-      </div>
-    </Elements>
+        <div className="min-h-[80vh] md:min-h-screen -mt-6 py-12">
+          <PaymentSection />
+        </div>
+      </Elements>
+    </div>
   );
 }

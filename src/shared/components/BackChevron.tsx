@@ -7,12 +7,12 @@ import { ReactNode } from 'react';
 import { useNavStore } from '@/widgets/init';
 
 interface Props {
-  title: string;
-  muted: string;
+  title: ReactNode | string;
+  desc: ReactNode | string;
   addon?: ReactNode;
 }
 
-export default function BackChevron({ title, muted, addon }: Props) {
+export default function BackChevron({ title, desc: muted, addon }: Props) {
   const navStore = useNavStore();
 
   return (

@@ -3,4 +3,5 @@ export interface FavoritesState {
   // actions
   init: () => void;
   toggle: (productId: number, scuId: number) => void;
+  clearAll: () => void;
 }

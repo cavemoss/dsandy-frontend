@@ -1,5 +1,6 @@
 'use client';
 
+import { Skeleton } from '@shadcd/skeleton';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -13,7 +14,6 @@ import {
   ProductTrustBudges,
   useProductsStore,
 } from '@/entities/products';
-import { Skeleton } from '@shadcd/skeleton';
 
 export default function ProductPage() {
   const params = useParams();

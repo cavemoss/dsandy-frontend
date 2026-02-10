@@ -4,13 +4,13 @@ import { Avatar, AvatarFallback } from '@shadcd/avatar';
 import { Badge } from '@shadcd/badge';
 import { Card, CardContent } from '@shadcd/card';
 import { Progress } from '@shadcd/progress';
+import { Skeleton } from '@shadcd/skeleton';
 import { BadgeCheck, Star } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 import { useProductsStore } from '@/entities/products';
 import Pagination from '@/shared/components/Pagination';
 import StarRating from '@/shared/components/StarRating';
-import { Skeleton } from '@shadcd/skeleton';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 import { useIsMobile } from '@/shared/shadcd/hooks/use-mobile';
 import { useDialogsStore } from '@/widgets/dialogs';

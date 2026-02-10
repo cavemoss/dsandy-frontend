@@ -22,6 +22,8 @@ export function OrderItemGroup2({ order }: Props) {
 
   const total = formatPrice(order.paymentInfo.amount / 100, order.paymentInfo.currency);
 
+  const createdAt = dayjs(order.createdAt);
+
   return (
     <div className="space-y-5">
       <Card className="flex flex-col">
@@ -39,7 +41,7 @@ export function OrderItemGroup2({ order }: Props) {
                 </Button>
               )}
             </div>
-            <div className="text-sm">
+            <div className="text-base">
               <span className="text-muted-foreground">Total: </span>
               {total}
             </div>
@@ -64,12 +66,12 @@ export function OrderItemGroup2({ order }: Props) {
           <div className="w-full grid grid-cols-2 text-sm">
             <div className="flex flex-col">
               <span className="text-muted-foreground">Placed on</span>
-              {dayjs(order.createdAt).format('MMM D YYYY')}
+              {createdAt.format('MMM D YYYY')}
             </div>
             <div className="flex flex-col">
               <span className="text-muted-foreground">Expected delivery</span>
               {order.trackingData
-                ? dayjs(order.createdAt).add(order.trackingData.deliveryDays, 'days').format('MMM D YYYY')
+                ? createdAt.add(order.trackingData.deliveryDays, 'days').format('MMM D YYYY')
                 : '....'}
             </div>
           </div>

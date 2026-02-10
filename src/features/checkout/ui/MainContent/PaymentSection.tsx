@@ -6,7 +6,7 @@ import { Skeleton } from '@shadcd/skeleton';
 import { Spinner } from '@shadcd/spinner';
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { CreditCard, Sparkles } from 'lucide-react';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useState } from 'react';
 
 import { useStripeStore } from '@/features/checkout';
 
@@ -15,7 +15,6 @@ export default function PaymentSection() {
   const elements = useElements();
   const stripeStore = useStripeStore();
 
-  const clientSecret = useStripeStore((state) => state.clientSecret);
   const isProcessing = useStripeStore((state) => state.isProcessing);
 
   const [isElementMounted, setIsElementMounted] = useState(false);
@@ -24,8 +23,6 @@ export default function PaymentSection() {
     e.preventDefault();
     if (stripe && elements) stripeStore.confirmPayment(stripe, elements);
   };
-
-  useEffect(() => void stripeStore.createPaymentIntent(), []);
 
   return (
     <Card>
@@ -38,7 +35,7 @@ export default function PaymentSection() {
 
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-6">
-          {clientSecret && <PaymentElement onLoaderStart={() => setIsElementMounted(true)} />}
+          <PaymentElement onLoaderStart={() => setIsElementMounted(true)} />
 
           {!isElementMounted && (
             <div className="space-y-2">

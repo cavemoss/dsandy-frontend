@@ -20,11 +20,9 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <BackChevron title="Shopping Cart" muted={`${itemsCount} items in your cart`} />
+        <BackChevron title={<>Shopping Cart</>} desc={<>{itemsCount} items in your cart</>} />
 
         {cartItems.length === 0 ? (
-          /* Empty Cart */
           <Card className="text-center py-12">
             <CardContent>
               <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
@@ -35,7 +33,6 @@ export default function CartPage() {
           </Card>
         ) : (
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {totalSavings > 0 && (
                 <div className="bg-green-50 border border-green-600/40 rounded-xl p-4 mb-4">
@@ -53,7 +50,6 @@ export default function CartPage() {
               ))}
             </div>
 
-            {/* Order Summary */}
             <CartSummary />
           </div>
         )}

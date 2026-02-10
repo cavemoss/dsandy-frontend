@@ -32,10 +32,6 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
     zipCode: '',
   },
 
-  // Getters
-
-  getLastOrderId: () => '#' + get().orders.lastId?.toString().padStart(5, '0'),
-
   // Actions
 
   async init() {
@@ -79,8 +75,6 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
     const { contactInfo, shippingInfo } = get();
     const { options: paymentInfo } = useStripeStore.getState();
 
-    const profitFloat = paymentInfo.amount / 100 - cartStore.getRealTotal();
-
     try {
       const order = await api.orders.placeOrder({
         contactInfo,
@@ -98,14 +92,14 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
         }),
 
         metadata: {
-          profit: parseFloat(profitFloat.toFixed(2)) * 100,
+          profit: paymentInfo.amount - cartStore.getRealTotalAmount(),
 
           products: cartItems.reduce(
             (result, item) => {
               const [product, scu] = productsStore.getProductAndSCU(item.productId, item.scuId);
 
               const ptr = (result[item.productId] ??= {
-                name: product.aliName,
+                name: product.title ?? product.aliName,
                 variants: [],
               });
 
@@ -125,7 +119,12 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
         addAnonOrder(order.id);
       }
 
-      set((state) => ((state.orders.currentId = order.id), state));
+      set((state) => {
+        const { orders: o } = state;
+        o.currentId = order.id;
+        o.lastId = order.id;
+        return state;
+      });
 
       return order;
     } catch (cause) {

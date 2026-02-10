@@ -102,16 +102,18 @@ export const useCartStore = createZustand<CartState>('cart', (set, get) => ({
     return +(self.getSubtotal() + self.getShipping()).toFixed(2);
   },
 
-  getRealTotal: () => {
+  getRealTotalAmount: () => {
     const self = get();
     const productsStore = useProductsStore.getState();
 
     const result = self.getItems().reduce((sum, item) => {
       const scu = productsStore.getExactSCU(item.productId, item.scuId);
-      return sum + parseFloat(scu.priceInfo.offerPrice) * item.quantity;
+      if (!scu) return sum;
+      const amount = parseInt(scu.priceInfo.offerPrice.replace('.', ''));
+      return sum + amount * item.quantity;
     }, 0);
 
-    return +result.toFixed(2);
+    return result;
   },
 
   getItemsCount: () => get().getItems().length,
@@ -149,7 +151,7 @@ export const useCartStore = createZustand<CartState>('cart', (set, get) => ({
 
   handleBuyNow(item) {
     set({ item });
-    useNavStore.getState().push('/checkout');
+    useNavStore.getState().replace('/checkout');
   },
 
   removeFromCart(index) {

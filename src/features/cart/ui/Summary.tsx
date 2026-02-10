@@ -4,10 +4,12 @@ import { Button } from '@shadcd/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@shadcd/card';
 import { Input } from '@shadcd/input';
 import { Separator } from '@shadcd/separator';
+import { Spinner } from '@shadcd/spinner';
+import { Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
-import { Spinner } from '@shadcd/spinner';
-import { formatPrice, useNavStore } from '@/widgets/init';
+import { cn } from '@/shared/shadcd/lib/utils';
+import { formatPrice, useInitStore, useNavStore } from '@/widgets/init';
 
 import { useCartStore } from '../model';
 
@@ -15,6 +17,7 @@ export default function CartSummary() {
   const cartStore = useCartStore();
   const navStore = useNavStore();
 
+  const policies = useInitStore((state) => state.subdomain.config.policies);
   const [redirecting, setRedirecting] = useState(false);
 
   const itemsCount = cartStore.getItemsCount();
@@ -25,7 +28,7 @@ export default function CartSummary() {
 
   const proceedToCheckout = () => {
     setRedirecting(true);
-    setTimeout(() => navStore.push('/checkout'), 300);
+    setTimeout(() => navStore.replace('/checkout'), 300);
   };
 
   return (
@@ -50,14 +53,14 @@ export default function CartSummary() {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex justify-between">
-            <span>Subtotal ({itemsCount} items)</span>
+            <span>Subtotal • {itemsCount} items</span>
             <span>{formatPrice(subtotal)}</span>
           </div>
 
           <div className="flex justify-between">
             <span>Shipping</span>
-            <span className={shipping === 0 ? 'text-muted-foreground' : ''}>
-              {shipping === 0 ? <>FREE</> : formatPrice(shipping)}
+            <span className={cn(shipping === 0 && 'text-muted-foreground')}>
+              {shipping == 0 ? <>Free</> : formatPrice(shipping)}
             </span>
           </div>
 
@@ -74,24 +77,25 @@ export default function CartSummary() {
           </div>
 
           {shipping > 0 && (
-            <p className="text-xs text-muted-foreground">Add {formatPrice(20 - subtotal)} for free shipping</p>
+            <p className="text-sm text-muted-foreground">
+              Add {formatPrice(policies.freeShippingCap - subtotal)} for free shipping
+            </p>
           )}
         </CardContent>
       </Card>
 
       {/* Checkout Button */}
       <div className="space-y-3">
-        <Button className="w-full" size="lg" onClick={proceedToCheckout}>
+        <Button className="w-full" size="lg" onClick={proceedToCheckout} disabled={redirecting}>
           {redirecting ? (
             <>
               <Spinner /> Redirecting to checkout...
             </>
           ) : (
-            <>Proceed to Checkout</>
+            <>
+              <Sparkles /> Proceed to Checkout
+            </>
           )}
-        </Button>
-        <Button variant="outline" className="w-full" onClick={() => navStore.back()}>
-          Continue Shopping
         </Button>
       </div>
     </div>

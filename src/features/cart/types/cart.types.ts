@@ -34,7 +34,7 @@ export interface CartState {
   getSubtotal: () => number;
   getShipping: () => number;
   getTotal: () => number;
-  getRealTotal: () => number;
+  getRealTotalAmount: () => number;
 
   getItemsCount: () => number;
   getAmountSaved: () => number;

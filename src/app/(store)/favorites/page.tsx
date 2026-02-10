@@ -11,6 +11,7 @@ import { useIsMobile } from '@/shared/shadcd/hooks/use-mobile';
 
 export default function FavoritesPage() {
   const isMobile = useIsMobile();
+  const store = useFavoritesStore();
 
   const items = useFavoritesStore((state) => state.items);
 
@@ -20,14 +21,10 @@ export default function FavoritesPage() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center">
-          <BackChevron title="My Favorites" muted="Saved items" />
+          <BackChevron title="My Favorites" desc="Saved items" />
           {keys.length > 0 && !isMobile && (
             <div className="ml-auto flex gap-2">
-              <Button
-                variant="ghost"
-                className="hover:bg-red-100 hover:text-red-600"
-                onClick={() => useFavoritesStore.setState({ items: {} })}
-              >
+              <Button variant="ghost" className="hover:bg-red-100 hover:text-red-600" onClick={store.clearAll}>
                 <Undo /> Clear All
               </Button>
               <Button variant="outline">

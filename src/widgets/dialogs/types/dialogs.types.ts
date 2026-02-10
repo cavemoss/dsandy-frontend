@@ -33,7 +33,7 @@ export interface DialogsState {
   // actions
   toggleDialog: (dialog: DialogEnum, noMobile?: boolean) => void;
   useImageViewer: (images?: string[], index?: number) => void;
-  useAlert: (data?: this['alertData']) => void;
+  useAlert: (data?: Partial<this['alertData']>) => void;
   useOrderTracking: (order?: OrderDTO) => void;
 
   setState: (clb: (s: this) => void) => void;

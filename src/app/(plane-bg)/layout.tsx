@@ -7,5 +7,5 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
 
   if (!isInitialized) return <></>;
 
-  return <div className="h-screen bg-muted p-12 flex gap-10 overflow-scroll">{children}</div>;
+  return <div className="h-screen bg-muted flex justify-around">{children}</div>;
 }

@@ -1,6 +1,7 @@
 import { toast } from 'sonner';
 
 import { createZustand, deepClone } from '@/shared/lib/utils';
+import { useDialogsStore } from '@/widgets/dialogs';
 
 import { FavoritesState } from '../types';
 
@@ -28,6 +29,14 @@ export const useFavoritesStore = createZustand<FavoritesState>('favorites', (set
 
       state.items = items;
       return deepClone(state);
+    });
+  },
+
+  clearAll() {
+    useDialogsStore.getState().useAlert({
+      title: 'Are you sure?',
+      description: 'This action will clear all of your saved items',
+      type: 'confirm',
     });
   },
 }));

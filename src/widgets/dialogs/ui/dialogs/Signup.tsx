@@ -106,7 +106,7 @@ export default function SignupDialog() {
 
   return (
     <Dialog open={isOpened} onOpenChange={() => dialogsStore.toggleDialog(DialogEnum.SIGNUP)}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader>
           <DialogTitle>Create Your Account</DialogTitle>
           <DialogDescription>Fill in your details to get started</DialogDescription>

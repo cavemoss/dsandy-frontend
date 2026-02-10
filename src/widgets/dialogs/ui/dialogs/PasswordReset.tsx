@@ -1,6 +1,8 @@
 'use client';
+
 import { Button } from '@shadcd/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@shadcd/dialog';
+import { Spinner } from '@shadcd/spinner';
 import { Mail } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -8,7 +10,6 @@ import { AuthErrorEnum } from '@/api/entities';
 import { useAuthStore } from '@/features/auth';
 import LabeledInput from '@/shared/components/LabeledInput';
 import { Model } from '@/shared/lib/utils';
-import { Spinner } from '@shadcd/spinner';
 
 import { DialogEnum, useDialogsStore } from '../..';
 
