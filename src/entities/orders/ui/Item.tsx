@@ -35,11 +35,11 @@ export function OrderItem({ item }: Params) {
       </div>
       <div className="flex-1">
         <p className="font-medium text-sm line-clamp-2">{product.title || product.aliName}</p>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground line-clamp-2">
           {scu.propertyName}: {scu.propertyValueName}
         </p>
         {scu.combinations.map((el, idx) => (
-          <p key={idx} className="text-sm text-muted-foreground">
+          <p key={idx} className="text-sm text-muted-foreground line-clamp-2">
             {el.propertyName}: {el.propertyValueName}
           </p>
         ))}

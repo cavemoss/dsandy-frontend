@@ -1,11 +1,12 @@
 'use client';
 
-import { Card, CardContent, CardHeader } from '@shadcd/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@shadcd/dropdown-menu';
+import { Button } from '@shadcd/button';
 import dayjs from 'dayjs';
-import { ClipboardClock, ClipboardX, EllipsisVertical } from 'lucide-react';
+import { ListCollapse } from 'lucide-react';
 
 import { OrderDTO } from '@/api/entities';
+import { Badge } from '@/shared/shadcd/components/ui/badge';
+import { Separator } from '@/shared/shadcd/components/ui/separator';
 import { useDialogsStore } from '@/widgets/dialogs';
 import { formatPrice } from '@/widgets/init';
 
@@ -14,9 +15,10 @@ import { OrderStatusBadge } from './StatusBadge';
 
 interface Props {
   order: OrderDTO;
+  isLast?: boolean;
 }
 
-export function OrderItemGroup({ order }: Props) {
+export function OrderItemGroupInner({ order, isLast }: Props) {
   const dialogs = useDialogsStore();
 
   const total = formatPrice(order.paymentInfo.amount / 100, order.paymentInfo.currency);
@@ -24,37 +26,42 @@ export function OrderItemGroup({ order }: Props) {
   const createdAt = dayjs(order.createdAt);
 
   return (
-    <Card className="flex flex-col">
-      <CardHeader className="flex justify-between">
+    <div className="space-y-7">
+      <div className="flex justify-between">
         <div>
           <div className="flex items-center">
             <span className="text-lg font-semibold">Order #{order.id.toString().padStart(5, '0')}</span>
+            {order.trackingData && (
+              <Button
+                variant="link"
+                className="text-sm text-muted-foreground hidden md:flex h-6"
+                onClick={() => dialogs.useOrderTracking(order)}
+              >
+                <ListCollapse /> Track Order
+              </Button>
+            )}
           </div>
           <div className="text-base">
-            <span className="text-muted-foreground">Total: </span> {total}
+            <span className="text-muted-foreground">Total: </span>
+            {total}
           </div>
         </div>
-
-        <div className="flex gap-2 items-center">
+        <div className="flex flex-col md:flex-row md:items-baseline">
           <OrderStatusBadge order={order} />
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <EllipsisVertical size={18} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem disabled={!order.trackingData} onClick={() => dialogs.useOrderTracking(order)}>
-                <ClipboardClock /> View Tracking
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <ClipboardX /> Cancel Order
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {order.trackingData && (
+            <Badge
+              className="w-full md:hidden"
+              variant="outline"
+              onClick={() => dialogs.setState((s) => (s.orderTrackingData.order = order))}
+            >
+              Track Order
+            </Badge>
+          )}
         </div>
-      </CardHeader>
+      </div>
 
-      <CardContent className="space-y-7">
+      <div className="space-y-7">
         <div className="w-full grid grid-cols-2 text-sm">
           <div className="flex flex-col">
             <span className="text-muted-foreground">Placed on</span>
@@ -70,7 +77,9 @@ export function OrderItemGroup({ order }: Props) {
             <OrderItem key={item.dProductId} item={item} />
           ))}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      {!isLast && <Separator />}
+    </div>
   );
 }

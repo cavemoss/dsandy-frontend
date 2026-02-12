@@ -1,11 +1,7 @@
 'use client';
 
 import { Button } from '@shadcd/button';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@shadcd/sheet';
-import { Menu } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
-
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@shadcd/sheet';
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -15,11 +11,14 @@ import {
   SidebarMenuSubItem,
   SidebarProvider,
 } from '@shadcd/sidebar';
+import { Menu } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 
 import { useInitStore } from '../../model';
 import ParamsSelect from './ParamsSelect';
 
-export default function BurgerMenu() {
+export default function MobileMenu() {
   const navigation = useInitStore((state) => state.subdomain.navigation);
 
   const [open, setOpen] = useState(false);
@@ -33,12 +32,11 @@ export default function BurgerMenu() {
       </SheetTrigger>
       <SheetContent side="right">
         <SheetHeader>
-          <SheetTitle>Edit profile</SheetTitle>
-          <SheetDescription>Make changes to your profile here. Click save when you&apos;re done.</SheetDescription>
+          <SheetTitle />
         </SheetHeader>
 
         <div className="px-4">
-          <ParamsSelect />
+          <ParamsSelect mobile />
 
           <SidebarProvider className="mt-7">
             <SidebarMenu>

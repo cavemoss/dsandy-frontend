@@ -45,7 +45,7 @@ export const useCustomersStore = createZustand<CustomersState>('customers', (set
   async savePreferences() {
     try {
       await api.customers.patch({
-        preferences: useInitStore.getState().viewerParams,
+        preferences: useInitStore.getState().viewerParamsModel,
       });
     } catch (error) {
       console.debug('Error when saving preferences', { error });

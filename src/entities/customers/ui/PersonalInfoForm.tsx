@@ -11,7 +11,11 @@ import { DialogEnum, useDialogsStore } from '@/widgets/dialogs';
 
 import { useCustomersStore } from '../model';
 
-export default function CustomerPersonalInfoForm() {
+interface Params {
+  isDrawer?: boolean;
+}
+
+export default function CustomerPersonalInfoForm({ isDrawer }: Params) {
   const store = useCustomersStore();
   const dialogs = useDialogsStore();
 
@@ -71,11 +75,22 @@ export default function CustomerPersonalInfoForm() {
 
   return (
     <>
-      <div className="flex flex-col md:grid grid-cols-2 gap-2.5 md:gap-4">
-        <LabeledInput model={fistNameModel} label="First Name" icon={<User />} />
-        <LabeledInput model={lastNameModel} label="Last Name" />
-      </div>
+      {isDrawer ? (
+        <>
+          <LabeledInput model={fistNameModel} label={<>First Name</>} icon={<User />} />
+
+          <LabeledInput model={lastNameModel} label={<>First Name</>} />
+        </>
+      ) : (
+        <div className="flex flex-col md:grid grid-cols-2 gap-2.5 md:gap-4">
+          <LabeledInput model={fistNameModel} label={<>First Name</>} icon={<User />} />
+
+          <LabeledInput model={lastNameModel} label={<>First Name</>} />
+        </div>
+      )}
+
       <LabeledInput model={emailModel} label="Email" icon={<Mail />} />
+
       <LabeledPhoneInput
         model={phoneModel}
         onReset={() => store.setState((s) => (s.customerModel!.info.phone = ''))}
@@ -84,28 +99,53 @@ export default function CustomerPersonalInfoForm() {
         withIcon
       />
 
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button onClick={cancelChanges} variant="outline" className="w-26">
-            <X /> Cancel
+      {isDrawer ? (
+        <div className="flex gap-2">
+          <DialogClose asChild className="flex-1">
+            <Button onClick={cancelChanges} variant="outline" className="w-26">
+              <X /> Cancel
+            </Button>
+          </DialogClose>
+          <Button
+            onClick={handleSubmit}
+            className="flex-1"
+            disabled={!isChanged || loading || (errorTrigger && !m.isAllValid)}
+          >
+            {loading ? (
+              <>
+                <Spinner /> Saving...
+              </>
+            ) : (
+              <>
+                <Save /> Save
+              </>
+            )}
           </Button>
-        </DialogClose>
-        <Button
-          onClick={handleSubmit}
-          className="w-26"
-          disabled={!isChanged || loading || (errorTrigger && !m.isAllValid)}
-        >
-          {loading ? (
-            <>
-              <Spinner /> Saving...
-            </>
-          ) : (
-            <>
-              <Save /> Save
-            </>
-          )}
-        </Button>
-      </DialogFooter>
+        </div>
+      ) : (
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button onClick={cancelChanges} variant="outline" className="w-26">
+              <X /> Cancel
+            </Button>
+          </DialogClose>
+          <Button
+            onClick={handleSubmit}
+            className="w-26"
+            disabled={!isChanged || loading || (errorTrigger && !m.isAllValid)}
+          >
+            {loading ? (
+              <>
+                <Spinner /> Saving...
+              </>
+            ) : (
+              <>
+                <Save /> Save
+              </>
+            )}
+          </Button>
+        </DialogFooter>
+      )}
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { useInitStore } from '../model';
 import { CountryData, ViewerParams } from '../types';
+import { localeOptions } from './init.const';
 
 export async function getAnonViewerParams(): Promise<ViewerParams> {
   const initStore = useInitStore.getState();
@@ -16,14 +17,19 @@ export async function getAnonViewerParams(): Promise<ViewerParams> {
 
     const { countries } = initStore.subdomain.config;
 
+    const locales = (data.languages || '').split(',').map((lang: string) => lang.slice(0, 2));
+    const language = localeOptions.find((opt) => locales.includes(opt.value))?.value ?? 'en';
+
     if (countries.includes(data.country_code)) {
       result.country = data.country_code;
       result.currency = data.currency;
+      result.language = language;
     } else {
       const data = initStore.countryData.find(({ code }) => code === countries[0]);
       if (data) {
         result.country = data.code;
         result.currency = data.currencies[0].code;
+        result.language = language;
       }
     }
   } catch (error) {

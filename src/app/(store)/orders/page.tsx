@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { useOrdersStore } from '@/entities/orders';
-import { OrderItemGroup2 } from '@/entities/orders/ui/ItemGroup2';
+import { OrderItemGroup } from '@/entities/orders/ui/ItemGroup';
 import BackChevron from '@/shared/components/BackChevron';
 
 export default function OrdersPage() {
@@ -46,7 +46,7 @@ export default function OrdersPage() {
         ) : (
           <div className="space-y-8">
             {orders.map((order) => (
-              <OrderItemGroup2 key={order.id} order={order} />
+              <OrderItemGroup key={order.id} order={order} />
             ))}
           </div>
         )}

@@ -86,6 +86,7 @@ export interface OrderTrackingDTO {
     description: string;
     timestamp: number;
   }[];
+  isCompleat: boolean;
   carrier: string;
   deliveryDays: number;
 }

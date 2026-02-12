@@ -11,7 +11,7 @@ import { useProductsStore } from '@/entities/products';
 import { useAdminStore } from '@/features/admin/model/admin.state';
 import { useCartStore, useFavoritesStore } from '@/features/cart';
 import i18n from '@/localization/i18n';
-import { createZustand, deepClone, objectByKey } from '@/shared/lib/utils';
+import { createZustand, deepClone, deepCompare, objectByKey } from '@/shared/lib/utils';
 
 import { fetchCountryData, getAnonViewerParams, InitState, isoToFlag, ViewerParams } from '..';
 import { useNavStore } from './nav.store';
@@ -29,7 +29,18 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
     language: 'en',
   },
 
+  viewerParamsModel: {
+    country: 'US',
+    currency: 'USD',
+    language: 'en',
+  },
+
   // Getters
+
+  areViewerParamsChanged: () => {
+    const self = get();
+    return !deepCompare(self.viewerParams, self.viewerParamsModel);
+  },
 
   isAdminPanel: () => location.hostname.startsWith('admin.'),
 
@@ -60,12 +71,12 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
     const countries = objectByKey(self.getAvailableCountries(), 'code');
     const defaultCtr = self.subdomain.config.countries[0];
 
-    return countries[self.viewerParams.country] ?? countries[defaultCtr];
+    return countries[self.viewerParamsModel.country] ?? countries[defaultCtr];
   },
 
   getAvailableCurrencies: () => {
     const self = get();
-    return self.countryData.find((ctr) => self.viewerParams.country === ctr.code)?.currencies ?? [];
+    return self.countryData.find((ctr) => self.viewerParamsModel.country === ctr.code)?.currencies ?? [];
   },
 
   // Actions
@@ -129,7 +140,11 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
       viewerParams = await getAnonViewerParams();
     }
 
-    set({ viewerParams });
+    set({
+      viewerParams,
+      viewerParamsModel: viewerParams,
+    });
+
     i18n.changeLanguage(viewerParams.language);
   },
 
@@ -153,7 +168,7 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
     const self = get();
 
     if (customersStore.customer) await customersStore.savePreferences();
-    else localStorage.setItem('viewerParams', JSON.stringify(self.viewerParams));
+    else localStorage.setItem('viewerParams', JSON.stringify(self.viewerParamsModel));
 
     toast.success('Preferences saved');
     setTimeout(() => location.reload(), 500);

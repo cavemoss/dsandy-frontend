@@ -1,12 +1,12 @@
 'use client';
 
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@shadcd/accordion';
 import { Card, CardContent } from '@shadcd/card';
 import { Separator } from '@shadcd/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shadcd/tabs';
 import DOMPurify from 'dompurify';
 
 import { Product } from '@/api/entities';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@shadcd/accordion';
 import { useInitStore } from '@/widgets/init';
 
 interface Params {

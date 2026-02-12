@@ -20,7 +20,6 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set, get)
     type: 'info',
     title: '',
     description: '',
-    onConfirm() {},
   },
 
   orderTrackingData: {

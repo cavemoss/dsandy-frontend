@@ -10,10 +10,10 @@ import { useCartStore, useFavoritesStore } from '@/features/cart';
 
 import { formatPrice } from '../../lib';
 import { useInitStore } from '../../model';
-import BurgerMenu from './BurgerMenu';
 import Customer from './Customer';
 import Logo from './Logo';
 import MenuBar from './MenuBar';
+import MobileMenu from './MobileMenu';
 import ParamsSelect from './ParamsSelect';
 import SearchBar from './SearchBar';
 
@@ -37,7 +37,6 @@ export function Header() {
       </div>
 
       <div className="border-b bg-background sticky top-0 z-50">
-        {/* Main header */}
         <div className="container mx-auto py-4">
           <div className="flex md:grid grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_1fr_1fr] w-full gap-4 px-4 md:px-0">
             <Logo className="text-[1.6rem]" />
@@ -71,12 +70,11 @@ export function Header() {
                 </Button>
               </Link>
 
-              <BurgerMenu />
+              <MobileMenu />
             </div>
           </div>
         </div>
 
-        {/* Navigation */}
         <div className="border-t bg-muted/50 hidden md:block py-2">
           <MenuBar />
         </div>

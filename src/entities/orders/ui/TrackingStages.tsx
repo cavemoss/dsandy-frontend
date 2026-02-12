@@ -8,19 +8,23 @@ interface Params {
   order: OrderDTO;
 }
 
-export default function OrderTrackingStages({ order }: Params) {
-  if (!order.trackingData) return;
+export function OrderTrackingStages({ order }: Params) {
+  const { trackingData } = order;
 
-  const deliveryDate = dayjs(order.createdAt).add(order.trackingData.deliveryDays, 'days').format('MMM D YYYY');
+  if (!trackingData) return;
 
-  const stages = [
-    {
-      name: 'Order Complete',
-      description: `Expected delivery on ${deliveryDate}`,
-      timestamp: null,
-    },
-    ...order.trackingData.stages,
-  ];
+  const deliveryDate = dayjs(order.createdAt).add(trackingData.deliveryDays, 'days').format('MMM D YYYY');
+
+  const stages = trackingData.isCompleat
+    ? trackingData.stages
+    : [
+        {
+          name: 'Order Complete',
+          description: `Expected delivery on ${deliveryDate}`,
+          timestamp: 0,
+        },
+        ...trackingData.stages,
+      ];
 
   return (
     <div className="relative">

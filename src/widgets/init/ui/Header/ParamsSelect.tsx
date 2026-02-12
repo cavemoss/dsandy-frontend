@@ -8,10 +8,18 @@ import { LabeledSelect } from '@/shared/components/form';
 import SelectSearchable from '@/shared/components/SelectSearchable';
 import { SelectOption } from '@/shared/lib/types';
 import { Model } from '@/shared/lib/utils';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/shadcd/components/ui/accordion';
 import { cn } from '@/shared/shadcd/lib/utils';
 import { useInitStore } from '@/widgets/init';
 
-export default function ParamsSelect({ className }: { className?: string }) {
+import { localeOptions } from '../../lib/init.const';
+
+interface Params {
+  mobile?: boolean;
+  className?: string;
+}
+
+export default function ParamsSelect({ className, mobile }: Params) {
   const [open, setOpen] = useState(false);
 
   const initStore = useInitStore.getState();
@@ -23,6 +31,7 @@ export default function ParamsSelect({ className }: { className?: string }) {
   const countries = initStore.getAvailableCountries();
   const currencies = initStore.getAvailableCurrencies();
   const currentCountry = initStore.getCurrentCountry();
+  const isChanged = initStore.areViewerParamsChanged();
 
   const countryOptions: SelectOption[] = countries.map((c) => ({
     value: c.code,
@@ -39,69 +48,79 @@ export default function ParamsSelect({ className }: { className?: string }) {
     ),
   }));
 
-  const localeOptions: SelectOption[] = [
-    { value: 'en', label: 'English' },
-    { value: 'fr', label: 'Français' },
-    { value: 'de', label: 'Deutsch' },
-    { value: 'es', label: 'Español' },
-    { value: 'it', label: 'Italiano' },
-  ];
-
   const onSelectCountry = () => {
     initStore.setState((s) => {
-      s.viewerParams.currency = initStore.getAvailableCurrencies()[0].code;
+      s.viewerParamsModel.currency = initStore.getAvailableCurrencies()[0].code;
+      s.viewerParamsModel.language = 'en';
     });
   };
 
   const handleSave = async () => {
     setIsSaving(true);
     await initStore.saveViewerParams();
-    setIsSaving(false);
-    setOpen(false);
   };
 
+  const node = (
+    <>
+      <CardHeader className="p-0">
+        {!mobile && <CardTitle>User Preferences</CardTitle>}
+        <CardDescription>
+          Select your country and currency. Your selections will be saved for future visits.
+        </CardDescription>
+      </CardHeader>
+
+      <SelectSearchable
+        options={countryOptions}
+        model={model.newSelect((s) => s.viewerParamsModel, 'country')}
+        icon={<span className="text-xl">{currentCountry.flag}</span>}
+        label={<>Shipping to</>}
+        onChange={onSelectCountry}
+      />
+      <LabeledSelect
+        model={model.newSelect((s) => s.viewerParamsModel, 'currency')}
+        options={currencyOptions}
+        label={<>Currency</>}
+      />
+      <LabeledSelect
+        model={model.newSelect((s) => s.viewerParamsModel, 'language')}
+        options={localeOptions}
+        label={<>Language</>}
+      />
+      <Button onClick={handleSave} disabled={isSaving || !isChanged} className="w-full">
+        {isSaving && <Spinner />}
+        Save Preferences
+      </Button>
+    </>
+  );
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild className="w-full md:w-50">
-        <Button variant="outline" className={cn('flex items-center gap-2 px-3 py-1.5 rounded-md', className)}>
-          <span className="text-xl">{currentCountry.flag}</span>
-          <p className="truncate">
-            {currentCountry.name} ({viewerParams.currency})
-          </p>
-        </Button>
-      </PopoverTrigger>
+    <>
+      {mobile ? (
+        <Accordion type="single" collapsible className="w-full rounded-lg border shadow-md">
+          <AccordionItem value="content" className="border-b px-4 last:border-b-0">
+            <AccordionTrigger>
+              {currentCountry.name} ({viewerParams.currency})
+            </AccordionTrigger>
 
-      <PopoverContent className="w-80 space-y-4" align="end">
-        <CardHeader className="p-0">
-          <CardTitle>User Preferences</CardTitle>
-          <CardDescription>Your selections will be saved for future visits.</CardDescription>
-        </CardHeader>
+            <AccordionContent className="space-y-4">{node}</AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      ) : (
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild className="w-full md:w-50">
+            <Button variant="outline" className={cn('flex items-center gap-2 px-3 py-1.5 rounded-md', className)}>
+              <span className="text-xl">{currentCountry.flag}</span>
+              <p className="truncate">
+                {currentCountry.name} ({viewerParams.currency})
+              </p>
+            </Button>
+          </PopoverTrigger>
 
-        <SelectSearchable
-          options={countryOptions}
-          model={model.newSelect((s) => s.viewerParams, 'country')}
-          icon={<span className="text-xl">{currentCountry.flag}</span>}
-          label={<>Shipping to</>}
-          onChange={onSelectCountry}
-        />
-
-        <LabeledSelect
-          model={model.newSelect((s) => s.viewerParams, 'currency')}
-          options={currencyOptions}
-          label={<>Currency</>}
-        />
-
-        <LabeledSelect
-          model={model.newSelect((s) => s.viewerParams, 'language')}
-          options={localeOptions}
-          label={<>Language</>}
-        />
-
-        <Button onClick={handleSave} disabled={isSaving} className="w-full">
-          {isSaving && <Spinner />}
-          Save Preferences
-        </Button>
-      </PopoverContent>
-    </Popover>
+          <PopoverContent className="w-80 space-y-4" align="end">
+            {node}
+          </PopoverContent>
+        </Popover>
+      )}
+    </>
   );
 }
