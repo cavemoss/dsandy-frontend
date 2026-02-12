@@ -96,8 +96,8 @@ export default function ParamsSelect({ className, mobile }: Params) {
   return (
     <>
       {mobile ? (
-        <Accordion type="single" collapsible className="w-full rounded-lg border shadow-md">
-          <AccordionItem value="content" className="border-b px-4 last:border-b-0">
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="content" className="border-b pl-2 last:border-b-0">
             <AccordionTrigger>
               {currentCountry.name} ({viewerParams.currency})
             </AccordionTrigger>

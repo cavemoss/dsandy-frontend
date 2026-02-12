@@ -37,8 +37,7 @@ export default function MobileMenu() {
 
         <div className="px-4">
           <ParamsSelect mobile />
-
-          <SidebarProvider className="mt-7">
+          <SidebarProvider>
             <SidebarMenu>
               {Object.entries(navigation).map(([url, option], index) => {
                 if (option.subOptions) {

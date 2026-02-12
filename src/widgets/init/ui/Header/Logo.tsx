@@ -1,7 +1,7 @@
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 import { useInitStore, useNavStore } from '@/widgets/init';
 
-export default function Logo({ className }: { className: string }) {
+export default function Logo({ className }: { className?: string }) {
   const navStore = useNavStore();
 
   const subdomainConfig = useInitStore((state) => state.subdomain.config);
