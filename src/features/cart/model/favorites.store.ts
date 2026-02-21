@@ -5,7 +5,7 @@ import { useDialogsStore } from '@/widgets/dialogs';
 
 import { FavoritesState } from '../types';
 
-export const useFavoritesStore = createZustand<FavoritesState>('favorites', (set, get) => ({
+export const useFavoritesStore = createZustand<FavoritesState>('favorites', (set) => ({
   items: {},
 
   // Actions
@@ -33,11 +33,18 @@ export const useFavoritesStore = createZustand<FavoritesState>('favorites', (set
   },
 
   clearAll() {
-    useDialogsStore.getState().useAlert({
-      title: 'Are you sure?',
-      description: 'This action will clear all of your saved items',
-      type: 'confirm',
-    });
+    const dialogs = useDialogsStore.getState();
+    dialogs.useAlert(
+      {
+        title: 'Are you sure?',
+        description: 'This action will clear all of your saved items',
+        type: 'confirm',
+      },
+      () => {
+        dialogs.useAlert();
+        set({ items: {} });
+      },
+    );
   },
 }));
 

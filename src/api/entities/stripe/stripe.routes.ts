@@ -15,3 +15,6 @@ export const updatePaymentIntent = (clientSecret: string, body: CreatePaymentInt
 
 export const retrievePaymentIntent = (clientSecret: string) =>
   axios.get(ROUTE + '/retrieve-payment-intent', { params: { clientSecret } }).then((r) => r.data);
+
+export const cancelOrder = (orderId: number, reason: string) =>
+  axios.post(ROUTE + `/cancel-order/${orderId}`, { reason });

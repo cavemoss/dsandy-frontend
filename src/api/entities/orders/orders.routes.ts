@@ -16,4 +16,6 @@ export const loadAnonOrders = () =>
 
 export const placeOrder = (dto: PlaceOrderBodyDTO) => axios.post<OrderDTO>(ROUTE, dto).then((res) => res.data);
 
+export const confirmOrder = (orderId: number) => axios.post(ROUTE + `/confirm/${orderId}`);
+
 export const updateOrderInfo = (dto: UpdateOrderInfoBodyDTO) => axios.patch(ROUTE, dto);

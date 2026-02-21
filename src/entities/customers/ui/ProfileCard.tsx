@@ -6,7 +6,6 @@ import { Mail, Pencil, Phone, User } from 'lucide-react';
 
 import { useIsMobile } from '@/shared/shadcd/hooks/use-mobile';
 import { DialogEnum, useDialogsStore } from '@/widgets/dialogs';
-import PersonalInfoDrawer from '@/widgets/dialogs/ui/drawers/PersonalInfo';
 
 import { useCustomersStore } from '../model';
 
@@ -22,15 +21,9 @@ export default function CustomerProfileCard() {
     <Card className="lg:col-span-1">
       <CardHeader>
         <CardAction>
-          <PersonalInfoDrawer>
-            <Button
-              variant="ghost"
-              className="text-sm"
-              onClick={() => dialogs.toggleDialog(DialogEnum.PERSONAL_INFO, isMobile)}
-            >
-              Edit info <Pencil />
-            </Button>
-          </PersonalInfoDrawer>
+          <Button variant="ghost" className="text-sm" onClick={() => dialogs.toggleDialog(DialogEnum.PERSONAL_INFO)}>
+            Edit info <Pencil />
+          </Button>
         </CardAction>
       </CardHeader>
       <CardContent className="p-6 flex flex-col items-center space-y-3">

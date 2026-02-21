@@ -8,6 +8,7 @@ export enum DialogEnum {
   IMAGE_VIEWER = 'imageViewer',
   ORDER_TRACKING = 'orderTracking',
   PERSONAL_INFO = 'personalInfo',
+  CANCEL_ORDER = 'cancelOrder',
 }
 
 export interface DialogsState {
@@ -18,23 +19,32 @@ export interface DialogsState {
   [DialogEnum.IMAGE_VIEWER]: boolean;
   [DialogEnum.ORDER_TRACKING]: boolean;
   [DialogEnum.PERSONAL_INFO]: boolean;
+  [DialogEnum.CANCEL_ORDER]: boolean;
   imageViewerData: {
     images: string[];
     index: number;
   };
   alertData: {
-    type: 'info' | 'confirm';
+    type: 'info' | 'confirm' | 'destructive';
     title: string;
     description: string;
+    isAsync: boolean;
   };
   orderTrackingData: {
     order: OrderDTO | null;
   };
+  cancelOrderData: {
+    orderId: number | null;
+    reason: string;
+  };
   // actions
   toggleDialog: (dialog: DialogEnum, noMobile?: boolean) => void;
   useImageViewer: (images?: string[], index?: number) => void;
-  useAlert: (data?: Partial<this['alertData']>) => void;
+  useAlert: (data?: Partial<this['alertData']>, onConfirm?: () => void) => void;
   useOrderTracking: (order?: OrderDTO) => void;
+  useCancelOrder: (order?: OrderDTO) => void;
+
+  confirmAction: (...args: unknown[]) => Promise<void> | void;
 
   setState: (clb: (s: this) => void) => void;
 }

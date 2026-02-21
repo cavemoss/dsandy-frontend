@@ -59,8 +59,10 @@ export enum OrderStatus {
   PLACED_AT_ALI,
   TO_BE_SHIPPED,
   SHIPPED,
-  COMPLEAT,
+  COMPLETE,
   REFUND_REQUESTED,
+  RETURN_REQUESTED,
+  CANCELED,
 }
 
 export interface DProductDTO {
@@ -86,10 +88,21 @@ export interface OrderTrackingDTO {
     description: string;
     timestamp: number;
   }[];
-  isCompleat: boolean;
+  trackingNumber: string | null;
   carrier: string;
   deliveryDays: number;
 }
+
+export type OrderCancelReason =
+  | 'changed_mind'
+  | 'found_better_price'
+  | 'duplicate_order'
+  | 'wrong_item'
+  | 'delivery_delay'
+  | 'payment_issue'
+  | 'shipping_cost'
+  | 'no_longer_needed'
+  | 'other';
 
 export interface OrderDTO {
   id: number;
@@ -102,6 +115,7 @@ export interface OrderDTO {
   orderItems: OrderItemDTO[];
   metadata: OrderMetadata;
   trackingData: OrderTrackingDTO | null;
+  cancelReason: OrderCancelReason;
   dProducts: DProductDTO[];
   createdAt: string;
 }

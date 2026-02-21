@@ -3,7 +3,7 @@ import { devtools } from 'zustand/middleware';
 
 import { InputModel, SelectModel } from './types';
 
-export const objectByKey = <T extends object>(array: T[] = [], key: keyof T): Record<string, T> =>
+export const indexByKey = <T extends object>(array: T[] = [], key: keyof T): Record<string, T> =>
   Object.fromEntries(array.map((obj) => [obj[key], obj]));
 
 export const createZustand = <T>(name: string, init: StateCreator<T>) => create(devtools(init, { name }));

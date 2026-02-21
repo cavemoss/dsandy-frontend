@@ -4,7 +4,7 @@ import { Button } from '@shadcd/button';
 import { CardContent } from '@shadcd/card';
 import { Package } from 'lucide-react';
 
-import { OrderItemGroupInner, useOrdersStore } from '@/entities/orders';
+import { OrderItemGroup, useOrdersStore } from '@/entities/orders';
 
 export default function CustomerOrderHistory() {
   const orders = useOrdersStore((state) => state.orders.all);
@@ -23,7 +23,7 @@ export default function CustomerOrderHistory() {
   return (
     <CardContent className="space-y-7">
       {orders.map((order, index, { length }) => (
-        <OrderItemGroupInner order={order} key={index} isLast={index + 1 == length} />
+        <OrderItemGroup order={order} key={index} isLast={index + 1 == length} inner />
       ))}
     </CardContent>
   );

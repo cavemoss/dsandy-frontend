@@ -26,12 +26,8 @@ export function CartItem({ index, item }: Params) {
     <Card>
       <CardContent>
         <div className="flex gap-4">
-          {/* Product Image */}
-          <div className="relative self-baseline">
-            <ImageWithFallback src={item.image} className="w-24 h-24 object-cover rounded-md brightness-90" />
-          </div>
+          <ImageWithFallback src={item.image} className="w-24 h-24 object-cover rounded-md brightness-90" />
 
-          {/* Product Details */}
           <div className="flex-1 space-y-2">
             <div className="flex justify-between">
               <div>

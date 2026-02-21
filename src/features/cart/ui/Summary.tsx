@@ -46,7 +46,6 @@ export default function CartSummary() {
         </CardContent>
       </Card>
 
-      {/* Order Summary */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Order Summary</CardTitle>
@@ -84,20 +83,17 @@ export default function CartSummary() {
         </CardContent>
       </Card>
 
-      {/* Checkout Button */}
-      <div className="space-y-3">
-        <Button className="w-full" size="lg" onClick={proceedToCheckout} disabled={redirecting}>
-          {redirecting ? (
-            <>
-              <Spinner /> Redirecting to checkout...
-            </>
-          ) : (
-            <>
-              <Sparkles /> Proceed to Checkout
-            </>
-          )}
-        </Button>
-      </div>
+      <Button className="w-full" size="lg" onClick={proceedToCheckout} disabled={redirecting}>
+        {redirecting ? (
+          <>
+            <Spinner /> Redirecting to checkout...
+          </>
+        ) : (
+          <>
+            <Sparkles /> Proceed to Checkout
+          </>
+        )}
+      </Button>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@shadcd/accordion';
 import { Card, CardHeader } from '@shadcd/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shadcd/tabs';
 import { MapPin, Package, Settings } from 'lucide-react';
@@ -18,17 +17,17 @@ export default function AccountPage() {
           <CustomerProfileCard />
 
           <Card className="lg:col-span-3">
-            <Tabs defaultValue="orders" className="space-y-6 hidden md:block">
+            <Tabs defaultValue="orders" className="space-y-6">
               <CardHeader>
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="orders">
-                    <Package /> Order History
+                    <Package /> <span className="hidden md:block">Order History</span>
                   </TabsTrigger>
                   <TabsTrigger disabled value="addresses">
-                    <MapPin /> Addresses
+                    <MapPin /> <span className="hidden md:block">Addresses</span>
                   </TabsTrigger>
                   <TabsTrigger value="settings">
-                    <Settings /> Settings
+                    <Settings /> <span className="hidden md:block">Settings</span>
                   </TabsTrigger>
                 </TabsList>
               </CardHeader>
@@ -41,37 +40,6 @@ export default function AccountPage() {
                 <CustomerAccountSettings />
               </TabsContent>
             </Tabs>
-
-            <Accordion className="md:hidden px-4" type="single" collapsible defaultValue="orders">
-              <AccordionItem value="description">
-                <AccordionTrigger>
-                  <div className="flex gap-3 items-center font-semibold text-neutral-700">
-                    <Package /> Order History
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <CustomerOrderHistory />
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="addresses" disabled>
-                <AccordionTrigger>
-                  <div className="flex gap-3 items-center font-semibold text-neutral-700">
-                    <MapPin /> Addresses
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent></AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="settings">
-                <AccordionTrigger>
-                  <div className="flex gap-3 items-center font-semibold text-neutral-700">
-                    <Settings /> Settings
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <CustomerAccountSettings />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
           </Card>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Product, ProductSCU } from '@/api/entities';
 import { useCartStore, useFavoritesStore } from '@/features/cart';
 import Toggle from '@/shared/components/Toggle';
-import { objectByKey } from '@/shared/lib/utils';
+import { indexByKey } from '@/shared/lib/utils';
 import { ImageWithFallback } from '@/shared/shadcd/figma/ImageWithFallback';
 import { cn } from '@/shared/shadcd/lib/utils';
 
@@ -49,7 +49,7 @@ export function ProductSCUSelect({ product, scu: currentSCU }: Params) {
 
   const displayedSCUs = showAllSCUs ? scus : scus.slice(0, MAX_VISIBLE_SCUS);
 
-  const scusByIds = objectByKey(product.scus, 'id');
+  const scusByIds = indexByKey(product.scus, 'id');
 
   return (
     <div className="flex-1 flex flex-col justify-around gap-12 my-12 md:my-0 md:gap-3">

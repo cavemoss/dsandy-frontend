@@ -1,5 +1,5 @@
 import * as api from '@/api/entities';
-import { createZustand, deepClone, objectByKey } from '@/shared/lib/utils';
+import { createZustand, deepClone, indexByKey } from '@/shared/lib/utils';
 import { formatPrice } from '@/widgets/init';
 
 import { ProductsState } from '../types';
@@ -18,13 +18,13 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
 
   // Getters
 
-  getProductsByIds: () => objectByKey(get().products.all, 'id'),
+  getProductsByIds: () => indexByKey(get().products.all, 'id'),
 
-  getCurrentSCUsByIds: () => objectByKey(get().products.current.item?.scus, 'id'),
+  getCurrentSCUsByIds: () => indexByKey(get().products.current.item?.scus, 'id'),
 
   getProductAndSCU: (productId, scuId) => {
     const { [productId]: product } = get().getProductsByIds();
-    const { [scuId]: scu } = objectByKey(product?.scus, 'id');
+    const { [scuId]: scu } = indexByKey(product?.scus, 'id');
 
     return [product, scu];
   },
@@ -56,7 +56,7 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
 
   getExactSCU: (productId, scuId) => {
     const product = get().getProductsByIds()[productId];
-    return objectByKey(product?.scus, 'id')[scuId];
+    return indexByKey(product?.scus, 'id')[scuId];
   },
 
   // Actions
@@ -95,7 +95,7 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
     const productId: number = Array.isArray(idParam) ? NaN : Number(idParam);
 
     const product = self.getProductsByIds()[productId];
-    const scu = objectByKey(product.scus, 'id')[scuId!] ?? product.scus[0];
+    const scu = indexByKey(product.scus, 'id')[scuId!] ?? product.scus[0];
 
     set((state) => {
       const ptr = state.products.current;

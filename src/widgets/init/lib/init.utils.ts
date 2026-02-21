@@ -64,14 +64,14 @@ export async function fetchCountryData() {
   }
 }
 
-export function formatPrice(amount: number, currency?: string) {
+export function formatPrice(amount: number, currency?: string, digits = 2) {
   const { viewerParams: params } = useInitStore.getState();
 
   return new Intl.NumberFormat(params.language, {
     style: 'currency',
     currency: currency ?? params.currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
   }).format(amount);
 }
 

@@ -131,19 +131,18 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: #000 !important; /* Adjust text color if needed */
   transition: background-color 5000s ease-in-out 0s; /* Fallback delay trick */
 }
+input:-webkit-autofill::selection {
+  -webkit-text-fill-color: #eee !important;
+}
 
-/* For Firefox compatibility (uses :autofill) */
 input:autofill {
   box-shadow: 0 0 0 1000px transparent inset !important; /* Match the above */
 }
 
 .hide-scrollbar {
-  /* Hide scrollbar for IE, Edge and Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-  scrollbar-width: none; /* Firefox */
-
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }

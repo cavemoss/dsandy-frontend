@@ -32,7 +32,8 @@ export function Header() {
     <>
       <div className="bg-primary text-primary-foreground py-2">
         <p className=" text-center text-sm">
-          Free shipping on orders over {formatPrice(policies.freeShippingCap)} | {policies.returnDays}-day return policy
+          Free shipping on orders over {formatPrice(policies.freeShippingCap, undefined, 0)} | {policies.returnDays}-day
+          return policy
         </p>
       </div>
 

@@ -2,6 +2,7 @@ import { toast } from 'sonner';
 
 import * as api from '@/api/entities';
 import { useCustomersStore } from '@/entities/customers';
+import { useOrdersStore } from '@/entities/orders';
 import { createZustand, deepClone } from '@/shared/lib/utils';
 import { useDialogsStore } from '@/widgets/dialogs';
 
@@ -56,6 +57,7 @@ export const useAuthStore = createZustand<AuthState>('auth', (set, get) => ({
   async loginCustomer() {
     const self = get();
     const customersStore = useCustomersStore.getState();
+    const orderStore = useOrdersStore.getState();
 
     try {
       const result = await api.auth.loginCustomer(self.credentials);
@@ -65,6 +67,8 @@ export const useAuthStore = createZustand<AuthState>('auth', (set, get) => ({
       localStorage.setItem('jwtToken', result.accessToken);
 
       await customersStore.loadCurrentCustomer();
+      await orderStore.loadOrders();
+
       customersStore.onLoginSuccess();
     } catch (error) {
       console.debug('Unable to login', { error });

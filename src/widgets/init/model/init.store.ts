@@ -11,7 +11,7 @@ import { useProductsStore } from '@/entities/products';
 import { useAdminStore } from '@/features/admin/model/admin.state';
 import { useCartStore, useFavoritesStore } from '@/features/cart';
 import i18n from '@/localization/i18n';
-import { createZustand, deepClone, deepCompare, objectByKey } from '@/shared/lib/utils';
+import { createZustand, deepClone, deepCompare, indexByKey } from '@/shared/lib/utils';
 
 import { fetchCountryData, getAnonViewerParams, InitState, isoToFlag, ViewerParams } from '..';
 import { useNavStore } from './nav.store';
@@ -68,7 +68,7 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
   getCurrentCountry: () => {
     const self = get();
 
-    const countries = objectByKey(self.getAvailableCountries(), 'code');
+    const countries = indexByKey(self.getAvailableCountries(), 'code');
     const defaultCtr = self.subdomain.config.countries[0];
 
     return countries[self.viewerParamsModel.country] ?? countries[defaultCtr];

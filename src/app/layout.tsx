@@ -1,10 +1,10 @@
 import './globals.css';
 
+import { Toaster } from '@shadcd/sonner';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
 import { ClientProvider } from '@/localization/ClientProvider';
-import { Toaster } from '@shadcd/sonner';
 import { Dialogs } from '@/widgets/dialogs';
 import { Initialization } from '@/widgets/init';
 

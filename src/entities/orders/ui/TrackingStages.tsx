@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { CheckCircle, Clock } from 'lucide-react';
 
-import { OrderDTO } from '@/api/entities';
+import { OrderDTO, OrderStatus } from '@/api/entities';
 import { cn } from '@/shared/shadcd/lib/utils';
 
 interface Params {
@@ -15,19 +15,18 @@ export function OrderTrackingStages({ order }: Params) {
 
   const deliveryDate = dayjs(order.createdAt).add(trackingData.deliveryDays, 'days').format('MMM D YYYY');
 
-  const stages = trackingData.isCompleat
-    ? trackingData.stages
-    : [
-        {
-          name: 'Order Complete',
-          description: `Expected delivery on ${deliveryDate}`,
-          timestamp: 0,
-        },
-        ...trackingData.stages,
-      ];
+  const stages = [...trackingData.stages];
+
+  if (order.status == OrderStatus.TO_BE_SHIPPED) {
+    stages.unshift({
+      name: 'Order Complete',
+      description: `Expected delivery on ${deliveryDate}`,
+      timestamp: 0,
+    });
+  }
 
   return (
-    <div className="relative">
+    <div className="relative overflow-y-auto max-h-[60vh] ">
       {stages.map((step, index) => (
         <div key={index} className="relative flex gap-4 pb-8 last:pb-0">
           {/* Timeline line */}
@@ -56,7 +55,7 @@ export function OrderTrackingStages({ order }: Params) {
               {step.timestamp ? dayjs(step.timestamp).format('MMM D YYYY') : '...'}
             </p>
             <p className={cn('font-semibold', step.timestamp ? 'text-gray-900' : 'text-gray-600')}>{step.name}</p>
-            <p className="text-sm text-gray-600">{step.description}</p>
+            <p className="text-sm text-neutral-600">{step.description}</p>
           </div>
         </div>
       ))}

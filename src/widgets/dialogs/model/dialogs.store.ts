@@ -10,6 +10,7 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set, get)
   [DialogEnum.IMAGE_VIEWER]: false,
   [DialogEnum.ORDER_TRACKING]: false,
   [DialogEnum.PERSONAL_INFO]: false,
+  [DialogEnum.CANCEL_ORDER]: false,
 
   imageViewerData: {
     images: [],
@@ -20,10 +21,16 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set, get)
     type: 'info',
     title: '',
     description: '',
+    isAsync: false,
   },
 
   orderTrackingData: {
     order: null,
+  },
+
+  cancelOrderData: {
+    orderId: null,
+    reason: '',
   },
 
   toggleDialog(dialog, noMobile) {
@@ -40,8 +47,13 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set, get)
     get().toggleDialog(DialogEnum.IMAGE_VIEWER);
   },
 
-  useAlert(alertData) {
-    if (alertData) set((s) => (Object.assign(s.alertData, alertData), s));
+  useAlert(alertData, onConfirm) {
+    if (alertData) {
+      set((s) => Object.assign(s, { alertData }));
+    }
+    if (onConfirm) {
+      set({ confirmAction: onConfirm });
+    }
     get().toggleDialog(DialogEnum.ALERT);
   },
 
@@ -49,6 +61,13 @@ export const useDialogsStore = createZustand<DialogsState>('dialogs', (set, get)
     if (order) set({ orderTrackingData: { order } });
     get().toggleDialog(DialogEnum.ORDER_TRACKING);
   },
+
+  useCancelOrder(order) {
+    if (order) set((s) => ((s.cancelOrderData.orderId = order.id), s));
+    get().toggleDialog(DialogEnum.CANCEL_ORDER);
+  },
+
+  confirmAction: () => {},
 
   setState: (clb) => set((s) => (clb(s), deepClone(s))),
 }));

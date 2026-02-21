@@ -1,7 +1,16 @@
 'use client';
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@shadcd/dialog';
-import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@shadcd/drawer';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@shadcd/drawer';
+import { Files } from 'lucide-react';
 
 import { OrderTrackingStages } from '@/entities/orders';
 import { useIsMobile } from '@/shared/shadcd/hooks/use-mobile';
@@ -19,11 +28,21 @@ export default function OrderTrackingModal() {
   return (
     <>
       <Dialog open={isOpened && !isMobile} onOpenChange={() => dialogsStore.useOrderTracking()}>
-        <DialogContent className="sm:max-w-106">
+        <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} className="sm:max-w-106">
           <DialogHeader>
             <DialogTitle>Order Tracking</DialogTitle>
-            <DialogDescription>
-              Enter your email address below, we will send you a password reset link
+            <DialogDescription className="flex gap-1">
+              <span className="text-black">Tracking Number: </span>
+              <span className="text-muted-foreground flex max-w-fit items-center gap-1">
+                {order?.trackingData?.trackingNumber ? (
+                  <>
+                    {order?.trackingData?.trackingNumber}
+                    <Files size={15} className="cursor-pointer" />
+                  </>
+                ) : (
+                  <>Unavailable</>
+                )}
+              </span>
             </DialogDescription>
           </DialogHeader>
 
@@ -31,11 +50,26 @@ export default function OrderTrackingModal() {
         </DialogContent>
       </Dialog>
 
-      <Drawer open={isOpened && isMobile} onOpenChange={() => dialogsStore.useOrderTracking()}>
+      <Drawer preventScrollRestoration open={isOpened && isMobile} onOpenChange={() => dialogsStore.useOrderTracking()}>
         <DrawerTrigger></DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle></DrawerTitle>
+            <DrawerTitle>Order Tracking</DrawerTitle>
+            <DrawerDescription>
+              <span className="text-black flex items-center flex-col">
+                Tracking Number:
+                <span className="text-muted-foreground flex items-center gap-1">
+                  {order?.trackingData?.trackingNumber ? (
+                    <>
+                      {order?.trackingData?.trackingNumber}
+                      <Files size={15} className="cursor-pointer" />
+                    </>
+                  ) : (
+                    <>Unavailable</>
+                  )}
+                </span>
+              </span>
+            </DrawerDescription>
           </DrawerHeader>
           <DrawerFooter>{order && <OrderTrackingStages order={order} />}</DrawerFooter>
         </DrawerContent>

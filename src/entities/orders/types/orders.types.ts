@@ -15,6 +15,8 @@ export interface OrdersState {
   loadOrders: (actualizeAnon?: boolean) => Promise<void>;
   placeOrder: () => Promise<OrderDTO>;
   updateOrderInfo: () => Promise<void>;
+  confirmOrder: (orderId: number) => Promise<void>;
+  cancelOrder: (orderId: number, reason: string) => Promise<void>;
   setAddress: (event: StripeAddressElementChangeEvent) => void;
   setState: (clb: (s: this) => void) => void;
 }

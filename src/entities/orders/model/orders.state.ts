@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { toast } from 'sonner';
 
 import * as api from '@/api/entities';
 import { useCustomersStore } from '@/entities/customers';
@@ -6,6 +7,7 @@ import { useProductsStore } from '@/entities/products';
 import { useCartStore } from '@/features/cart';
 import { useStripeStore } from '@/features/checkout';
 import { createZustand, deepClone } from '@/shared/lib/utils';
+import { useDialogsStore } from '@/widgets/dialogs';
 
 import { actualizeAnonOrders, addAnonOrder, getAnonOrderIds, getSCUAttr } from '../lib';
 import { OrdersState } from '../types';
@@ -152,6 +154,38 @@ export const useOrdersStore = createZustand<OrdersState>('orders', (set, get) =>
       set((state) => ((state.orders.lastId = orderId), state));
     } catch (cause) {
       throw new Error('Order update info request failed', { cause });
+    }
+  },
+
+  async confirmOrder(orderId: number) {
+    const dialogs = useDialogsStore.getState();
+
+    try {
+      await api.orders.confirmOrder(orderId);
+
+      dialogs.useAlert();
+      toast.success('Order receipt confirmed!');
+
+      void setTimeout(() => location.reload(), 300);
+    } catch (error) {
+      console.error('Failed to confirm order', { error });
+      toast.error('Something went wrong');
+    }
+  },
+
+  async cancelOrder(orderId, reason) {
+    const dialogs = useDialogsStore.getState();
+
+    try {
+      await api.stripe.cancelOrder(orderId, reason);
+
+      toast.success('Order receipt confirmed!');
+      dialogs.useCancelOrder();
+
+      void setTimeout(() => location.reload(), 300);
+    } catch (error) {
+      console.error('Failed to confirm order', { error });
+      toast.error('Something went wrong');
     }
   },
 
