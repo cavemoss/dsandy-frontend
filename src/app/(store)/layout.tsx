@@ -11,7 +11,7 @@ export default function StoreLayout({ children }: Readonly<{ children: React.Rea
 
   useEffect(() => {
     document.title = storeName;
-  }, []);
+  }, [storeName]);
 
   if (!isInitialized)
     return (
