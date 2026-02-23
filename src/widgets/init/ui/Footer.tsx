@@ -22,7 +22,7 @@ export function Footer() {
               <div>
                 <h4 className="font-medium">Free Shipping</h4>
                 <p className="text-sm text-muted-foreground">
-                  On orders over {formatPrice(config.policies.freeShippingCap)}
+                  On orders over {formatPrice(config.policies.freeShippingCap, undefined, 0)}
                 </p>
               </div>
             </div>
