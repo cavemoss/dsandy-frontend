@@ -101,7 +101,7 @@ export function AuthSignupForm() {
   }, [isOpened]);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form className="space-y-4">
       <div className="space-y-4 my-6">
         <div className="grid grid-cols-2 gap-3">
           <LabeledInput model={firstNameModel} icon={<User />} label={<>First Name</>} placeholder="Jane" />
@@ -141,7 +141,7 @@ export function AuthSignupForm() {
         </div>
       </div>
 
-      <Button type="submit" className="w-full" disabled={errorTrigger && !isAllValid} onClick={handleSubmit}>
+      <Button className="w-full" disabled={errorTrigger && !isAllValid} onClick={handleSubmit}>
         {loading ? (
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
