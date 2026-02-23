@@ -1,7 +1,6 @@
 import './globals.css';
 
 import { Toaster } from '@shadcd/sonner';
-import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Script from 'next/script';
 
@@ -18,10 +17,6 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
 });
-
-export const metadata: Metadata = {
-  title: '%s',
-};
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

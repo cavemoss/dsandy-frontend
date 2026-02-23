@@ -117,7 +117,10 @@ export const useInitStore = createZustand<InitState>('init', (set, get) => ({
 
   loadSubdomainData: async () => {
     try {
-      set({ subdomain: await api.admin.loadSubdomainData() });
+      const subdomain = await api.admin.loadSubdomainData();
+
+      set({ subdomain });
+      document.title = subdomain.config.storeName;
     } catch (error) {
       console.error('Error fetching subdomain data', { error });
     }

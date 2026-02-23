@@ -1,17 +1,11 @@
 'use client';
 
 import { Spinner } from '@shadcd/spinner';
-import { useEffect } from 'react';
 
 import { Footer, Header, useInitStore } from '@/widgets/init';
 
 export default function StoreLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const isInitialized = useInitStore((state) => state.initialized);
-  const storeName = useInitStore((state) => state.subdomain?.config?.storeName);
-
-  useEffect(() => {
-    document.title = storeName;
-  }, [storeName]);
 
   if (!isInitialized)
     return (
