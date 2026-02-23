@@ -78,13 +78,13 @@ export function AuthSignupForm() {
 
   // Methods
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setErrorTrigger(true);
 
     if (!isAllValid) return;
     setLoading(true);
 
-    customersStore.createCustomer();
+    await customersStore.createCustomer();
     setLoading(false);
   };
 
