@@ -95,6 +95,9 @@ export const useProductsStore = createZustand<ProductsState>('products', (set, g
     const productId: number = Array.isArray(idParam) ? NaN : Number(idParam);
 
     const product = self.getProductsByIds()[productId];
+
+    if (!product) return;
+
     const scu = indexByKey(product.scus, 'id')[scuId!] ?? product.scus[0];
 
     set((state) => {
