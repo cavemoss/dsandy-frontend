@@ -4,6 +4,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@s
 import { Card, CardContent } from '@shadcd/card';
 import { Separator } from '@shadcd/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shadcd/tabs';
+import dayjs from 'dayjs';
 import DOMPurify from 'dompurify';
 
 import { Product } from '@/api/entities';
@@ -15,6 +16,8 @@ interface Params {
 
 export function ProductDetailTabs({ product }: Params) {
   const policies = useInitStore((state) => state.subdomain.config.policies);
+
+  const deliveryDate = dayjs().add(product.logistics.deliveryTime, 'days').format('MMM D YYYY');
 
   const specifications = (
     <div
@@ -44,7 +47,7 @@ export function ProductDetailTabs({ product }: Params) {
       <div>
         <h4 className="font-medium mb-2">Shipping Information</h4>
         <ul className="space-y-1 text-muted-foreground">
-          <li>• Standard shipping: {product.logistics.deliveryTime} business days</li>
+          <li>• Estimated delivery date: {deliveryDate}</li>
           <li>• International shipping available</li>
         </ul>
       </div>
