@@ -45,7 +45,7 @@ export function ProductSCUSelect({ product, scu: currentSCU }: Params) {
 
   const noSCUImages = scus.some((scu) => !scu.image);
 
-  const hasMoreSCUs = scus.length > MAX_VISIBLE_SCUS;
+  const hasMoreSCUs = scus.length - 3 > MAX_VISIBLE_SCUS;
 
   const displayedSCUs = showAllSCUs ? scus : scus.slice(0, MAX_VISIBLE_SCUS);
 
